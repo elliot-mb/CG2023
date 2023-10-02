@@ -3,9 +3,36 @@
 #include <Utils.h>
 #include <fstream>
 #include <vector>
+#include <glm/glm.hpp>
+
+using namespace std;
+using namespace glm;
 
 #define WIDTH 320
 #define HEIGHT 240
+
+vector<float> interpolateSingleFloats(float from, float to, int numberOfValues){
+	if(numberOfValues < 2) throw invalid_argument("interpolateSingleFloats must output at least two values");
+	float delta = to - from;
+	float step = delta / (numberOfValues - 1);
+	vector<float> result = {};
+	for(int i = 0; i < numberOfValues; i++) {
+		result.push_back(from + (i * step));
+	}
+	return result;
+}
+
+vector<vec3> interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues){
+	if(numberOfValues < 2) throw invalid_argument("interpolateThreeElementValues must output at least two values");
+	vector<float> xs = interpolateSingleFloats(from.x, to.x, numberOfValues);
+	vector<float> ys = interpolateSingleFloats(from.y, to.y, numberOfValues);
+	vector<float> zs = interpolateSingleFloats(from.z, to.z, numberOfValues);
+	vector<vec3> result = {};
+	for(int i = 0; i < numberOfValues; i++){
+		result.push_back(vec3(xs[i], ys[i], zs[i]));
+	}
+	return result;
+}
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -18,6 +45,54 @@ void draw(DrawingWindow &window) {
 			window.setPixelColour(x, y, colour);
 		}
 	}
+}
+
+// template <typename T>
+
+// void showV(vector<T> v) {
+// 	for(int i=0; i < v.size(); i++) cout << v[i] << " ";
+// 	cout << endl;
+// }
+
+uint32_t pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
+	return (a << 24) + (r << 16) + (g << 8) + b;
+}
+
+void drawGreys(DrawingWindow &window){
+	window.clearPixels();
+	vector<float> greys = interpolateSingleFloats(255, 0, window.width);
+	vector<uint8_t> greyWholes = {};
+	for(int i = 0; i < greys.size(); i++){
+		greyWholes.push_back(static_cast<uint8_t>(greys[i]));
+	}
+	for(int y = 0; y < window.height; y++){
+		for(int x = 0; x < window.width; x++){
+			uint8_t value = greyWholes[x];
+			uint32_t colour = pack(255, value, value, value);
+			window.setPixelColour(x, y, colour);
+		}
+	}
+}
+
+void drawColours(DrawingWindow &window){
+	window.clearPixels();
+	vec3 red = vec3(255, 0, 0);
+	vec3 green = vec3(0, 255, 0);
+	vec3 blue = vec3(0, 0, 255);
+	vec3 yellow = vec3(255, 255, 0);
+	vector<vec3> leftCol = interpolateThreeElementValues(red, yellow, window.height);
+	vector<vec3> rightCol = interpolateThreeElementValues(blue, green, window.height);
+	for(int y = 0; y < window.height; y++){
+		vector<vec3> row = interpolateThreeElementValues(leftCol[y], rightCol[y], window.width);
+		for(int x = 0; x < window.width; x++){
+			window.setPixelColour(x, y, pack(
+				255, 
+				static_cast<uint8_t>(row[x].x),
+				static_cast<uint8_t>(row[x].y),
+				static_cast<uint8_t>(row[x].z)
+			));
+		}
+	} 
 }
 
 void handleEvent(SDL_Event event, DrawingWindow &window) {
@@ -35,10 +110,26 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 int main(int argc, char *argv[]) {
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
+
+	vector<float> result = interpolateSingleFloats(2.2, 8.5, 7);
+	for(int i=0; i < result.size(); i++) cout << result[i] << " ";
+	cout << endl;
+
+	vector<vec3> resultVec = interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
+	for(int i=0; i < resultVec.size(); i++) {
+		cout << "(";
+		cout << resultVec[i].x << " ";
+		cout << resultVec[i].y << " ";
+		cout << resultVec[i].z << " ";
+		cout << ")";
+	}
+	cout << endl;
+
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
-		draw(window);
+		//draw(window);
+		drawColours(window);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}
