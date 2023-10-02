@@ -3,8 +3,10 @@
 #include <Utils.h>
 #include <fstream>
 #include <vector>
+#include <glm/glm.hpp>
 
 using namespace std;
+using namespace glm;
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -16,6 +18,18 @@ vector<float> interpolateSingleFloats(float from, float to, int numberOfValues){
 	vector<float> result = {};
 	for(int i = 0; i < numberOfValues; i++) {
 		result.push_back(from + (i * step));
+	}
+	return result;
+}
+
+vector<vec3> interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues){
+	if(numberOfValues < 2) throw invalid_argument("interpolateThreeElementValues must output at least two values");
+	vector<float> xs = interpolateSingleFloats(from.x, to.x, numberOfValues);
+	vector<float> ys = interpolateSingleFloats(from.y, to.y, numberOfValues);
+	vector<float> zs = interpolateSingleFloats(from.z, to.z, numberOfValues);
+	vector<vec3> result = {};
+	for(int i = 0; i < numberOfValues; i++){
+		result.push_back(vec3(xs[i], ys[i], zs[i]));
 	}
 	return result;
 }
@@ -32,6 +46,13 @@ void draw(DrawingWindow &window) {
 		}
 	}
 }
+
+// template <typename T>
+
+// void showV(vector<T> v) {
+// 	for(int i=0; i < v.size(); i++) cout << v[i] << " ";
+// 	cout << endl;
+// }
 
 uint32_t pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
 	return (a << 24) + (r << 16) + (g << 8) + b;
@@ -71,6 +92,16 @@ int main(int argc, char *argv[]) {
 
 	vector<float> result = interpolateSingleFloats(2.2, 8.5, 7);
 	for(int i=0; i < result.size(); i++) cout << result[i] << " ";
+	cout << endl;
+
+	vector<vec3> resultVec = interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
+	for(int i=0; i < resultVec.size(); i++) {
+		cout << "(";
+		cout << resultVec[i].x << " ";
+		cout << resultVec[i].y << " ";
+		cout << resultVec[i].z << " ";
+		cout << ")";
+	}
 	cout << endl;
 
 	while (true) {
