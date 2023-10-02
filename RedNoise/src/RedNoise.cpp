@@ -74,6 +74,27 @@ void drawGreys(DrawingWindow &window){
 	}
 }
 
+void drawColours(DrawingWindow &window){
+	window.clearPixels();
+	vec3 red = vec3(255, 0, 0);
+	vec3 green = vec3(0, 255, 0);
+	vec3 blue = vec3(0, 0, 255);
+	vec3 yellow = vec3(255, 255, 0);
+	vector<vec3> leftCol = interpolateThreeElementValues(red, yellow, window.height);
+	vector<vec3> rightCol = interpolateThreeElementValues(blue, green, window.height);
+	for(int y = 0; y < window.height; y++){
+		vector<vec3> row = interpolateThreeElementValues(leftCol[y], rightCol[y], window.width);
+		for(int x = 0; x < window.width; x++){
+			window.setPixelColour(x, y, pack(
+				255, 
+				static_cast<uint8_t>(row[x].x),
+				static_cast<uint8_t>(row[x].y),
+				static_cast<uint8_t>(row[x].z)
+			));
+		}
+	} 
+}
+
 void handleEvent(SDL_Event event, DrawingWindow &window) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_LEFT) std::cout << "LEFT" << std::endl;
@@ -108,7 +129,7 @@ int main(int argc, char *argv[]) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
 		//draw(window);
-		drawGreys(window);
+		drawColours(window);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}
