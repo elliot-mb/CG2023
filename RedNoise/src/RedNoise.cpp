@@ -33,7 +33,7 @@ void draw(DrawingWindow &window) {
 
 void drawGreys(DrawingWindow &window){
 	window.clearPixels();
-	vector<float> greys = interpolateSingleFloats(255, 0, window.width);
+	vector<float> greys = Utils::interpolateSingleFloats(255, 0, window.width);
 	vector<uint8_t> greyWholes = {};
 	for(int i = 0; i < greys.size(); i++){
 		greyWholes.push_back(static_cast<uint8_t>(greys[i]));
@@ -41,7 +41,7 @@ void drawGreys(DrawingWindow &window){
 	for(int y = 0; y < window.height; y++){
 		for(int x = 0; x < window.width; x++){
 			uint8_t value = greyWholes[x];
-			uint32_t colour = pack(255, value, value, value);
+			uint32_t colour = Utils::pack(255, value, value, value);
 			window.setPixelColour(x, y, colour);
 		}
 	}
@@ -53,12 +53,12 @@ void drawColours(DrawingWindow &window){
 	vec3 green = vec3(0, 255, 0);
 	vec3 blue = vec3(0, 0, 255);
 	vec3 yellow = vec3(255, 255, 0);
-	vector<vec3> leftCol = interpolateThreeElementValues(red, yellow, window.height);
-	vector<vec3> rightCol = interpolateThreeElementValues(blue, green, window.height);
+	vector<vec3> leftCol = Utils::interpolateThreeElementValues(red, yellow, window.height);
+	vector<vec3> rightCol = Utils::interpolateThreeElementValues(blue, green, window.height);
 	for(int y = 0; y < window.height; y++){
-		vector<vec3> row = interpolateThreeElementValues(leftCol[y], rightCol[y], window.width);
+		vector<vec3> row = Utils::interpolateThreeElementValues(leftCol[y], rightCol[y], window.width);
 		for(int x = 0; x < window.width; x++){
-			window.setPixelColour(x, y, pack(
+			window.setPixelColour(x, y, Utils::pack(
 				255, 
 				static_cast<uint8_t>(row[x].x),
 				static_cast<uint8_t>(row[x].y),
@@ -84,11 +84,11 @@ int main(int argc, char *argv[]) {
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
-	vector<float> result = interpolateSingleFloats(2.2, 8.5, 7);
+	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
 	for(int i=0; i < result.size(); i++) cout << result[i] << " ";
 	cout << endl;
 
-	vector<vec3> resultVec = interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
+	vector<vec3> resultVec = Utils::interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
 	for(int i=0; i < resultVec.size(); i++) {
 		cout << "(";
 		cout << resultVec[i].x << " ";
