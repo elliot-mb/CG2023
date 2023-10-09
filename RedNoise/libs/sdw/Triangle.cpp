@@ -46,12 +46,6 @@ const void Triangle::fill(DrawingWindow &window) {
     vec2 v0 = vec2(unpack0.x, unpack0.y);
     vec2 v1 = vec2(unpack1.x, unpack1.y);
     vec2 v2 = vec2(unpack2.x, unpack2.y);
-    vector<vec2> pts0 = Line::pixels(v0, v1);
-    vector<vec2> pts1 = Line::pixels(v1, v2);
-    vector<vec2> pts2 = Line::pixels(v2, v0);
-    std::sort(pts0.begin(), pts0.end(), [](vec2 a, vec2 b){ return a.y < b.y; });
-    std::sort(pts1.begin(), pts1.end(), [](vec2 a, vec2 b){ return a.y < b.y; });
-    std::sort(pts2.begin(), pts2.end(), [](vec2 a, vec2 b){ return a.y < b.y; });
     //vertical range of the sides
     float r0 = abs(v1.y - v0.y);
     float r1 = abs(v2.y - v1.y);
@@ -59,9 +53,49 @@ const void Triangle::fill(DrawingWindow &window) {
     float rMax = Utils::max(Utils::max(r0, r1), r2); //we just need the max to find the two smallest ones
     //our split vertex
     vec2 vSplit;
-    if(rMax == r0) vSplit = v2; //common vertex
-    if(rMax == r1) vSplit = v0;
-    if(rMax == r2) vSplit = v1;
+    vec4 sideAndOffset; //the vector of the tallest side(for interpolating) and the highest side for an vTop
+    if(rMax == r0) {
+        vSplit = v2;
+        if(v0.y < v1.y) sideAndOffset = vec4(v1 - v0, v0);
+        else sideAndOffset = vec4(v0 - v1, v1);
+    } //common vertex
+    if(rMax == r1) {
+        vSplit = v0;
+        if(v1.y < v2.y) sideAndOffset = vec4(v2 - v1, v1);
+        else sideAndOffset = vec4(v1 - v2, v2);
+    }
+    if(rMax == r2) {
+        vSplit = v1;
+        if(v0.y < v2.y) sideAndOffset = vec4(v2 - v0, v0);
+        else sideAndOffset = vec4(v0 - v2, v2);
+    }
+    vec2 side = vec2(sideAndOffset.x, sideAndOffset.y);
+    vec2 vTop = vec2(sideAndOffset.z, sideAndOffset.w);
+    vec2 vBottom = side + vTop;
+    float hTop = vSplit.y - sideAndOffset.w; //height of top triangle (number of interpolation steps)
+    float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
+    float coef = (hTop) / sideAndOffset.y;
+    vec2 vNew = vTop + (side * coef);
+
+    //heights of the triangles we make
+
+    Triangle* tTop = new Triangle(
+            *new CanvasTriangle(
+                    *new CanvasPoint(vTop.x, vTop.y),
+                    *new CanvasPoint(vNew.x, vNew.y),
+                    *new CanvasPoint(vSplit.x, vSplit.y)
+                    ), *new Colour(255, 0, 0));
+    Triangle* tBottom = new Triangle(
+            *new CanvasTriangle(
+                    *new CanvasPoint(vBottom.x, vBottom.y),
+                    *new CanvasPoint(vNew.x, vNew.y),
+                    *new CanvasPoint(vSplit.x, vSplit.y)
+            ), *new Colour(0, 255, 0));
+
+    tTop->draw(window);
+    tBottom->draw(window);
+
+
 
 //    //split out the x values into separate arrays
 //    vector<float> pts0x = {}; //they will be sorted on their y values
@@ -76,13 +110,13 @@ const void Triangle::fill(DrawingWindow &window) {
 //
 //    if(vSplit == v2){ //we KNOW v0 -> v1 (pts0) has the greatest number of points
 //        Line::draw(window, v0, v1, *new Colour(255, 255, 255), 1);
-//        if(v0.y < v1.y){ //then v2 connects to v0, where v0 is the top of the triangle
+//        if(v0.y < v1.y){ //then v2 connects to v0, where v0 is the vTop of the triangle
 //            int lastY = 0;
 //            for(int i = 0; pts2[i].y < v2.y; i++) {
 //                if(pts2[i].y != lastY) Line::draw(window, pts0[i], pts2[i], this->colour, 1);
 //                lastY = pts2[i].y;
 //            }
-//        }else{ //then v2 connects to v1, where v1 is the top of the triangle
+//        }else{ //then v2 connects to v1, where v1 is the vTop of the triangle
 //            for(int i = 0; pts1[i].y < v2.y; i++) {
 //                Line::draw(window, pts0[i], pts1[i], this->colour, 1);
 //            }
