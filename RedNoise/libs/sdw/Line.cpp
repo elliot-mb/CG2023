@@ -5,36 +5,36 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "DrawingWindow.h"
+#include <Colour.h>
+#include <CanvasPoint.h>
 
 using namespace std;
 using namespace glm;
 
-void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, vec3 colour, float weight){
+void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, float weight){
   vec2 delta = posB - posA;
-  //for a line we have to draw (at least) the number of pixels that are along the
-  //longest dimension
-  /**
-   * 
-      @    @ @        @@
-      @   @  @      @@
-      5  @   5    @@
-      @ @    @  @@
-      @@     @@@
-       @@5@@  @@@@10@@@@
-  */
+  //bool flatter = abs(delta.x) > abs(delta.y);
+  //vec2 signs = delta / abs(delta);
   float steps = Utils::max(abs(delta.x), abs(delta.y));
   vec2 stepSize = delta / steps;
-  
-  for(float i = 0.0; i < steps; i++){
+
+  vec2 last = posA;
+
+  for(float i = 0; i <= steps; i++){
     vec2 now = posA + (stepSize * i);
-    //draws two orthogonal lines, one with length 1
-    for(float j = 0.0; j < stepSize.x; j++){ //vertical line
-      window.setPixelColour(round(now.x + j), round(now.y), Utils::pack(255, 255, 255, 255));
+    //window.setPixelColour(round(now.x), round(now.y), Utils::pack(255, 255, 255, 255));
+
+    vec2 lastDelta = round(now) - last;
+    vec2 signs = abs(lastDelta) / lastDelta;
+    // x
+    for(float j = 0.0; j < abs(lastDelta.x); j++){
+        window.setPixelColour(round(last.x + (j * signs.x)), round(last.y), Utils::pack(255, 255, 255, 255));
     }
-    //starts at 1.0 because we have guarenteed to have already drawn k = 0
-    for(float k = 1.0; k < stepSize.y; k++){ //horizontal line 
-      window.setPixelColour(round(now.x), round(now.y + k), Utils::pack(255, 0, 0, 0));
+    // y
+    for(float j = 0.0; j < abs(lastDelta.y); j++){
+        window.setPixelColour(round(last.x), round(last.y + (j * signs.y)), Utils::pack(255, 255, 255, 255));
     }
-  
+    last = round(now);
   }
+  window.setPixelColour(round(posB.x), round(posB.y), Utils::pack(255, 255, 255, 255));
 }
