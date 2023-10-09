@@ -27,8 +27,6 @@ vector<vec2> Line::pixels(vec2 posA, vec2 posB){
     vector<vec2> pixels = {};
     for(float i = 0; i <= steps; i++){
         vec2 now = posA + (stepSize * i);
-        //window.setPixelColour(round(now.x), round(now.y), Utils::pack(255, 255, 255, 255));
-
         vec2 lastDelta = round(now) - last;
         if(lastDelta.x == 0) lastDelta.x = 0.1;
         if(lastDelta.y == 0) lastDelta.y = 0.1;
