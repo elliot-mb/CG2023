@@ -7,12 +7,12 @@
 using namespace std;
 using namespace glm;
 
-float Utils::min(float a, float b){
+float Utils::max(float a, float b){
 	if (a >= b) return a;
 	return b;
 }
 
-float Utils::max(float a, float b){
+float Utils::min(float a, float b){
 	if (a <= b) return a;
 	return b;
 }
