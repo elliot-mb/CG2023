@@ -12,14 +12,6 @@
 class Line {
   
   public: 
-    Line(glm::vec2 a, glm::vec2 b);
-    ~Line(); //any memory that a class allocates and owns it must destroy in it's
-    //destructor
-
     //render the line with a specified colour and weight
-    const void draw(glm::vec3 colour, float weight);
-
-  private: 
-    glm::vec2 a;
-    glm::vec2 b;
+    const void draw(glm::vec2 posA, glm::vec2 posB, glm::vec3 colour, float weight);
 };
