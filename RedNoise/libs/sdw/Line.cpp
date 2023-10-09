@@ -16,6 +16,7 @@ void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, flo
   //bool flatter = abs(delta.x) > abs(delta.y);
   //vec2 signs = delta / abs(delta);
   float steps = Utils::max(abs(delta.x), abs(delta.y));
+  if(steps == 0) steps = 1;
   vec2 stepSize = delta / steps;
 
   vec2 last = posA;
@@ -28,13 +29,13 @@ void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, flo
     vec2 signs = abs(lastDelta) / lastDelta;
     // x
     for(float j = 0.0; j < abs(lastDelta.x); j++){
-        window.setPixelColour(round(last.x + (j * signs.x)), round(last.y), Utils::pack(255, 255, 255, 255));
+        window.setPixelColour(round(last.x + (j * signs.x)), round(last.y), Utils::pack(255, colour.red, colour.green, colour.blue));
     }
     // y
     for(float j = 0.0; j < abs(lastDelta.y); j++){
-        window.setPixelColour(round(last.x), round(last.y + (j * signs.y)), Utils::pack(255, 255, 255, 255));
+        window.setPixelColour(round(last.x), round(last.y + (j * signs.y)), Utils::pack(255, colour.red, colour.green, colour.blue));
     }
     last = round(now);
   }
-  window.setPixelColour(round(posB.x), round(posB.y), Utils::pack(255, 255, 255, 255));
+  window.setPixelColour(round(posB.x), round(posB.y), Utils::pack(255, colour.red, colour.green, colour.blue));
 }
