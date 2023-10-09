@@ -107,8 +107,11 @@ int main(int argc, char *argv[]) {
 		draw(window);
 		//drawColours(window);
         Colour* c = new Colour();
-		Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
-
+		//Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
+        Line::draw(window, vec2(0.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
+        Line::draw(window, vec2(320.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
+        Line::draw(window, vec2(160.0, 0.0), vec2(160, 320), *c, 1.0);
+        Line::draw(window, vec2(80, 100), vec2(240, 100), *c, 1.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}
