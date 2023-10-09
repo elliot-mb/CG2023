@@ -1,6 +1,7 @@
 #include <CanvasTriangle.h>
 #include <DrawingWindow.h>
 #include <Utils.h>
+#include <Line.h>
 #include <fstream>
 #include <vector>
 #include <glm/glm.hpp>
@@ -102,7 +103,8 @@ int main(int argc, char *argv[]) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
 		//draw(window);
-		drawColours(window);
+		//drawColours(window);
+		Line::draw(window, vec2(0.0, 0.0), vec2(50.0, 150.0), vec3(0.0, 0.0, 0.0), 1.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}

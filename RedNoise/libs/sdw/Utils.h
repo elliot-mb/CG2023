@@ -8,6 +8,8 @@ using namespace std;
 using namespace glm;
 
 namespace Utils{
+  float min(float a, float b);
+  float max(float a, float b);
   std::vector<std::string> split(const std::string &line, char delimiter);
   std::vector<float> interpolateSingleFloats(float from, float to, int numberOfValues);
   std::vector<vec3> interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues);
