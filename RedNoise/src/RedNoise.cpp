@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <glm/glm.hpp>
+#include <Colour.h>
+#include <CanvasPoint.h>
 
 using namespace std;
 using namespace glm;
@@ -19,8 +21,8 @@ void draw(DrawingWindow &window) {
 			float red = rand() % 256;
 			float green = 0.0;
 			float blue = 0.0;
-			uint32_t colour = (255 << 24) + (int(red) << 16) + (int(green) << 8) + int(blue);
-			window.setPixelColour(x, y, colour);
+			//uint32_t colour = (255 << 24) + (int(red) << 16) + (int(green) << 8) + int(blue);
+			window.setPixelColour(x, y, Utils::pack(255, 127, 127, 127));
 		}
 	}
 }
@@ -82,7 +84,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
-	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
+	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, true);
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
@@ -102,9 +104,11 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
-		//draw(window);
+		draw(window);
 		//drawColours(window);
-		Line::draw(window, vec2(0.0, 0.0), vec2(50.0, 150.0), vec3(0.0, 0.0, 0.0), 1.0);
+        Colour* c = new Colour();
+		Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
+
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}

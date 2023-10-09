@@ -17,6 +17,8 @@ float Utils::max(float a, float b){
 	return b;
 }
 
+
+//accidentally put this in my utils name space
 vector<std::string> Utils::split(const std::string &line, char delimiter) {
 	auto haystack = line;
 	std::vector<std::string> tokens;
