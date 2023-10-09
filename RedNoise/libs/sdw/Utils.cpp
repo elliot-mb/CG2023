@@ -7,7 +7,19 @@
 using namespace std;
 using namespace glm;
 
-vector<std::string> split(const std::string &line, char delimiter) {
+float Utils::min(float a, float b){
+	if (a >= b) return a;
+	return b;
+}
+
+float Utils::max(float a, float b){
+	if (a <= b) return a;
+	return b;
+}
+
+
+//accidentally put this in my utils name space
+vector<std::string> Utils::split(const std::string &line, char delimiter) {
 	auto haystack = line;
 	std::vector<std::string> tokens;
 	size_t pos;
@@ -20,7 +32,7 @@ vector<std::string> split(const std::string &line, char delimiter) {
 	return tokens;
 }
 
-std::vector<float> interpolateSingleFloats(float from, float to, int numberOfValues){
+std::vector<float> Utils::interpolateSingleFloats(float from, float to, int numberOfValues){
 	if(numberOfValues < 2) throw invalid_argument("interpolateSingleFloats must output at least two values");
 	float delta = to - from;
 	float step = delta / (numberOfValues - 1);
@@ -31,11 +43,21 @@ std::vector<float> interpolateSingleFloats(float from, float to, int numberOfVal
 	return result;
 }
 
-std::vector<vec3> interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues){
+// //throws if too few steps are requested 
+// std::vector<vec2> Utils::interpolateVec2(vec2 from, vec2 to, int steps, int stepsY = -1){
+// 	//stepsY is optional, and set to -1 only when we generate 'steps' number of 
+// 	//steps for both axes.
+// 	if(steps < 2 || (stepsY != -1 && stepsY < 2)) throw invalid_argument("interpolateVec2 must output at least two values");
+// 	vector<float> xs = Utils::interpolateSingleFloats(from.x, to.x, steps);
+// 	vector<float> ys = Utils::interpolateSingleFloats(from.y, to.y, steps);
+// 	vector<vec2> result = {};
+// }
+
+std::vector<vec3> Utils::interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues){
 	if(numberOfValues < 2) throw invalid_argument("interpolateThreeElementValues must output at least two values");
-	vector<float> xs = interpolateSingleFloats(from.x, to.x, numberOfValues);
-	vector<float> ys = interpolateSingleFloats(from.y, to.y, numberOfValues);
-	vector<float> zs = interpolateSingleFloats(from.z, to.z, numberOfValues);
+	vector<float> xs = Utils::interpolateSingleFloats(from.x, to.x, numberOfValues);
+	vector<float> ys = Utils::interpolateSingleFloats(from.y, to.y, numberOfValues);
+	vector<float> zs = Utils::interpolateSingleFloats(from.z, to.z, numberOfValues);
 	vector<vec3> result = {};
 	for(int i = 0; i < numberOfValues; i++){
 		result.push_back(vec3(xs[i], ys[i], zs[i]));
@@ -43,6 +65,6 @@ std::vector<vec3> interpolateThreeElementValues(vec3 from, vec3 to, int numberOf
 	return result;
 }
 
-uint32_t pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
+uint32_t Utils::pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
 	return (a << 24) + (r << 16) + (g << 8) + b;
 }
