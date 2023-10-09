@@ -7,6 +7,16 @@
 using namespace std;
 using namespace glm;
 
+float Utils::min(float a, float b){
+	if (a >= b) return a;
+	return b;
+}
+
+float Utils::max(float a, float b){
+	if (a <= b) return a;
+	return b;
+}
+
 vector<std::string> Utils::split(const std::string &line, char delimiter) {
 	auto haystack = line;
 	std::vector<std::string> tokens;
