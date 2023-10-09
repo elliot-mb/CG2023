@@ -33,9 +33,10 @@ vector<std::string> Utils::split(const std::string &line, char delimiter) {
 }
 
 std::vector<float> Utils::interpolateSingleFloats(float from, float to, int numberOfValues){
-	if(numberOfValues < 2) throw invalid_argument("interpolateSingleFloats must output at least two values");
+	if(numberOfValues < 1) throw invalid_argument("interpolateSingleFloats must output at least one value");
+    if(numberOfValues == 1) return vector<float>{to};
 	float delta = to - from;
-	float step = delta / (numberOfValues - 1);
+	float step = delta / static_cast<float>((numberOfValues - 1));
 	vector<float> result = {};
 	for(int i = 0; i < numberOfValues; i++) {
 		result.push_back(from + (i * step));

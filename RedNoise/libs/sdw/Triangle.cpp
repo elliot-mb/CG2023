@@ -77,8 +77,6 @@ const void Triangle::fill(DrawingWindow &window) {
     float coef = (hTop) / sideAndOffset.y;
     vec2 vNew = vTop + (side * coef);
 
-    //heights of the triangles we make
-
     Triangle* tTop = new Triangle(
             *new CanvasTriangle(
                     *new CanvasPoint(vTop.x, vTop.y),
@@ -92,57 +90,56 @@ const void Triangle::fill(DrawingWindow &window) {
                     *new CanvasPoint(vSplit.x, vSplit.y)
             ), *new Colour(0, 255, 0));
 
-    tTop->draw(window);
-    tBottom->draw(window);
+    //tTop->draw(window);
+    //tBottom->draw(window);
 
+    int topLines = static_cast<int>(ceil(hTop));
+    int topY = static_cast<int>(round(vTop.y));
+    vector<float> topSideA;
+    vector<float> topSideB;
+    if(topLines > 0){
+        topSideA = Utils::interpolateSingleFloats(vTop.x, vSplit.x, topLines);
+        topSideB = Utils::interpolateSingleFloats(vTop.x, vNew.x, topLines);
+    }
 
+    int bottomLines = static_cast<int>(ceil(hBottom));
+    int bottomY = static_cast<int>(round(vBottom.y));
+    vector<float> bottomSideA;
+    vector<float> bottomSideB;
+    if(bottomLines > 0) {
+        bottomSideA = Utils::interpolateSingleFloats(vBottom.x, vSplit.x, bottomLines);
+        bottomSideB = Utils::interpolateSingleFloats(vBottom.x, vNew.x, bottomLines);
+    }
+    //fill those holes!
+    vec4 middleLine;
+    if(vSplit.x > vNew.x){
+        middleLine = vec4(vec2(floor(vNew.x), vNew.y), vec2(ceil(vSplit.x), vSplit.y));
+        for(int i = 0; i < topLines; i++){
+            topSideA[i] = round(topSideA[i]);
+            topSideB[i] = round(topSideB[i]);
+        }
+        for(int i = 0; i < bottomLines; i++) {
+            bottomSideA[i] = round(bottomSideA[i]);
+            bottomSideB[i] = round(bottomSideB[i]);
+        }
+    }else{
+        middleLine = vec4(vec2(ceil(vNew.x), vNew.y), vec2(floor(vSplit.x), vSplit.y));
+        for(int i = 0; i < topLines; i++){
+            topSideA[i] = round(topSideA[i]);
+            topSideB[i] = round(topSideB[i]);
+        }
+        for(int i = 0; i < bottomLines; i++){
+            bottomSideA[i] = round(bottomSideA[i]);
+            bottomSideB[i] = round(bottomSideB[i]);
+        }
+    }
 
-//    //split out the x values into separate arrays
-//    vector<float> pts0x = {}; //they will be sorted on their y values
-//    for(int i = 0; i < pts0.size(); i++) pts0x.push_back(pts0[i].x);
-//    float pts0xOffset = Utils::min(v0.y, v1.y); //where does the sorted array start? we can use this to turn y values into indices
-//    vector<float> pts1x = {}; //they will be sorted on their y values
-//    for(int i = 0; i < pts1.size(); i++) pts1x.push_back(pts1[i].x);
-//    float pts1xOffset = Utils::min(v1.y, v2.y); //where does the sorted array start? we can use this to turn y values into indices
-//    vector<float> pts2x = {}; //they will be sorted on their y values
-//    for(int i = 0; i < pts2.size(); i++) pts2x.push_back(pts2[i].x);
-//    float pts2xOffset = Utils::min(v0.y, v2.y); //where does the sorted array start? we can use this to turn y values into indices
-//
-//    if(vSplit == v2){ //we KNOW v0 -> v1 (pts0) has the greatest number of points
-//        Line::draw(window, v0, v1, *new Colour(255, 255, 255), 1);
-//        if(v0.y < v1.y){ //then v2 connects to v0, where v0 is the vTop of the triangle
-//            int lastY = 0;
-//            for(int i = 0; pts2[i].y < v2.y; i++) {
-//                if(pts2[i].y != lastY) Line::draw(window, pts0[i], pts2[i], this->colour, 1);
-//                lastY = pts2[i].y;
-//            }
-//        }else{ //then v2 connects to v1, where v1 is the vTop of the triangle
-//            for(int i = 0; pts1[i].y < v2.y; i++) {
-//                Line::draw(window, pts0[i], pts1[i], this->colour, 1);
-//            }
-//        }
-//    }
-//    if(vSplit == v0){ //we KNOW v1 -> v2 (pts1) has the greatest number of points
-//        Line::draw(window, v1, v2, *new Colour(255, 255, 255), 1);
-//    }
-//    if(vSplit == v1){ //we KNOW v0 -> v2 (pts2) has the greatest number of points
-//        Line::draw(window, v0, v2, *new Colour(255, 255, 255), 1);
-//    }
-////    if(vSplit.x == v2.x && vSplit.y == v2.y) { //r0 is the largest (most vertical) side, but which way up is it?
-////        if(v0.y < v1.y){
-////            for(int i = 0; i < pts2.size(); i++){
-////                Line::draw(window, pts0[i], pts2[i], this->colour, 1);
-////            }
-////            for(int i = 0; i + pts2.size() < pts0.size() && i < pts1.size(); i++){
-////                Line::draw(window, pts0[i + pts2.size()], pts1[i], this->colour, 1);
-////            }
-////        }else{
-////            for(int i = 0; i < pts1.size(); i++){
-////                Line::draw(window, pts0[i], pts1[i], this->colour, 1);
-////            }
-////            for(int i = 0; i + pts2.size() < pts0.size() && i < pts1.size(); i++){
-////                Line::draw(window, pts0[i + pts1.size()], pts2[i], this->colour, 1);
-////            }
-////        }
-////    }
+    for(int i = 0; i < topLines; i++){
+        Line::draw(window, vec2(topSideA[i], topY + i), vec2(topSideB[i], topY + i), this->colour, 1);
+    }
+    Line::draw(window, vec2(middleLine.x, middleLine.y), vec2(middleLine.z, middleLine.w), this->colour, 1);
+    for(int i = 0; i < bottomLines; i++){
+        Line::draw(window, vec2(bottomSideA[i], bottomY - i), vec2(bottomSideB[i], bottomY - i), this->colour, 1);
+    }
+    (new Triangle(this->tri, *new Colour(255, 255, 255)))->draw(window);
 }

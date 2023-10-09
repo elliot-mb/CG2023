@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
 //        Line::draw(window, vec2(80, 100), vec2(240, 100), *c, 1.0);
 
         for(int i = 0; i < triangles.size(); i++){
-            triangles[i]->draw(window);
+            //triangles[i]->draw(window);
             triangles[i]->fill(window);
         }
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
