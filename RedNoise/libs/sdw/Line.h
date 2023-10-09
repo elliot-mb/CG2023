@@ -12,5 +12,7 @@
  * 'static' class for line methods
 */
 namespace Line {
-  void draw(DrawingWindow& window, glm::vec2 posA, glm::vec2 posB, Colour &colour, float weight);
+    std::vector<glm::vec2> pixels(glm::vec2 posA, glm::vec2 posB); //gives all the pixels we must draw
+    std::vector<glm::vec2> points(glm::vec2 posA, glm::vec2 posB); //just gives points on each step
+    void draw(DrawingWindow& window, glm::vec2 posA, glm::vec2 posB, Colour &colour, float weight);
 };
