@@ -90,7 +90,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
-	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
+	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, true);
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);

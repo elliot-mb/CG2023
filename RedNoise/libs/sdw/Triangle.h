@@ -4,6 +4,8 @@
 #include <CanvasTriangle.h>
 #include "DrawingWindow.h"
 #include "Colour.h"
+#include "TextureMap.h"
+#include <tuple>
 
 #pragma once
 
@@ -11,13 +13,21 @@
 class Triangle {
 public:
     Triangle(); //new random triangle
+    Triangle(CanvasTriangle tri, Colour &colour, TextureMap &texture);
     Triangle(CanvasTriangle tri, Colour &colour);
 
     const void draw(DrawingWindow& window); //just needs the window to draw tri
     const void fill(DrawingWindow& window);
+    const void drawWithTexture(DrawingWindow& window);
 private:
+    //vtop vnew vsplit vbottom
+    tuple<vec2, vec2, vec2, vec2> splitTriangle(vec2 v0, vec2 v1, vec2 v2);
+    //generates two lists of x coordinates along the two sides which are being interpolated
+    tuple<vector<float>, vector<float>> interpolateFlatTriangle(vec2 vPoint, vec2 vFlatA, vec2 vFlatB, int lines);
+
     CanvasTriangle tri;
     Colour colour;
-
+    TextureMap texture;
+    bool hasTexture;
 };
 
