@@ -76,22 +76,6 @@ const void Triangle::fill(DrawingWindow &window) {
     float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
     float coef = (hTop) / sideAndOffset.y;
     vec2 vNew = vTop + (side * coef);
-//  DEBUGGING
-//    Triangle* tTop = new Triangle(
-//            *new CanvasTriangle(
-//                    *new CanvasPoint(vTop.x, vTop.y),
-//                    *new CanvasPoint(vNew.x, vNew.y),
-//                    *new CanvasPoint(vSplit.x, vSplit.y)
-//                    ), *new Colour(255, 0, 0));
-//    Triangle* tBottom = new Triangle(
-//            *new CanvasTriangle(
-//                    *new CanvasPoint(vBottom.x, vBottom.y),
-//                    *new CanvasPoint(vNew.x, vNew.y),
-//                    *new CanvasPoint(vSplit.x, vSplit.y)
-//            ), *new Colour(0, 255, 0));
-//
-//    //tTop->draw(window);
-//    //tBottom->draw(window);
 
     int topLines = static_cast<int>(ceil(hTop));
     int topY = static_cast<int>(round(vTop.y));

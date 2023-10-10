@@ -24,7 +24,7 @@ vector<vec2> Line::pixels(vec2 posA, vec2 posB){
     if(steps == 0) steps = 1;
     vec2 stepSize = delta / steps;
     vector<vec2> pixels = {};
-    for(int i = 0; i <= steps; i++){
+    for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
         vec2 now = posA + (stepSize * static_cast<float>(i));
         pixels.push_back(vec2(round(now.x), round(now.y)));
     }
