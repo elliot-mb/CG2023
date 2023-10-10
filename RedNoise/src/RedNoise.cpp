@@ -7,12 +7,16 @@
 #include <glm/glm.hpp>
 #include <Colour.h>
 #include <CanvasPoint.h>
+#include "Triangle.h"
 
 using namespace std;
 using namespace glm;
 
 #define WIDTH 320
 #define HEIGHT 240
+
+//GLOBAL!! EVIL!!
+vector<Triangle*> triangles = {};
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -77,6 +81,8 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_RIGHT) std::cout << "RIGHT" << std::endl;
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
+        //triangle
+        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -84,7 +90,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
-	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, true);
+	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
@@ -104,11 +110,19 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
-		draw(window);
-		//drawColours(window);
-        Colour* c = new Colour();
-		Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
+        draw(window);
+//		//drawColours(window);
+//        Colour* c = new Colour();
+//		//Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
+//        Line::draw(window, vec2(0.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
+//        Line::draw(window, vec2(320.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
+//        Line::draw(window, vec2(160.0, 0.0), vec2(160, 320), *c, 1.0);
+//        Line::draw(window, vec2(80, 100), vec2(240, 100), *c, 1.0);
 
+        for(int i = 0; i < triangles.size(); i++){
+            //triangles[i]->draw(window);
+            triangles[i]->fill(window);
+        }
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
 	}
