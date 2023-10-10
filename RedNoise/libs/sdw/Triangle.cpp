@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include <tuple>
 #include <algorithm>
 
 using namespace std;
@@ -16,6 +17,14 @@ using namespace glm;
 Triangle::Triangle(CanvasTriangle tri, Colour &colour) {
     this->tri = tri;
     this->colour = colour;
+    this->hasTexture = false;
+}
+
+Triangle::Triangle(CanvasTriangle tri, Colour &colour, TextureMap& texture) {
+    this->tri = tri;
+    this->colour = colour;
+    this->texture = texture;
+    this->hasTexture = true;
 }
 
 const void Triangle::draw(DrawingWindow &window) {
@@ -39,14 +48,7 @@ Triangle::Triangle() {
     this->colour = *colour;
 }
 
-const void Triangle::fill(DrawingWindow &window) {
-    CanvasPoint unpack0 = tri.v0();
-    CanvasPoint unpack1 = tri.v1();
-    CanvasPoint unpack2 = tri.v2();
-    vec2 v0 = vec2(unpack0.x, unpack0.y);
-    vec2 v1 = vec2(unpack1.x, unpack1.y);
-    vec2 v2 = vec2(unpack2.x, unpack2.y);
-    //vertical range of the sides
+tuple<vec2, vec2, vec2, vec2> Triangle::splitTriangle(vec2 v0, vec2 v1, vec2 v2){
     float r0 = abs(v1.y - v0.y);
     float r1 = abs(v2.y - v1.y);
     float r2 = abs(v0.y - v2.y);
@@ -73,27 +75,41 @@ const void Triangle::fill(DrawingWindow &window) {
     vec2 vTop = vec2(sideAndOffset.z, sideAndOffset.w);
     vec2 vBottom = side + vTop;
     float hTop = vSplit.y - sideAndOffset.w; //height of top triangle (number of interpolation steps)
-    float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
     float coef = (hTop) / sideAndOffset.y;
     vec2 vNew = vTop + (side * coef);
 
+    return {vTop, vNew, vSplit, vBottom};
+}
+
+tuple<vector<float>, vector<float>> Triangle::interpolateFlatTriangle(vec2 vPoint, vec2 vFlatA, vec2 vFlatB, int lines){
+    vector<float> sideA;
+    vector<float> sideB;
+    if(lines > 0){
+        sideA = Utils::interpolateSingleFloats(vPoint.x, vFlatA.x, lines);
+        sideB = Utils::interpolateSingleFloats(vPoint.x, vFlatB.x, lines);
+    }
+    return {sideA, sideB};
+}
+
+const void Triangle::fill(DrawingWindow &window) {
+    CanvasPoint unpack0 = tri.v0();
+    CanvasPoint unpack1 = tri.v1();
+    CanvasPoint unpack2 = tri.v2();
+    vec2 v0 = vec2(unpack0.x, unpack0.y);
+    vec2 v1 = vec2(unpack1.x, unpack1.y);
+    vec2 v2 = vec2(unpack2.x, unpack2.y);
+    auto [vTop, vNew, vSplit, vBottom] = splitTriangle(v0, v1, v2);
+    float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
+    float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
+
     int topLines = static_cast<int>(ceil(hTop));
     int topY = static_cast<int>(round(vTop.y));
-    vector<float> topSideA;
-    vector<float> topSideB;
-    if(topLines > 0){
-        topSideA = Utils::interpolateSingleFloats(vTop.x, vSplit.x, topLines);
-        topSideB = Utils::interpolateSingleFloats(vTop.x, vNew.x, topLines);
-    }
+    auto [topSideA, topSideB] = interpolateFlatTriangle(vTop, vSplit, vNew, topLines);
 
     int bottomLines = static_cast<int>(ceil(hBottom));
     int bottomY = static_cast<int>(round(vBottom.y));
-    vector<float> bottomSideA;
-    vector<float> bottomSideB;
-    if(bottomLines > 0) {
-        bottomSideA = Utils::interpolateSingleFloats(vBottom.x, vSplit.x, bottomLines);
-        bottomSideB = Utils::interpolateSingleFloats(vBottom.x, vNew.x, bottomLines);
-    }
+    auto [bottomSideA, bottomSideB] = interpolateFlatTriangle(vBottom, vSplit, vNew, bottomLines);
+
     //fill those holes!
     vec4 middleLine;
     if(vSplit.x > vNew.x){
@@ -126,4 +142,9 @@ const void Triangle::fill(DrawingWindow &window) {
         Line::draw(window, vec2(bottomSideA[i], bottomY - i), vec2(bottomSideB[i], bottomY - i), this->colour, 1);
     }
     (new Triangle(this->tri, *new Colour(255, 255, 255)))->draw(window);
+}
+
+const void Triangle::drawWithTexture(DrawingWindow &window) {
+    if(!this->hasTexture) throw invalid_argument("drawWithTexture: triangle has no texture");
+
 }
