@@ -13,8 +13,8 @@ using namespace glm;
 
 void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, float weight){
     vector<vec2> pixels = Line::pixels(posA, posB);
-    for(int i = 0; i <= pixels.size(); i++){
-        window.setPixelColour(round(pixels[i].x), round(pixels[i].y), Utils::pack(255, colour.red, colour.green, colour.blue));
+    for(vec2 & pixel : pixels){
+        window.setPixelColour(static_cast<ulong>(round(pixel.x)), static_cast<ulong>(round(pixel.y)), Utils::pack(255, colour.red, colour.green, colour.blue));
     }
 }
 
