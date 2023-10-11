@@ -58,37 +58,19 @@ const void Triangle::draw(DrawingWindow &window) {
     Line::draw(window, vec2(v2.x,v2.y), vec2(v0.x, v0.y), colour, 1);
 }
 
-tuple<vec2, vec2, vec2, vec2> Triangle::splitTriangle(vec2 v0, vec2 v1, vec2 v2){
-    float r0 = abs(v1.y - v0.y);
-    float r1 = abs(v2.y - v1.y);
-    float r2 = abs(v0.y - v2.y);
-    float rMax = Utils::max(Utils::max(r0, r1), r2); //we just need the max to find the two smallest ones
-    //our split vertex
-    vec2 vSplit;
-    vec4 sideAndOffset; //the vector of the tallest side(for interpolating) and the highest side for an vTop
-    if(rMax == r0) {
-        vSplit = v2;
-        if(v0.y < v1.y) sideAndOffset = vec4(v1 - v0, v0);
-        else sideAndOffset = vec4(v0 - v1, v1);
-    } //common vertex
-    if(rMax == r1) {
-        vSplit = v0;
-        if(v1.y < v2.y) sideAndOffset = vec4(v2 - v1, v1);
-        else sideAndOffset = vec4(v1 - v2, v2);
-    }
-    if(rMax == r2) {
-        vSplit = v1;
-        if(v0.y < v2.y) sideAndOffset = vec4(v2 - v0, v0);
-        else sideAndOffset = vec4(v0 - v2, v2);
-    }
-    vec2 side = vec2(sideAndOffset.x, sideAndOffset.y);
-    vec2 vTop = vec2(sideAndOffset.z, sideAndOffset.w);
-    vec2 vBottom = side + vTop;
-    float hTop = vSplit.y - sideAndOffset.w; //height of top triangle (number of interpolation steps)
-    float coef = (hTop) / sideAndOffset.y;
-    vec2 vNew = vTop + (side * coef);
+tuple<vec2, vec2, vec2, vec2> Triangle::splitTriangle(vector<vec2> vs){
+    //highest up the image (lowest y value) to lowest down the image (highest y value)
+    std::sort(vs.begin(), vs.end(), [] (const vec2& v0, const vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
-    return {vTop, vNew, vSplit, vBottom};
+    vec2 vTop = vs[0];
+    vec2 vMid = vs[1];
+    vec2 vBot = vs[2];
+    vec2 vSide = vBot - vTop;
+    float hTop = vMid.y - vTop.y; //height of top triangle (number of interpolation steps)
+    float coef = hTop / vSide.y;
+    vec2 vNew = vTop + (vSide * coef);
+
+    return {vTop, vNew, vs[1], vBot};
 }
 
 tuple<vector<float>, vector<float>> Triangle::interpolateFlatTriangle(vec2 vPoint, vec2 vFlatA, vec2 vFlatB, int lines){
@@ -108,7 +90,7 @@ const void Triangle::fill(DrawingWindow &window) {
     vec2 v0 = vec2(unpack0.x, unpack0.y);
     vec2 v1 = vec2(unpack1.x, unpack1.y);
     vec2 v2 = vec2(unpack2.x, unpack2.y);
-    auto [vTop, vNew, vSplit, vBottom] = splitTriangle(v0, v1, v2);
+    auto [vTop, vNew, vSplit, vBottom] = splitTriangle({v0, v1, v2});
     float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
     float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
 
@@ -123,27 +105,6 @@ const void Triangle::fill(DrawingWindow &window) {
     //fill those holes!
     vec4 middleLine;
     middleLine = vec4(vec2(round(vNew.x), vNew.y), vec2(round(vSplit.x), vSplit.y));
-//    if(vSplit.x > vNew.x){
-//        middleLine = vec4(vec2(floor(vNew.x), vNew.y), vec2(ceil(vSplit.x), vSplit.y));
-//        for(int i = 0; i < topLines; i++){
-//            topSideA[i] = round(topSideA[i]);
-//            topSideB[i] = round(topSideB[i]);
-//        }
-//        for(int i = 0; i < bottomLines; i++) {
-//            bottomSideA[i] = round(bottomSideA[i]);
-//            bottomSideB[i] = round(bottomSideB[i]);
-//        }
-//    }else{
-//        middleLine = vec4(vec2(ceil(vNew.x), vNew.y), vec2(floor(vSplit.x), vSplit.y));
-//        for(int i = 0; i < topLines; i++){
-//            topSideA[i] = round(topSideA[i]);
-//            topSideB[i] = round(topSideB[i]);
-//        }
-//        for(int i = 0; i < bottomLines; i++){
-//            bottomSideA[i] = round(bottomSideA[i]);
-//            bottomSideB[i] = round(bottomSideB[i]);
-//        }
-//    }
 
     for(int i = 0; i < topLines; i++){
         Line::draw(window, vec2(round(topSideA[i]), topY + i), vec2(round(topSideB[i]), topY + i), this->colour, 1);
@@ -164,7 +125,7 @@ const void Triangle::drawWithTexture(DrawingWindow &window){//, vec2 vt0, vec2 v
     vec2 v0 = vec2(unpack0.x, unpack0.y);
     vec2 v1 = vec2(unpack1.x, unpack1.y);
     vec2 v2 = vec2(unpack2.x, unpack2.y);
-    auto [vTop, vNew, vSplit, vBottom] = splitTriangle(v0, v1, v2);
+    auto [vTop, vNew, vSplit, vBottom] = splitTriangle({v0, v1, v2});
     float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
     float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
 
