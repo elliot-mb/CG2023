@@ -82,7 +82,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
         //triangle
-        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle());
+        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle(*new TextureMap("./texture.ppm")));
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
         for(int i = 0; i < triangles.size(); i++){
             //triangles[i]->draw(window);
-            triangles[i]->fill(window);
+            triangles[i]->drawWithTexture(window);
         }
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
