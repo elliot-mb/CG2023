@@ -3,6 +3,7 @@
 TextureMap::TextureMap() = default;
 TextureMap::TextureMap(const std::string &filename) {
 	std::ifstream inputStream(filename, std::ifstream::binary);
+    if(!inputStream.good()) throw invalid_argument("TextureMap(): texture file not found");
 	std::string nextLine;
 	// Get the "P6" magic number
 	std::getline(inputStream, nextLine);
@@ -32,4 +33,8 @@ TextureMap::TextureMap(const std::string &filename) {
 std::ostream &operator<<(std::ostream &os, const TextureMap &map) {
 	os << "(" << map.width << " x " << map.height << ")";
 	return os;
+}
+
+uint32_t TextureMap::pixel(int x, int y) {
+    return this->pixels[(y * this->width) + x];
 }
