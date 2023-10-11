@@ -82,7 +82,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
         //triangle
-        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle(*new TextureMap("./texture.ppm")));
+        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle(*new TextureMap("texture.ppm")));
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -90,7 +90,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
-	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, true);
+	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
