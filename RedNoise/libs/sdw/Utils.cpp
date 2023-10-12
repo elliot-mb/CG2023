@@ -44,15 +44,18 @@ std::vector<float> Utils::interpolateSingleFloats(float from, float to, int numb
 	return result;
 }
 
-// //throws if too few steps are requested 
-// std::vector<vec2> Utils::interpolateVec2(vec2 from, vec2 to, int steps, int stepsY = -1){
-// 	//stepsY is optional, and set to -1 only when we generate 'steps' number of 
-// 	//steps for both axes.
-// 	if(steps < 2 || (stepsY != -1 && stepsY < 2)) throw invalid_argument("interpolateVec2 must output at least two values");
-// 	vector<float> xs = Utils::interpolateSingleFloats(from.x, to.x, steps);
-// 	vector<float> ys = Utils::interpolateSingleFloats(from.y, to.y, steps);
-// 	vector<vec2> result = {};
-// }
+ //throws if too few steps are requested
+ std::vector<vec2> Utils::interpolateTwoElementValues(vec2 from, vec2 to, int steps){
+ 	if(steps < 1) throw invalid_argument("interpolateTwoElementValues must output at least two values");
+ 	vector<float> xs = Utils::interpolateSingleFloats(from.x, to.x, steps);
+ 	vector<float> ys = Utils::interpolateSingleFloats(from.y, to.y, steps);
+ 	vector<vec2> result = {};
+     for(size_t i = 0; i < xs.size(); i++){
+         result.push_back(vec2(xs[i], ys[i]));
+     }
+
+     return result;
+ }
 
 std::vector<vec3> Utils::interpolateThreeElementValues(vec3 from, vec3 to, int numberOfValues){
 	if(numberOfValues < 2) throw invalid_argument("interpolateThreeElementValues must output at least two values");
