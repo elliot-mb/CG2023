@@ -17,6 +17,8 @@ public:
     Triangle(CanvasTriangle tri, Colour &colour, TextureMap &texture);
     Triangle(CanvasTriangle tri, Colour &colour);
 
+    Triangle(CanvasTriangle tri, Colour &colour, TextureMap &texture, CanvasTriangle textureTri);
+
     const void draw(DrawingWindow& window); //just needs the window to draw tri
     const void fill(DrawingWindow& window);
     const void drawWithTexture(DrawingWindow& window);
@@ -24,9 +26,9 @@ private:
     //vtop vnew vsplit vbottom
     tuple<vec2, vec2, vec2, vec2> splitTriangle(vector<vec2> vs);
     //generates two lists of x coordinates along the two sides which are being interpolated
-    tuple<vector<float>, vector<float>> interpolateFlatTriangle(vec2 vPoint, vec2 vFlatA, vec2 vFlatB, int lines);
-
+    tuple<vector<float>, vector<float>> interpolateTwoSides(vec2 vPoint, vec2 vA, vec2 vB, int lines);
     CanvasTriangle randomCanvasTriangle();
+    void drawOutline(DrawingWindow& window);
 
     CanvasTriangle tri;
     vec2 vt0; //texture vertices

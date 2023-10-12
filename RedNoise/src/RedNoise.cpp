@@ -16,7 +16,19 @@ using namespace glm;
 #define HEIGHT 240
 
 //GLOBAL!! EVIL!!
-vector<Triangle*> triangles = {};
+vector<Triangle*> triangles = {
+        new Triangle(
+            *new CanvasTriangle(
+                *new CanvasPoint(160, 10),
+                *new CanvasPoint(300, 230),
+                *new CanvasPoint(10,150)),
+            *new Colour(100, 100, 0),
+            *new TextureMap("texture.ppm"),
+            *new CanvasTriangle(
+                    *new CanvasPoint(195, 5),
+                    *new CanvasPoint(395, 380),
+                    *new CanvasPoint(65,330)))
+};
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -121,7 +133,7 @@ int main(int argc, char *argv[]) {
 
         for(int i = 0; i < triangles.size(); i++){
             //triangles[i]->draw(window);
-            triangles[i]->drawWithTexture(window);
+            triangles[i]->fill(window);
         }
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
