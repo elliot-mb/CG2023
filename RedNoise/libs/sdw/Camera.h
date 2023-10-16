@@ -2,13 +2,18 @@
 // Created by elliot on 16/10/23.
 //
 
-#ifndef REDNOISE_CAMERA_H
-#define REDNOISE_CAMERA_H
+#pragma once
 
+
+#include <glm/glm.hpp>
 
 class Camera {
+public:
+    Camera(glm::vec3 cameraPosition, float focalLength);
+    glm::vec2 getCanvasIntersectionPoint(glm::vec3 vertexPosition){
 
+    }
+private:
+    glm::vec3 cameraPosition;
+    float focalLength;
 };
-
-
-#endif //REDNOISE_CAMERA_H
