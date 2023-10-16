@@ -59,7 +59,7 @@ Triangle::Triangle(TextureMap& texture){
     this->hasTexture = true;
 }
 
-const void Triangle::draw(DrawingWindow &window) {
+void Triangle::draw(DrawingWindow &window) {
     CanvasPoint v0 = tri.v0();
     CanvasPoint v1 = tri.v1();
     CanvasPoint v2 = tri.v2();
@@ -77,8 +77,8 @@ tuple<vec2, vec2, vec2, vec2> Triangle::splitTriangle(vector<vec2> vs){
     vec2 vBot = vs[2];
     vec2 vSide = vBot - vTop;
     float hTop = vMid.y - vTop.y; //height of top triangle (number of interpolation steps)
-    float coef = hTop / vSide.y;
-    vec2 vNew = vTop + (vSide * coef);
+    float fracDownLongSide = hTop / vSide.y;
+    vec2 vNew = vTop + (vSide * fracDownLongSide);
 
     return {vTop, vNew, vMid, vBot};
 }
@@ -93,7 +93,7 @@ tuple<vector<float>, vector<float>> Triangle::interpolateTwoSides(vec2 vPoint, v
     return {sideA, sideB};
 }
 
-const void Triangle::fill(DrawingWindow &window) {
+void Triangle::fill(DrawingWindow &window) {
     CanvasPoint unpack0 = tri.v0();
     CanvasPoint unpack1 = tri.v1();
     CanvasPoint unpack2 = tri.v2();
@@ -124,8 +124,8 @@ const void Triangle::fill(DrawingWindow &window) {
     this->drawOutline(window);
 }
 
-const void Triangle::drawWithTexture(DrawingWindow &window){//, vec2 vt0, vec2 vt1, vec2 vt2) {
-    if(!this->hasTexture) throw invalid_argument("drawWithTexture: triangle has no texture");
+void Triangle::fillTexture(DrawingWindow &window){//, vec2 vt0, vec2 vt1, vec2 vt2) {
+    if(!this->hasTexture) throw invalid_argument("fillTexture: triangle has no texture");
 
     CanvasPoint unpack0 = tri.v0();
     CanvasPoint unpack1 = tri.v1();
@@ -152,8 +152,6 @@ const void Triangle::drawWithTexture(DrawingWindow &window){//, vec2 vt0, vec2 v
     int bottomLines = static_cast<int>(ceil(hBottom));
     int bottomY = static_cast<int>(round(vBot.y));
     auto [bottomSideA, bottomSideB] = interpolateTwoSides(vBot, vMid, vNew, bottomLines);
-    vec4 middleLine;
-    middleLine = vec4(vec2(round(vNew.x), vNew.y), vec2(round(vMid.x), vMid.y));
 
     vector<vec2> vts;
     for(tuple<vec2, vec2> v: vsAndVts) vts.push_back(get<1>(v)); //unpack texture vertices sorted which correspond to the triangle vertices
