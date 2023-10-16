@@ -162,10 +162,19 @@ const void Triangle::drawWithTexture(DrawingWindow &window){//, vec2 vt0, vec2 v
     vec2 vtBot = vts[2];
     float fracDownLongSide = (vMid.y - vTop.y) / (vBot.y - vTop.y); //used to place vSplit for texture triangle
     vec2 vtNew = vtTop + (fracDownLongSide * (vtBot - vtTop));
-    vector<vec2> topSideTextureA = Utils::interpolateTwoElementValues(vtTop, vtMid, topLines); //same number of texture lines as display lines
-    vector<vec2> topSideTextureB = Utils::interpolateTwoElementValues(vtTop, vtNew, topLines);
-    vector<vec2> bottomSideTextureA = Utils::interpolateTwoElementValues(vtBot, vtMid, bottomLines);
-    vector<vec2> bottomSideTextureB = Utils::interpolateTwoElementValues(vtBot, vtNew, bottomLines);
+    vector<vec2> topSideTextureA;
+    vector<vec2> topSideTextureB;
+    if(topLines > 0){
+        topSideTextureA = Utils::interpolateTwoElementValues(vtTop, vtMid, topLines); //same number of texture lines as display lines
+        topSideTextureB = Utils::interpolateTwoElementValues(vtTop, vtNew, topLines);
+    }
+    vector<vec2> bottomSideTextureA;
+    vector<vec2> bottomSideTextureB;
+    if(bottomLines > 0){
+        bottomSideTextureA = Utils::interpolateTwoElementValues(vtBot, vtMid, bottomLines);
+        bottomSideTextureB = Utils::interpolateTwoElementValues(vtBot, vtNew, bottomLines);
+    }
+
 
     for(int i = 0; i < topLines; i++){
         const int xA = static_cast<int>(round(topSideA[i]));
