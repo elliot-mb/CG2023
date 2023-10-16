@@ -14,8 +14,8 @@
 using namespace std;
 using namespace glm;
 
-#define WIDTH 320
-#define HEIGHT 240
+#define WIDTH 640
+#define HEIGHT 480
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -36,8 +36,6 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_RIGHT) std::cout << "RIGHT" << std::endl;
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
-        //triangle
-        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -72,6 +70,17 @@ int main(int argc, char *argv[]) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
         draw(window);
+
+        for(ModelTriangle tri: cornellLoader->getTris()){
+            glm::vec2 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]);
+            glm::vec2 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
+            glm::vec2 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
+            Triangle t = *new Triangle(*new CanvasTriangle(
+                    *new CanvasPoint(pt0.x, pt0.y),
+                    *new CanvasPoint(pt1.x, pt1.y),
+                    *new CanvasPoint(pt2.x, pt2.y)), tri.colour);
+            t.fill(window);
+        }
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();

@@ -17,7 +17,9 @@ glm::vec2 Camera::getCanvasIntersectionPoint(glm::vec3 vertexPosition) {
     float dz = this->position.z - vertexPosition.z;
     float dy = this->position.y - vertexPosition.y;
     float dx = this->position.x - vertexPosition.x;
-    float u = static_cast<float>(this->focalLength * (dx / dz) + (screen.x * 0.5));
-    float v = static_cast<float>(this->focalLength * (dy / dz) + (screen.y * 0.5));
+    float w2 = screen.x * 0.5;
+    float h2 = screen.y * 0.5;
+    float u = (static_cast<float>((this->focalLength * ((-dx) / dz) * w2) + (w2)));
+    float v = (static_cast<float>((this->focalLength * (dy / dz) * w2) + (h2)));
     return glm::vec2(u, v);
 }
