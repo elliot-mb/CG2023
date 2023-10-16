@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include <vector>
 #include <glm/glm.hpp>
+#include <fstream>
 
 using namespace std;
 using namespace glm;
@@ -71,4 +72,16 @@ std::vector<vec3> Utils::interpolateThreeElementValues(vec3 from, vec3 to, int n
 
 uint32_t Utils::pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
 	return (a << 24) + (r << 16) + (g << 8) + b;
+}
+
+string Utils::fileAsString(string& filename){
+    std::ifstream inputStream(filename, std::ifstream::binary);
+    if(!inputStream.good()) throw invalid_argument("Utils::fileAsString(): file '"+ filename + "' not found"); //invalid_argument("ModelLoader::load(): model file not found");
+    char c = 'c'; //get value
+    string bytes;
+    while(c != EOF){
+        c = static_cast<char>(inputStream.get() % 255);
+        if(c != EOF) { bytes += c; }
+    }
+    return bytes;
 }
