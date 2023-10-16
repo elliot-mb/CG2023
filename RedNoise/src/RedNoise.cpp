@@ -8,6 +8,7 @@
 #include <Colour.h>
 #include <CanvasPoint.h>
 #include "Triangle.h"
+#include "ModelLoader.h"
 
 using namespace std;
 using namespace glm;
@@ -17,17 +18,17 @@ using namespace glm;
 
 //GLOBAL!! EVIL!!
 vector<Triangle*> triangles = {
-        new Triangle(
-            *new CanvasTriangle(
-                *new CanvasPoint(160, 10),
-                *new CanvasPoint(300, 230),
-                *new CanvasPoint(10,150)),
-            *new Colour(100, 100, 0),
-            *new TextureMap("texture.ppm"),
-            *new CanvasTriangle(
-                    *new CanvasPoint(195, 5),
-                    *new CanvasPoint(395, 380),
-                    *new CanvasPoint(65,330)))
+//        new Triangle(
+//            *new CanvasTriangle(
+//                *new CanvasPoint(160, 10),
+//                *new CanvasPoint(300, 230),
+//                *new CanvasPoint(10,150)),
+//            *new Colour(100, 100, 0),
+//            *new TextureMap("texture.ppm"),
+//            *new CanvasTriangle(
+//                    *new CanvasPoint(195, 5),
+//                    *new CanvasPoint(395, 380),
+//                    *new CanvasPoint(65,330)))
 };
 
 void draw(DrawingWindow &window) {
@@ -94,7 +95,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
         //triangle
-        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle(*new TextureMap("texture.ppm")));
+        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -102,6 +103,10 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
+    ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
+    cornellLoader->load();
+    cornellLoader->printTris();
+
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
@@ -133,7 +138,7 @@ int main(int argc, char *argv[]) {
 
         for(int i = 0; i < triangles.size(); i++){
             //triangles[i]->draw(window);
-            triangles[i]->drawWithTexture(window);
+            triangles[i]->fill(window);
         }
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
