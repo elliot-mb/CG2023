@@ -9,6 +9,7 @@
 #include <CanvasPoint.h>
 #include "Triangle.h"
 #include "ModelLoader.h"
+#include "Camera.h"
 
 using namespace std;
 using namespace glm;
@@ -106,6 +107,8 @@ int main(int argc, char *argv[]) {
     ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
     cornellLoader->load();
     cornellLoader->printTris();
+
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
