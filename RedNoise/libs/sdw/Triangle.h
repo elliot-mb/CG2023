@@ -22,18 +22,18 @@ public:
     void draw(DrawingWindow& window); //just needs the window to draw tri
     void fill(DrawingWindow& window);
     void fillTexture(DrawingWindow& window);
+    void drawOutline(DrawingWindow& window);
 private:
     //vtop vnew vsplit vbottom
-    tuple<vec2, vec2, vec2, vec2> splitTriangle(vector<vec2> vs);
+    std::tuple<glm::vec2, glm::vec2, glm::vec2, glm::vec2> splitTriangle(std::vector<glm::vec2> vs);
     //generates two lists of x coordinates along the two sides which are being interpolated
-    tuple<vector<float>, vector<float>> interpolateTwoSides(vec2 vPoint, vec2 vA, vec2 vB, int lines);
+    std::tuple<std::vector<float>, std::vector<float>> interpolateTwoSides(glm::vec2 vPoint, glm::vec2 vA, glm::vec2 vB, int lines);
     static CanvasTriangle randomCanvasTriangle();
-    void drawOutline(DrawingWindow& window);
 
     CanvasTriangle tri;
-    vec2 vt0; //texture vertices
-    vec2 vt1;
-    vec2 vt2;
+    glm::vec2 vt0; //texture vertices
+    glm::vec2 vt1;
+    glm::vec2 vt2;
     Colour colour;
     TextureMap texture;
     bool hasTexture;
