@@ -23,3 +23,7 @@ glm::vec2 Camera::getCanvasIntersectionPoint(glm::vec3 vertexPosition) {
     float v = (static_cast<float>((this->focalLength * (dy / dz) * w2) + (h2)));
     return glm::vec2(u, v);
 }
+
+void Camera::move(glm::vec3 delta){
+    this->position = this->position + delta;
+}

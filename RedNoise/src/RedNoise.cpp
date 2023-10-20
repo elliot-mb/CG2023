@@ -43,6 +43,8 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
+    uint frame = 0;
+
     ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
     cornellLoader->load();
     cornellLoader->printTris();
@@ -81,8 +83,9 @@ int main(int argc, char *argv[]) {
                     *new CanvasPoint(pt2.x, pt2.y)), tri.colour);
             t.fill(window);
         }
-
+        camera->move(glm::vec3(0.0, 0.001 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
+        frame = (frame + 1) % (SDL_MAX_UINT32);
 	}
 }
