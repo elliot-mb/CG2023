@@ -84,11 +84,10 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
     std::vector<float> sideA;
     std::vector<float> sideB;
 
-    if(static_cast<int>(glm::floor(glm::abs(vPoint.x - vA.x))) > 0)
-        sideA = Utils::interpolateSingleFloats(vPoint.x, vA.x, static_cast<int>(glm::floor(glm::abs(vPoint.x - vA.x))));
-    if(static_cast<int>(glm::floor(glm::abs(vPoint.x - vB.x))) > 0)
-        sideB = Utils::interpolateSingleFloats(vPoint.x, vB.x, static_cast<int>(glm::floor(glm::abs(vPoint.x - vB.x))));
-
+    if(lines > 0){
+        sideA = Utils::interpolateSingleFloats(vPoint.x, vA.x, lines);
+        sideB = Utils::interpolateSingleFloats(vPoint.x, vB.x, lines);
+    }
     return {sideA, sideB};
 }
 
@@ -99,32 +98,31 @@ void Triangle::fill(DrawingWindow &window) {
     glm::vec2 v0 = glm::vec2(unpack0.x, unpack0.y);
     glm::vec2 v1 = glm::vec2(unpack1.x, unpack1.y);
     glm::vec2 v2 = glm::vec2(unpack2.x, unpack2.y);
-    std::vector<glm::vec2> vs = {v0, v1, v2};
-    std::sort(vs.begin(), vs.end(), [] (const glm::vec2& v0, const glm::vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
+    std::vector<glm::vec2> vsY = {v0, v1, v2};
+    std::vector<glm::vec2> vsX = {v0, v1, v2};
+    std::sort(vsY.begin(), vsY.end(), [] (const glm::vec2& v0, const glm::vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
-    auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vs);
+    auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vsY);
     float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
     float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
 
     float totalLines = hTop + hBottom;
 
     int topLines = static_cast<int>(ceil(hTop)) + 1;
-    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 1;
+    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 2;
 
     auto [topSideA, topSideB] = interpolateTwoSides(vTop, vSplit, vNew, topLines);
     auto [bottomSideA, bottomSideB] = interpolateTwoSides(vBottom, vSplit, vNew, bottomLines);
 
-    float scaler = glm::min(topSideA.size(), topSideB.size()) / glm::max(topSideA.size(), topSideB.size());
-
-    for(int i = 0; i < glm::min(topSideA.size(), topSideB.size()); i++){
+    for(int i = 0; i < topLines; i++){
         Line::draw(window, glm::vec2(topSideA[i], vTop.y + static_cast<float>(i)), glm::vec2(topSideB[i], vTop.y + static_cast<float>(i)), this->colour, 1);
     }
     //Line::draw(window, floor(vSplit), floor(vNew), this->colour, 1);
     //Line::draw(window, ceil(vSplit), ceil(vNew), this->colour, 1);
-    for(int i = 0; i < glm::min(bottomSideA.size(), bottomSideB.size()); i++){
-        Line::draw(window, glm::vec2(bottomSideA[i], vBottom.y - static_cast<float>(i)), glm::vec2(round(bottomSideB[i]), vBottom.y - static_cast<float>(i)), this->colour, 1);
+    for(int i = 0; i < bottomLines; i++){
+        Line::draw(window, glm::vec2(bottomSideA[i], vBottom.y - static_cast<float>(i) + 1), glm::vec2(round(bottomSideB[i]), vBottom.y - static_cast<float>(i) + 1), this->colour, 1);
     }
-    this->drawOutline(window, this->colour);
+    //this->drawOutline(window, this->colour);
 }
 
 void Triangle::fillTexture(DrawingWindow &window){//, glm::vec2 vt0, glm::vec2 vt1, glm::vec2 vt2) {
