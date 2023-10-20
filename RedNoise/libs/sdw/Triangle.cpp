@@ -84,10 +84,11 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
     std::vector<float> sideA;
     std::vector<float> sideB;
 
-    if(lines > 0){
-        sideA = Utils::interpolateSingleFloats(vPoint.x, vA.x, lines);
-        sideB = Utils::interpolateSingleFloats(vPoint.x, vB.x, lines);
-    }
+    if(static_cast<int>(glm::floor(glm::abs(vPoint.x - vA.x))) > 0)
+        sideA = Utils::interpolateSingleFloats(vPoint.x, vA.x, static_cast<int>(glm::floor(glm::abs(vPoint.x - vA.x))));
+    if(static_cast<int>(glm::floor(glm::abs(vPoint.x - vB.x))) > 0)
+        sideB = Utils::interpolateSingleFloats(vPoint.x, vB.x, static_cast<int>(glm::floor(glm::abs(vPoint.x - vB.x))));
+
     return {sideA, sideB};
 }
 
@@ -107,19 +108,23 @@ void Triangle::fill(DrawingWindow &window) {
 
     float totalLines = hTop + hBottom;
 
-    int topLines = static_cast<int>(floor(hTop));
-    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines)));
+    int topLines = static_cast<int>(ceil(hTop)) + 1;
+    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 1;
 
     auto [topSideA, topSideB] = interpolateTwoSides(vTop, vSplit, vNew, topLines);
     auto [bottomSideA, bottomSideB] = interpolateTwoSides(vBottom, vSplit, vNew, bottomLines);
 
-    for(int i = 0; i < topLines; i++){
+    float scaler = glm::min(topSideA.size(), topSideB.size()) / glm::max(topSideA.size(), topSideB.size());
+
+    for(int i = 0; i < glm::min(topSideA.size(), topSideB.size()); i++){
         Line::draw(window, glm::vec2(topSideA[i], vTop.y + static_cast<float>(i)), glm::vec2(topSideB[i], vTop.y + static_cast<float>(i)), this->colour, 1);
     }
-    for(int i = 0; i < bottomLines; i++){
+    //Line::draw(window, floor(vSplit), floor(vNew), this->colour, 1);
+    //Line::draw(window, ceil(vSplit), ceil(vNew), this->colour, 1);
+    for(int i = 0; i < glm::min(bottomSideA.size(), bottomSideB.size()); i++){
         Line::draw(window, glm::vec2(bottomSideA[i], vBottom.y - static_cast<float>(i)), glm::vec2(round(bottomSideB[i]), vBottom.y - static_cast<float>(i)), this->colour, 1);
     }
-    //this->drawOutline(window);
+    this->drawOutline(window, this->colour);
 }
 
 void Triangle::fillTexture(DrawingWindow &window){//, glm::vec2 vt0, glm::vec2 vt1, glm::vec2 vt2) {
@@ -171,13 +176,13 @@ void Triangle::fillTexture(DrawingWindow &window){//, glm::vec2 vt0, glm::vec2 v
         bottomSideTextureB = Utils::interpolateTwoElementValues(vtBot, vtNew, bottomLines);
     }
 
-
     for(int i = 0; i < topLines; i++){
         const int xA = static_cast<int>(round(topSideA[i]));
         const int y = topY + i + 1; // offset stops it drawing the same line twice
         const int xB = static_cast<int>(round(topSideB[i]));
         Line::draw(window, glm::vec2(xA, y), glm::vec2(xB, y), round(topSideTextureA[i]), round(topSideTextureB[i]), this->texture, 1);
     }
+    // draw middle line
     for(int i = 0; i < bottomLines; i++){
         const int xA = static_cast<int>(round(bottomSideA[i]));
         const int y = bottomY - i - 1; // offset stops it drawing the same line twice
@@ -199,6 +204,6 @@ CanvasTriangle Triangle::randomCanvasTriangle() {
     return *new CanvasTriangle(*v0, *v1, *v2);
 }
 
-void Triangle::drawOutline(DrawingWindow &window) {
-    (new Triangle(this->tri, *new Colour(255, 255, 255)))->draw(window);
+void Triangle::drawOutline(DrawingWindow &window, Colour aColour) {
+    (new Triangle(this->tri, aColour))->draw(window);
 }

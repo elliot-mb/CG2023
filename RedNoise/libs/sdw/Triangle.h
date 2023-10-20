@@ -22,7 +22,7 @@ public:
     void draw(DrawingWindow& window); //just needs the window to draw tri
     void fill(DrawingWindow& window);
     void fillTexture(DrawingWindow& window);
-    void drawOutline(DrawingWindow& window);
+    void drawOutline(DrawingWindow& window, Colour colour);
 private:
     //vtop vnew vsplit vbottom
     std::tuple<glm::vec2, glm::vec2, glm::vec2, glm::vec2> splitTriangle(std::vector<glm::vec2> vs);
