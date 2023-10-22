@@ -11,24 +11,30 @@
 #include <tuple>
 #include <algorithm>
 
-Triangle::Triangle(CanvasTriangle tri, Colour &colour) {
-    this->tri = tri;
+Triangle::Triangle(glm::mat3 tri3, Colour &colour) {
+    this->tri3 = glm::mat3(tri3[0], tri3[1], tri3[2]);
     this->colour = colour;
     this->hasTexture = false;
 }
 
-Triangle::Triangle(CanvasTriangle tri, Colour &colour, TextureMap& texture) {
-    this->tri = tri;
-    this->vt0 = glm::vec2(tri.v0().x, tri.v0().y); //default set texture vertices to triangle vertices
-    this->vt1 = glm::vec2(tri.v1().x, tri.v1().y);
-    this->vt2 = glm::vec2(tri.v2().x, tri.v2().y);
+Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour) {
+    this->tri3 = glm::mat3(v0, v1, v2);
+    this->colour = colour;
+    this->hasTexture = false;
+}
+
+Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture) {
+    this->tri3 = glm::mat3(v0, v1, v2);
+    this->vt0 = glm::vec2(tri3[0].x, tri3[0].y); //default set texture vertices to triangle vertices
+    this->vt1 = glm::vec2(tri3[1].x, tri3[1].y);
+    this->vt2 = glm::vec2(tri3[2].x, tri3[3].y);
     this->colour = colour;
     this->texture = texture;
     this->hasTexture = true;
 }
 
-Triangle::Triangle(CanvasTriangle tri, Colour &colour, TextureMap& texture, CanvasTriangle textureTri) {
-    this->tri = tri;
+Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture, CanvasTriangle textureTri) {
+    this->tri3 = glm::mat3(v0, v1, v2);
     this->vt0 = glm::vec2(textureTri.v0().x, textureTri.v0().y); //default set texture vertices to triangle vertices
     this->vt1 = glm::vec2(textureTri.v1().x, textureTri.v1().y);
     this->vt2 = glm::vec2(textureTri.v2().x, textureTri.v2().y);
@@ -39,27 +45,27 @@ Triangle::Triangle(CanvasTriangle tri, Colour &colour, TextureMap& texture, Canv
 
 
 Triangle::Triangle() {
-    this->tri = randomCanvasTriangle();
+    //this->tri = randomCanvasTriangle();
     Colour* randColour = new Colour(random() % 255, random() % 255, random() % 255);
     this->colour = *randColour;
     this->hasTexture = false;
 }
 
 Triangle::Triangle(TextureMap& texture){
-    this->tri = randomCanvasTriangle();
+    this->tri3 = randomCanvasTriangle();
     this->texture = texture;
-    this->vt0 = glm::vec2(tri.v0().x, tri.v0().y); //default set texture vertices to triangle vertices
-    this->vt1 = glm::vec2(tri.v1().x, tri.v1().y);
-    this->vt2 = glm::vec2(tri.v2().x, tri.v2().y);
+    this->vt0 = glm::vec2(tri3[0].x, tri3[0].y); //default set texture vertices to triangle vertices
+    this->vt1 = glm::vec2(tri3[1].x, tri3[1].y);
+    this->vt2 = glm::vec2(tri3[2].x, tri3[3].y);
     Colour* randColour = new Colour(random() % 255, random() % 255, random() % 255);
     this->colour = *randColour;
     this->hasTexture = true;
 }
 
 void Triangle::draw(DrawingWindow &window) {
-    CanvasPoint v0 = tri.v0();
-    CanvasPoint v1 = tri.v1();
-    CanvasPoint v2 = tri.v2();
+    glm::vec2 v0 = glm::vec2(this->tri3[0].x, this->tri3[0].y);
+    glm::vec2 v1 = glm::vec2(this->tri3[1].x, this->tri3[1].y);
+    glm::vec2 v2 = glm::vec2(this->tri3[2].x, this->tri3[2].y);
 
     Line::draw(window, glm::vec2(v0.x, v0.y), glm::vec2(v1.x, v1.y), colour, 1);
     Line::draw(window, glm::vec2(v1.x, v1.y), glm::vec2(v2.x, v2.y), colour, 1);
@@ -92,12 +98,9 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
 }
 
 void Triangle::fill(DrawingWindow &window) {
-    CanvasPoint unpack0 = tri.v0();
-    CanvasPoint unpack1 = tri.v1();
-    CanvasPoint unpack2 = tri.v2();
-    glm::vec2 v0 = glm::vec2(unpack0.x, unpack0.y);
-    glm::vec2 v1 = glm::vec2(unpack1.x, unpack1.y);
-    glm::vec2 v2 = glm::vec2(unpack2.x, unpack2.y);
+    glm::vec2 v0 = glm::vec2(this->tri3[0].x, this->tri3[0].y);
+    glm::vec2 v1 = glm::vec2(this->tri3[1].x, this->tri3[1].y);
+    glm::vec2 v2 = glm::vec2(this->tri3[2].x, this->tri3[2].y);
     std::vector<glm::vec2> vsY = {v0, v1, v2};
     std::vector<glm::vec2> vsX = {v0, v1, v2};
     std::sort(vsY.begin(), vsY.end(), [] (const glm::vec2& v0, const glm::vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
@@ -128,13 +131,9 @@ void Triangle::fill(DrawingWindow &window) {
 void Triangle::fillTexture(DrawingWindow &window){//, glm::vec2 vt0, glm::vec2 vt1, glm::vec2 vt2) {
     if(!this->hasTexture) throw std::invalid_argument("fillTexture: triangle has no texture");
 
-    CanvasPoint unpack0 = tri.v0();
-    CanvasPoint unpack1 = tri.v1();
-    CanvasPoint unpack2 = tri.v2();
-    glm::vec2 v0 = glm::vec2(unpack0.x, unpack0.y);
-    glm::vec2 v1 = glm::vec2(unpack1.x, unpack1.y);
-    glm::vec2 v2 = glm::vec2(unpack2.x, unpack2.y);
-
+    glm::vec2 v0 = glm::vec2(this->tri3[0].x, this->tri3[0].y);
+    glm::vec2 v1 = glm::vec2(this->tri3[1].x, this->tri3[1].y);
+    glm::vec2 v2 = glm::vec2(this->tri3[2].x, this->tri3[2].y);
     std::vector<std::tuple<glm::vec2, glm::vec2>> vsAndVts = {{v0, this->vt0}, {v1, this->vt1}, {v2, this->vt2}};
     //sort vertices and texture vertices together to keep winding consistent
     std::sort(vsAndVts.begin(), vsAndVts.end(), [] (const std::tuple<glm::vec2, glm::vec2>& v0vt0, const std::tuple<glm::vec2, glm::vec2>& v1vt1) -> bool
@@ -190,18 +189,18 @@ void Triangle::fillTexture(DrawingWindow &window){//, glm::vec2 vt0, glm::vec2 v
     //this->drawOutline(window);
 }
 
-CanvasTriangle Triangle::randomCanvasTriangle() {
+glm::mat3 Triangle::randomCanvasTriangle() {
     int WIDTH = 320;
     int HEIGHT = 240;
-    CanvasPoint* v0 = new CanvasPoint(random() % WIDTH, random() % HEIGHT);
-    CanvasPoint* v1 = new CanvasPoint(random() % WIDTH, random() % HEIGHT);
-    CanvasPoint* v2 = new CanvasPoint(random() % WIDTH, random() % HEIGHT);
-    if(v0->x == v1->x) v1->x += 10;
-    if(v0->x == v2->x) v2->x -= 10;
-    std::cout << v0->x << ':' << v0->y << ',' << v1->x << ':' << v1->y << ',' << v2->x << ':' << v2->y << std::endl;
-    return *new CanvasTriangle(*v0, *v1, *v2);
+    glm::vec2 v0 = glm::vec2(random() % WIDTH, random() % HEIGHT);
+    glm::vec2 v1 = glm::vec2(random() % WIDTH, random() % HEIGHT);
+    glm::vec2 v2 = glm::vec2(random() % WIDTH, random() % HEIGHT);
+    if(v0.x == v1.x) v1.x += 10;
+    if(v0.x == v2.x) v2.x -= 10;
+    std::cout << v0.x << ':' << v0.y << ',' << v1.x << ':' << v1.y << ',' << v2.x << ':' << v2.y << std::endl;
+    return glm::mat3(glm::vec3(v0, 0), glm::vec3(v1, 0), glm::vec3(v2, 0));
 }
 
 void Triangle::drawOutline(DrawingWindow &window, Colour aColour) {
-    (new Triangle(this->tri, aColour))->draw(window);
+    (new Triangle(this->tri3, aColour))->draw(window);
 }
