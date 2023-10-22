@@ -25,7 +25,7 @@ public:
     void drawOutline(DrawingWindow& window, Colour colour);
 private:
     //vtop vnew vsplit vbottom
-    std::tuple<glm::vec2, glm::vec2, glm::vec2, glm::vec2> splitTriangle(std::vector<glm::vec2> vs);
+    std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3> splitTriangle(std::vector<glm::vec3> vs);
     //generates two lists of x coordinates along the two sides which are being interpolated
     std::tuple<std::vector<float>, std::vector<float>> interpolateTwoSides(glm::vec2 vPoint, glm::vec2 vA, glm::vec2 vB, int lines);
     static glm::mat3 randomCanvasTriangle();
