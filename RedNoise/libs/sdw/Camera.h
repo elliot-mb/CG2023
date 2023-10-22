@@ -10,7 +10,7 @@
 class Camera {
 public:
     Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
-    glm::vec2 getCanvasIntersectionPoint(glm::vec3 vertexPosition);
+    glm::vec3 getCanvasIntersectionPoint(glm::vec3 vertexPosition);
     void move(glm::vec3 delta);
 private:
     glm::vec3 position;
