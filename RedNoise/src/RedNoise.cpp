@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     cornellLoader->printTris();
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    Camera* camera = new Camera(glm::vec3(0.0, -1, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
 
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -84,7 +84,13 @@ int main(int argc, char *argv[]) {
             Triangle t = *new Triangle(pt0, pt1, pt2, tri.colour);
             t.fill(window, *depthBuffer);
         }
-        camera->move(glm::vec3(0.0, 0.015 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
+        if((frame + 300) % 600 == 0){
+            camera->move(glm::vec3(0, 1, 0));
+        }
+        if((frame) % 600 == 0){
+            camera->move(glm::vec3(0, -1, 0));
+        }
+
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);
