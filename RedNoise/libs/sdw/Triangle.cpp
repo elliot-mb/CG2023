@@ -72,16 +72,16 @@ void Triangle::draw(DrawingWindow &window) {
     Line::draw(window, glm::vec2(v2.x,v2.y), glm::vec2(v0.x, v0.y), colour, 1);
 }
 
-std::tuple<glm::vec2, glm::vec2, glm::vec2, glm::vec2> Triangle::splitTriangle(std::vector<glm::vec2> vs){
+std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3> Triangle::splitTriangle(std::vector<glm::vec3> vs){
     //highest up the image (lowest y value) to lowest down the image (highest y value)
 
-    glm::vec2 vTop = vs[0];
-    glm::vec2 vMid = vs[1];
-    glm::vec2 vBot = vs[2];
-    glm::vec2 vSide = vBot - vTop;
+    glm::vec3 vTop = vs[0];
+    glm::vec3 vMid = vs[1];
+    glm::vec3 vBot = vs[2];
+    glm::vec3 vSide = vBot - vTop;
     float hTop = vMid.y - vTop.y; //height of top triangle (number of interpolation steps)
     float fracDownLongSide = hTop / vSide.y;
-    glm::vec2 vNew = vTop + (vSide * fracDownLongSide);
+    glm::vec3 vNew = vTop + (vSide * fracDownLongSide);
 
     return {vTop, vNew, vMid, vBot};
 }
@@ -98,11 +98,8 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
 }
 
 void Triangle::fill(DrawingWindow &window) {
-    glm::vec2 v0 = glm::vec2(this->tri3[0].x, this->tri3[0].y);
-    glm::vec2 v1 = glm::vec2(this->tri3[1].x, this->tri3[1].y);
-    glm::vec2 v2 = glm::vec2(this->tri3[2].x, this->tri3[2].y);
-    std::vector<glm::vec2> vsY = {v0, v1, v2};
-    std::sort(vsY.begin(), vsY.end(), [] (const glm::vec2& v0, const glm::vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
+    std::vector<glm::vec3> vs = {this->tri3[0], this->tri3[1], this->tri3[2]};
+    std::sort(vs.begin(), vs.end(), [] (const glm::vec3& v0, const glm::vec3& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
     auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vsY);
     float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
@@ -113,9 +110,12 @@ void Triangle::fill(DrawingWindow &window) {
     int topLines = static_cast<int>(ceil(hTop)) + 1;
     int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 2;
 
-    auto [topSideA, topSideB] = interpolateTwoSides(vTop, vSplit, vNew, topLines);
-    auto [bottomSideA, bottomSideB] = interpolateTwoSides(vBottom, vSplit, vNew, bottomLines);
-
+    auto [topSideA, topSideB] = interpolateTwoSides(glm::vec2(vTop), glm::vec2(vSplit), glm::vec2(vNew), topLines);
+    auto [bottomSideA, bottomSideB] = interpolateTwoSides(glm::vec2(vBottom), glm::vec2(vSplit), glm::vec2(vNew), bottomLines);
+    std::vector<float> depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);
+    std::vector<float> depthsTopSideB = Utils::interpolateSingleFloats(vTop.z, vNew.z, topLines);
+    std::vector<float> depthsBottomSideA = Utils::interpolateSingleFloats(vBottom.z, vSplit.z, topLines);
+    std::vector<float> depthsBottomSideB = Utils::interpolateSingleFloats(vBottom.z, vNew.z, topLines);
 
     for(int i = 0; i < topLines; i++){
         Line::draw(window, glm::vec2(topSideA[i], vTop.y + static_cast<float>(i)), glm::vec2(topSideB[i], vTop.y + static_cast<float>(i)), this->colour, 1);
