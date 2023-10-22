@@ -74,10 +74,10 @@ int main(int argc, char *argv[]) {
         draw(window);
 
         for(ModelTriangle tri: cornellLoader->getTris()){
-            glm::vec2 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]);
-            glm::vec2 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
-            glm::vec2 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
-            Triangle t = *new Triangle(glm::vec3(pt0, tri.vertices[0].z), glm::vec3(pt1, tri.vertices[1].z), glm::vec3(pt2, tri.vertices[2].z), tri.colour);
+            glm::vec3 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]); //project to flat (z becomes the distance to the camera)
+            glm::vec3 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
+            glm::vec3 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
+            Triangle t = *new Triangle(pt0, pt1, pt2, tri.colour);
             t.fill(window);
         }
         camera->move(glm::vec3(0.0, 0.001 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));

@@ -102,7 +102,6 @@ void Triangle::fill(DrawingWindow &window) {
     glm::vec2 v1 = glm::vec2(this->tri3[1].x, this->tri3[1].y);
     glm::vec2 v2 = glm::vec2(this->tri3[2].x, this->tri3[2].y);
     std::vector<glm::vec2> vsY = {v0, v1, v2};
-    std::vector<glm::vec2> vsX = {v0, v1, v2};
     std::sort(vsY.begin(), vsY.end(), [] (const glm::vec2& v0, const glm::vec2& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
     auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vsY);
@@ -116,6 +115,7 @@ void Triangle::fill(DrawingWindow &window) {
 
     auto [topSideA, topSideB] = interpolateTwoSides(vTop, vSplit, vNew, topLines);
     auto [bottomSideA, bottomSideB] = interpolateTwoSides(vBottom, vSplit, vNew, bottomLines);
+
 
     for(int i = 0; i < topLines; i++){
         Line::draw(window, glm::vec2(topSideA[i], vTop.y + static_cast<float>(i)), glm::vec2(topSideB[i], vTop.y + static_cast<float>(i)), this->colour, 1);

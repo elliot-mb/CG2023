@@ -14,3 +14,9 @@
 3	1161	1697621625658778038	CMakeFiles/RedNoise.dir/libs/sdw/ModelLoader.cpp.o	6293bb0787b1bdab
 3	509	1697621640250712036	CMakeFiles/RedNoise.dir/libs/sdw/TextureMap.cpp.o	8404d9cacaa2af0d
 1	276	1696855162445567894	CMakeFiles/RedNoise.dir/libs/sdw/Colour.cpp.o	5f8728e4a1ed2ad4
+4	305	1697975474493138125	CMakeFiles/RedNoise.dir/libs/sdw/Camera.cpp.o	9a6c5a572f7c7d82
+4	526	1697975474713135809	CMakeFiles/RedNoise.dir/libs/sdw/DepthBuffer.cpp.o	b6562afc77ac2b21
+2	1312	1697975475497127555	CMakeFiles/RedNoise.dir/libs/sdw/Line.cpp.o	5d8369a20b35430
+3	1365	1697975475553126965	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	d130610f942dcead
+3	1980	1697975476165120526	CMakeFiles/RedNoise.dir/libs/sdw/Triangle.cpp.o	d3cc000512f4cb23
+1980	2194	1697975476381118253	RedNoise	6d2d1765a2e4ff43
