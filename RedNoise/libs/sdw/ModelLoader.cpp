@@ -4,6 +4,7 @@
 
 #include "ModelLoader.h"
 #include "Utils.h"
+#include "CanvasTriangle.h"
 #include <iostream>
 #include <fstream>
 
@@ -108,4 +109,8 @@ void ModelLoader::printTris() {
         cout << tri << endl;
         cout << tri.colour << endl;
     }
+}
+
+vector<ModelTriangle> ModelLoader::getTris() {
+    return this->tris;
 }
