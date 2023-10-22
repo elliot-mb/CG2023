@@ -147,6 +147,13 @@ build CMakeFiles/RedNoise.dir/libs/sdw/Camera.cpp.o: CXX_COMPILER__RedNoise_unsc
   OBJECT_DIR = CMakeFiles/RedNoise.dir
   OBJECT_FILE_DIR = CMakeFiles/RedNoise.dir/libs/sdw
 
+build CMakeFiles/RedNoise.dir/libs/sdw/DepthBuffer.cpp.o: CXX_COMPILER__RedNoise_unscanned_Debug /home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/sdw/DepthBuffer.cpp || cmake_object_order_depends_target_RedNoise
+  DEP_FILE = CMakeFiles/RedNoise.dir/libs/sdw/DepthBuffer.cpp.o.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always -Wall -Wextra -Wcast-align -Wfatal-errors -Werror=return-type -Wno-unused-parameter -Wno-unused-variable -Wno-ignored-attributes -O2 -fno-omit-frame-pointer -g
+  INCLUDES = -I/usr/include/SDL2 -I/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/glm-0.9.7.2 -I/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/sdw
+  OBJECT_DIR = CMakeFiles/RedNoise.dir
+  OBJECT_FILE_DIR = CMakeFiles/RedNoise.dir/libs/sdw
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target RedNoise
@@ -155,7 +162,7 @@ build CMakeFiles/RedNoise.dir/libs/sdw/Camera.cpp.o: CXX_COMPILER__RedNoise_unsc
 #############################################
 # Link the executable RedNoise
 
-build RedNoise: CXX_EXECUTABLE_LINKER__RedNoise_Debug CMakeFiles/RedNoise.dir/libs/sdw/CanvasPoint.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/CanvasTriangle.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Colour.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/DrawingWindow.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/ModelTriangle.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/RayTriangleIntersection.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/TextureMap.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/TexturePoint.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Utils.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Line.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Triangle.cpp.o CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/ModelLoader.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Camera.cpp.o
+build RedNoise: CXX_EXECUTABLE_LINKER__RedNoise_Debug CMakeFiles/RedNoise.dir/libs/sdw/CanvasPoint.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/CanvasTriangle.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Colour.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/DrawingWindow.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/ModelTriangle.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/RayTriangleIntersection.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/TextureMap.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/TexturePoint.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Utils.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Line.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Triangle.cpp.o CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/ModelLoader.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/Camera.cpp.o CMakeFiles/RedNoise.dir/libs/sdw/DepthBuffer.cpp.o
   FLAGS = -g
   LINK_LIBRARIES = -Wl,-lasan  -L/usr/lib/x86_64-linux-gnu  -lSDL2
   OBJECT_DIR = CMakeFiles/RedNoise.dir

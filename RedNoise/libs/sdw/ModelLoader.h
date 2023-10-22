@@ -25,6 +25,8 @@ public:
 
     // shows all tris coords
     void printTris();
+
+    vector<ModelTriangle> getTris();
 private:
     string afterToken(string& ln, const string& tkn);
     bool isToken(string& ln, const string& tkn);

@@ -9,27 +9,13 @@
 #include <CanvasPoint.h>
 #include "Triangle.h"
 #include "ModelLoader.h"
+#include "Camera.h"
 
 using namespace std;
 using namespace glm;
 
-#define WIDTH 320
-#define HEIGHT 240
-
-//GLOBAL!! EVIL!!
-vector<Triangle*> triangles = {
-//        new Triangle(
-//            *new CanvasTriangle(
-//                *new CanvasPoint(160, 10),
-//                *new CanvasPoint(300, 230),
-//                *new CanvasPoint(10,150)),
-//            *new Colour(100, 100, 0),
-//            *new TextureMap("texture.ppm"),
-//            *new CanvasTriangle(
-//                    *new CanvasPoint(195, 5),
-//                    *new CanvasPoint(395, 380),
-//                    *new CanvasPoint(65,330)))
-};
+#define WIDTH 640
+#define HEIGHT 480
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -44,58 +30,12 @@ void draw(DrawingWindow &window) {
 	}
 }
 
-// template <typename T>
-
-// void showV(vector<T> v) {
-// 	for(int i=0; i < v.size(); i++) cout << v[i] << " ";
-// 	cout << endl;
-// }
-
-void drawGreys(DrawingWindow &window){
-	window.clearPixels();
-	vector<float> greys = Utils::interpolateSingleFloats(255, 0, window.width);
-	vector<uint8_t> greyWholes = {};
-	for(int i = 0; i < greys.size(); i++){
-		greyWholes.push_back(static_cast<uint8_t>(greys[i]));
-	}
-	for(int y = 0; y < window.height; y++){
-		for(int x = 0; x < window.width; x++){
-			uint8_t value = greyWholes[x];
-			uint32_t colour = Utils::pack(255, value, value, value);
-			window.setPixelColour(x, y, colour);
-		}
-	}
-}
-
-void drawColours(DrawingWindow &window){
-	window.clearPixels();
-	vec3 red = vec3(255, 0, 0);
-	vec3 green = vec3(0, 255, 0);
-	vec3 blue = vec3(0, 0, 255);
-	vec3 yellow = vec3(255, 255, 0);
-	vector<vec3> leftCol = Utils::interpolateThreeElementValues(red, yellow, window.height);
-	vector<vec3> rightCol = Utils::interpolateThreeElementValues(blue, green, window.height);
-	for(int y = 0; y < window.height; y++){
-		vector<vec3> row = Utils::interpolateThreeElementValues(leftCol[y], rightCol[y], window.width);
-		for(int x = 0; x < window.width; x++){
-			window.setPixelColour(x, y, Utils::pack(
-				255, 
-				static_cast<uint8_t>(row[x].x),
-				static_cast<uint8_t>(row[x].y),
-				static_cast<uint8_t>(row[x].z)
-			));
-		}
-	} 
-}
-
 void handleEvent(SDL_Event event, DrawingWindow &window) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_LEFT) std::cout << "LEFT" << std::endl;
 		else if (event.key.keysym.sym == SDLK_RIGHT) std::cout << "RIGHT" << std::endl;
 		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
 		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
-        //triangle
-        else if (event.key.keysym.sym == SDLK_u) triangles.push_back(new Triangle());
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -103,9 +43,15 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 }
 
 int main(int argc, char *argv[]) {
+    uint frame = 0;
+
     ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
     cornellLoader->load();
     cornellLoader->printTris();
+
+    DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+
 
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -127,20 +73,20 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
-        draw(window);
-//		//drawColours(window);
-//        Colour* c = new Colour();
-//		//Line::draw(window, vec2(200.0, 20.0 ), vec2(10.0, 100.0), *c, 1.0);
-//        Line::draw(window, vec2(0.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
-//        Line::draw(window, vec2(320.0, 0.0), vec2(160.0, 100.0), *c, 1.0);
-//        Line::draw(window, vec2(160.0, 0.0), vec2(160, 320), *c, 1.0);
-//        Line::draw(window, vec2(80, 100), vec2(240, 100), *c, 1.0);
 
-        for(int i = 0; i < triangles.size(); i++){
-            //triangles[i]->draw(window);
-            triangles[i]->fill(window);
+        draw(window);
+        depthBuffer->reset();
+
+        for(ModelTriangle tri: cornellLoader->getTris()){
+            glm::vec3 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]); //project to flat (z becomes the distance to the camera)
+            glm::vec3 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
+            glm::vec3 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
+            Triangle t = *new Triangle(pt0, pt1, pt2, tri.colour);
+            t.fill(window, *depthBuffer);
         }
+        camera->move(glm::vec3(0.0, 0.015 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
+        frame = (frame + 1) % (SDL_MAX_UINT32);
 	}
 }

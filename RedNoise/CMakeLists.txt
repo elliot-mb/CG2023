@@ -41,7 +41,9 @@ add_executable(RedNoise
         libs/sdw/ModelLoader.h
         libs/sdw/ModelLoader.cpp
         libs/sdw/Camera.h
-        libs/sdw/Camera.cpp)
+        libs/sdw/Camera.cpp
+        libs/sdw/DepthBuffer.h
+        libs/sdw/DepthBuffer.cpp)
 
 if (MSVC)
     target_compile_options(RedNoise
