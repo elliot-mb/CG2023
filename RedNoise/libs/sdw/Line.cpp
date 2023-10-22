@@ -35,8 +35,10 @@ void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, vec2 posTA, vec2 po
 void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec3 posB, Colour &colour, float weight){
     vector<vec3> pixels = Line::pixels(posA, posB);
     for(vec3& pixel : pixels){
-        if(db.putPixel(pixel)){
-            window.setPixelColour(static_cast<ulong>(round(pixel.x)), static_cast<ulong>(round(pixel.y)), Utils::pack(255, colour.red, colour.green, colour.blue));
+        int x = static_cast<int>(round(pixel.x));
+        int y = static_cast<int>(round(pixel.y));
+        if(db.putPixel(glm::vec3(x, y, pixel.z))){
+            window.setPixelColour(static_cast<ulong>(x), static_cast<ulong>(y), Utils::pack(255, colour.red, colour.green, colour.blue));
         }
     }
 }
@@ -65,7 +67,7 @@ vector<vec3> Line::pixels(vec3 posA, vec3 posB){
     vector<vec3> pixels = {};
     for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
         vec3 now = posA + (stepSize * static_cast<float>(i));
-        pixels.push_back(round(now));
+        pixels.push_back(glm::vec3(glm::round(now.x), glm::round(now.y), now.z));
     }
     pixels.push_back(round(posB));
     return pixels;

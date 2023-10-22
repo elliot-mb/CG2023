@@ -6,10 +6,12 @@
 
 
 #include <glm/glm.hpp>
+#include "DepthBuffer.h"
 
 class Camera {
 public:
     Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
+
     glm::vec3 getCanvasIntersectionPoint(glm::vec3 vertexPosition);
     void move(glm::vec3 delta);
 private:

@@ -5,6 +5,7 @@
 #include "DrawingWindow.h"
 #include "Colour.h"
 #include "TextureMap.h"
+#include "DepthBuffer.h"
 #include <tuple>
 
 #pragma once
@@ -21,6 +22,7 @@ public:
 
     void draw(DrawingWindow& window); //just needs the window to draw tri
     void fill(DrawingWindow& window);
+    void fill(DrawingWindow& window, DepthBuffer& db);
     void fillTexture(DrawingWindow& window);
     void drawOutline(DrawingWindow& window, Colour colour);
 private:

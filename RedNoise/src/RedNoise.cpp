@@ -49,7 +49,9 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     cornellLoader->printTris();
 
+    DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+
 
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -71,16 +73,18 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window);
+
         draw(window);
+        depthBuffer->reset();
 
         for(ModelTriangle tri: cornellLoader->getTris()){
             glm::vec3 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]); //project to flat (z becomes the distance to the camera)
             glm::vec3 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
             glm::vec3 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
             Triangle t = *new Triangle(pt0, pt1, pt2, tri.colour);
-            t.fill(window);
+            t.fill(window, *depthBuffer);
         }
-        camera->move(glm::vec3(0.0, 0.001 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
+        camera->move(glm::vec3(0.0, 0.015 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);
