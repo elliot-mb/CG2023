@@ -77,10 +77,7 @@ int main(int argc, char *argv[]) {
             glm::vec2 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]);
             glm::vec2 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
             glm::vec2 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
-            Triangle t = *new Triangle(*new CanvasTriangle(
-                    *new CanvasPoint(pt0.x, pt0.y),
-                    *new CanvasPoint(pt1.x, pt1.y),
-                    *new CanvasPoint(pt2.x, pt2.y)), tri.colour);
+            Triangle t = *new Triangle(glm::vec3(pt0, tri.vertices[0].z), glm::vec3(pt1, tri.vertices[1].z), glm::vec3(pt2, tri.vertices[2].z), tri.colour);
             t.fill(window);
         }
         camera->move(glm::vec3(0.0, 0.001 * glm::cos(frame * 0.01), 0 * glm::sin(frame * 0.01)));
