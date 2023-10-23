@@ -47,8 +47,11 @@ int main(int argc, char *argv[]) {
 
     ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
     cornellLoader->load();
-    cornellLoader->printTris();
+//    cornellLoader->printTris();
 
+//    ModelLoader* icosahedron = new ModelLoader("icosahedron.obj", 1.0);
+//    icosahedron->load();
+//    //cornellLoader->printTris();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, -1, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
@@ -85,13 +88,7 @@ int main(int argc, char *argv[]) {
             Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
             t.fill(window, *depthBuffer);
         }
-        if((frame + 150) % 300 == 0){
-            depthBuffer->show(10, 5);
-            camera->move(glm::vec3(0, 1, 0));
-        }
-        if((frame) % 300 == 0){
-            camera->move(glm::vec3(0, -1, 0));
-        }
+        camera->move(glm::vec3(0.01, 0.1, 0));
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();

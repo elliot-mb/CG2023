@@ -50,7 +50,7 @@ void DepthBuffer::show(int strideX, int strideY){
         std::cout << "--" << ' ';
     }
     std::cout << std::endl;
-    for(int y = 0; y < this->height; y+=strideY){ //populate with zeros (1/infinity distance)
+    for(int y = 0; y < this->height; y+=strideY){
         for(int x = 0; x < this->width; x+=strideX){
             int readableOut = static_cast<int>( glm::round(this->buff[y][x] * 100));
             if(readableOut < 10) std::cout << '0';
