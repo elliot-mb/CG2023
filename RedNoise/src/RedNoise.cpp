@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 //    icosahedron->load();
 //    //cornellLoader->printTris();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, -1, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
 
 	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -88,9 +88,10 @@ int main(int argc, char *argv[]) {
             Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
             t.fill(window, *depthBuffer);
         }
-        camera->move(glm::vec3(0.0, -0.01, 0));
-
+        //camera->move(glm::vec3(0.0, -0.01, 0));
+        camera->setRot(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
+        //if(frame % 6 == 0) std::cout << "frame" << frame << std::endl;
 		window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);
 	}
