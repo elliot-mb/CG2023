@@ -30,12 +30,39 @@ void draw(DrawingWindow &window) {
 	}
 }
 
-void handleEvent(SDL_Event event, DrawingWindow &window) {
+void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera) {
 	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_LEFT) std::cout << "LEFT" << std::endl;
-		else if (event.key.keysym.sym == SDLK_RIGHT) std::cout << "RIGHT" << std::endl;
-		else if (event.key.keysym.sym == SDLK_UP) std::cout << "UP" << std::endl;
-		else if (event.key.keysym.sym == SDLK_DOWN) std::cout << "DOWN" << std::endl;
+		if (event.key.keysym.sym == SDLK_t) {
+            camera.move(vec3(0.0, 0.0, -0.2));
+        }
+		else if (event.key.keysym.sym == SDLK_g) {
+            camera.move(vec3(0.0, 0.0, 0.2));
+        }
+        if (event.key.keysym.sym == SDLK_f) {
+            camera.move(vec3(-0.2, 0.0, 0.0));
+        }
+        else if (event.key.keysym.sym == SDLK_h) {
+            camera.move(vec3(0.2, 0.0, 0.0));
+        }
+        if (event.key.keysym.sym == SDLK_r) {
+            camera.move(vec3(0.0, -0.2, 0.0));
+        }
+        else if (event.key.keysym.sym == SDLK_y) {
+            camera.move(vec3(0.0, 0.2, 0.0));
+        }
+        else if (event.key.keysym.sym == SDLK_4) {
+            camera.rot(-0.2, 0);
+        }
+        else if (event.key.keysym.sym == SDLK_5) {
+            camera.rot(0.2, 0);
+        }
+        else if (event.key.keysym.sym == SDLK_6) {
+            camera.rot(0, -0.2);
+        }
+        else if (event.key.keysym.sym == SDLK_7) {
+            camera.rot(0, 0.2);
+        }
+
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -75,7 +102,7 @@ int main(int argc, char *argv[]) {
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
-		if (window.pollForInputEvents(event)) handleEvent(event, window);
+		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera);
 
         draw(window);
         depthBuffer->reset();
@@ -89,7 +116,7 @@ int main(int argc, char *argv[]) {
             t.fill(window, *depthBuffer);
         }
         //camera->move(glm::vec3(0.0, -0.01, 0));
-        camera->setRot(0.0, 0.0);
+//        camera->setRot(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
         //if(frame % 6 == 0) std::cout << "frame" << frame << std::endl;
 		window.renderFrame();
