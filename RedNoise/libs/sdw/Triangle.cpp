@@ -124,23 +124,21 @@ void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
     if(glm::ceil(hTop) > 0.0){
         for(int i = 0; i < topLines; i++){
             float xA = topSideA[i];
-            float yA = vTop.y + static_cast<float>(i);
+            float y = vTop.y + static_cast<float>(i);
             float zA = depthsTopSideA[i];
             float xB = topSideB[i];
-            float yB = vTop.y + static_cast<float>(i);
             float zB = depthsTopSideB[i];
-            Line::draw(window, db, glm::vec3(xA, yA, zA), glm::vec3(xB, yB, zB), this->colour, 1);
+            Line::draw(window, db, glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), this->colour, 1);
         }
     }
     if(glm::ceil(hBottom) > 0.0) {
         for(int i = 0; i < bottomLines; i++){
             float xA = bottomSideA[i];
-            float yA = vBottom.y - static_cast<float>(i) + 1;
+            float y = vBottom.y - static_cast<float>(i) + 1;
             float zA = depthsBottomSideA[i];
             float xB = bottomSideB[i];
-            float yB = vBottom.y - static_cast<float>(i) + 1;
             float zB = depthsBottomSideB[i];
-            Line::draw(window, db, glm::vec3(xA, yA, zA), glm::vec3(xB, yB, zB), this->colour, 1);
+            Line::draw(window, db, glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), this->colour, 1);
         }
     }
 
