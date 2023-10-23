@@ -45,10 +45,12 @@ void Camera::setPos(glm::vec3 pos) {
 }
 
 void Camera::makeRots() {
-    float cTx = glm::cos(xT);
-    float sTx = glm::sin(xT);
-    float cTy = glm::cos(yT);
-    float sTy = glm::sin(yT);
+    if(xT < 0) xT += M_PI_2f * 4;
+    if(yT < 0) yT += M_PI_2f * 4;
+    float cTx = glm::cos(xT + (M_PI_2f * 4));
+    float sTx = glm::sin(xT + (M_PI_2f * 4));
+    float cTy = glm::cos(yT + (M_PI_2f * 4));
+    float sTy = glm::sin(yT + (M_PI_2f * 4));
     this->rotX = glm::mat3({1,   0,    0},
                            {0, cTx, -sTx},
                            {0, sTx,  cTx});
@@ -60,8 +62,6 @@ void Camera::makeRots() {
 void Camera::rot(float angleX, float angleY) {
     this->xT += angleX;
     this->yT += angleY;
-    this->xT = this->xT - static_cast<float>(floor(this->xT / (M_PI * 2)));
-    this->yT = this->yT - static_cast<float>(floor(this->yT / (M_PI * 2)));
     makeRots();
 }
 
