@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
             Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
             t.fill(window, *depthBuffer);
         }
-        camera->move(glm::vec3(0.01, 0.1, 0));
+        camera->move(glm::vec3(0.0, -0.01, 0));
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window.renderFrame();
