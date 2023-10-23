@@ -80,7 +80,12 @@ void ModelLoader::load() {
             vector<string> floatsStr = Utils::split(floatLine, ' ');
             vector<float> floats;
             for(const string& flt: floatsStr){
-                floats.push_back(stof(flt));
+                try{
+                    floats.push_back(stof(flt));
+                }catch(invalid_argument& err){ //failed to read as float
+                    std::cout << "warning, reading as float failed for '" << flt << "':" << err.what() << std::endl;
+                    floats.push_back(static_cast<float>(stoi(flt)));
+                }
             }
             if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VECTOR conversion resulted in the wrong number of floats");
             verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);

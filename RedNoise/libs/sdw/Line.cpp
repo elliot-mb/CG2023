@@ -61,7 +61,7 @@ vector<vec2> Line::pixels(vec2 posA, vec2 posB){
 //stored in the z is the distance to the camera, which is reciprocated and compared in the draw function which takes an additional parameter of a depth buffer
 vector<vec3> Line::pixels(vec3 posA, vec3 posB){
     vec3 delta = posB - posA;
-    float steps = Utils::max(abs(delta.x), abs(delta.y));
+    float steps = Utils::max(abs(delta.x), abs(delta.y)); //steps depends just on the largest distance we have to cross in the (2D) projected plane
     if(steps == 0) steps = 1;
     vec3 stepSize = delta / steps;
     vector<vec3> pixels = {};
