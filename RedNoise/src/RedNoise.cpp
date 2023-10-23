@@ -76,18 +76,20 @@ int main(int argc, char *argv[]) {
 
         draw(window);
         depthBuffer->reset();
-
-        for(ModelTriangle tri: cornellLoader->getTris()){
-            glm::vec3 pt0 = camera->getCanvasIntersectionPoint(tri.vertices[0]); //project to flat (z becomes the distance to the camera)
-            glm::vec3 pt1 = camera->getCanvasIntersectionPoint(tri.vertices[1]);
-            glm::vec3 pt2 = camera->getCanvasIntersectionPoint(tri.vertices[2]);
-            Triangle t = *new Triangle(pt0, pt1, pt2, tri.colour);
+        vector<ModelTriangle> tris = cornellLoader->getTris();
+        for(size_t i = 0; i < tris.size(); i++){
+            ModelTriangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
+            glm::vec3 pt0 = camera->getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
+            glm::vec3 pt1 = camera->getCanvasIntersectionPoint(thisTri.vertices[1]);
+            glm::vec3 pt2 = camera->getCanvasIntersectionPoint(thisTri.vertices[2]);
+            Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
             t.fill(window, *depthBuffer);
         }
-        if((frame + 300) % 600 == 0){
+        if((frame + 150) % 300 == 0){
+            depthBuffer->show(10, 5);
             camera->move(glm::vec3(0, 1, 0));
         }
-        if((frame) % 600 == 0){
+        if((frame) % 300 == 0){
             camera->move(glm::vec3(0, -1, 0));
         }
 

@@ -14,6 +14,7 @@ public:
     // based on epthBuffer* db = new DepthBuffer(WIDTH, HEIGHT);the provided z depth (encoding the distance to the camera)
     bool putPixel(glm::vec3 pos);
     void reset(); //sets all buff positions to zero
+    void show(int strideX, int strideY); //print the depth buffer or every stride element in every stride column
 private:
     int width;
     int height;
