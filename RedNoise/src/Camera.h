@@ -19,12 +19,8 @@ public:
     void rot(float angleX, float angleY); //move
     void setRot(float angleX, float angleY); //set
 private:
-    void makeRots(); //sets the pair of mat3s (deligation from rot and setRot)
 
-    float xT;
-    float yT;
-    glm::mat3 rotX; //calculated in rot and setRot
-    glm::mat3 rotY;
+    glm::mat3 orientation;
     glm::vec3 position;
     float focalLength;
     glm::vec2 screen;
