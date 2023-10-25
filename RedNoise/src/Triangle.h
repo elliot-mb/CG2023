@@ -21,7 +21,6 @@ public:
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri);
 
     void draw(DrawingWindow& window); //just needs the window to draw tri
-    void fill(DrawingWindow& window);
     void fill(DrawingWindow& window, DepthBuffer& db);
     void fillTexture(DrawingWindow& window);
     void drawOutline(DrawingWindow& window, Colour colour);

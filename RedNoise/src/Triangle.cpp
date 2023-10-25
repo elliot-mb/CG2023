@@ -97,12 +97,16 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
     return {sideA, sideB};
 }
 
-void Triangle::fill(DrawingWindow& window){
-    std::cout << '2d drawing no occlusion' << std::endl;
-}
-
 void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
     std::vector<glm::vec3> vs = {this->tri3[0], this->tri3[1], this->tri3[2]};
+    int outside = 0;
+    for(glm::vec3 v : vs){
+        if (v.x < 0 || v.x > static_cast<float>(window.width) || v.y < 0 || v.y > static_cast<float>(window.height)){
+            outside++;
+        }
+    }
+    if(outside == static_cast<int>(vs.size())) return; //are all the the vertices outside of the screen
+
     std::sort(vs.begin(), vs.end(), [] (const glm::vec3& v0, const glm::vec3& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
     auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vs);

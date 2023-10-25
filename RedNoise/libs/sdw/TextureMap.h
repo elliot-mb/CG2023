@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include "Utils.h"
+#include "../../src/Utils.h"
 
 class TextureMap {
 public:
