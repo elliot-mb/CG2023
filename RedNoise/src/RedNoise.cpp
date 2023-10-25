@@ -1,8 +1,6 @@
 #include <CanvasTriangle.h>
 #include <DrawingWindow.h>
 #include <Utils.h>
-#include <Line.h>
-#include <fstream>
 #include <vector>
 #include <glm/glm.hpp>
 #include <Colour.h>
