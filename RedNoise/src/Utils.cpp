@@ -82,3 +82,21 @@ std::string Utils::fileAsString(std::string& filename){
     }
     return bytes;
 }
+
+glm::mat3 Utils::rotateX(float angle){
+    if(angle < 0) angle += M_PI_2f * 4;
+    float cTx = glm::cos(angle + (M_PI_2f * 4));
+    float sTx = glm::sin(angle + (M_PI_2f * 4));
+    return glm::mat3({1,   0,    0},
+                     {0, cTx, -sTx},
+                     {0, sTx,  cTx});
+}
+
+glm::mat3 Utils::rotateY(float angle){
+    if(angle < 0) angle += M_PI_2f * 4;
+    float cTy = glm::cos(angle + (M_PI_2f * 4));
+    float sTy = glm::sin(angle + (M_PI_2f * 4));
+    return glm::mat3({cTy,  0, sTy},
+                     {0,    1,   0},
+                     {-sTy, 0, cTy});
+}
