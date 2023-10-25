@@ -15,6 +15,7 @@ public:
     glm::vec3 getCanvasIntersectionPoint(glm::vec3 vertexPosition);
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
+    glm::vec3 getPos();
     void rot(float angleX, float angleY); //move
     void setRot(float angleX, float angleY); //set
 private:

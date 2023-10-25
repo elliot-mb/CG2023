@@ -8,11 +8,12 @@
 #include <iostream>
 #include <fstream>
 
-ModelLoader::ModelLoader(string fileName, float scale) {
+ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
     this->tris = vector<ModelTriangle>{}; //new modeltriangle vector
+    this->position = position;
 }
 //ModelLoader::~ModelLoader(){
 //    delete this->tris;
@@ -100,13 +101,17 @@ void ModelLoader::load() {
             }
             if(facets.size() != 3) throw runtime_error("ModelLoader::load(): TKN_FACET facet does not have three vertices");
             //create a triangle
-            vec3 v0 = verts[facets[0] - 1];
-            vec3 v1 = verts[facets[1] - 1];
-            vec3 v2 = verts[facets[2] - 1];
+            vec3 v0 = verts[facets[0] - 1] + this->position;
+            vec3 v1 = verts[facets[1] - 1] + this->position;
+            vec3 v2 = verts[facets[2] - 1] + this->position;
             this->tris.push_back(*new ModelTriangle(v0, v1, v2, currentColour));
         }
     }
 
+}
+
+glm::vec3 ModelLoader::getPos(){
+    return this->position;
 }
 
 void ModelLoader::printTris() {

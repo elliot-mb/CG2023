@@ -17,17 +17,25 @@ using namespace glm;
 #define WIDTH 640
 #define HEIGHT 480
 
-void draw(DrawingWindow &window) {
+void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, Camera& camera, int frame) {
 	window.clearPixels();
-	for (size_t y = 0; y < window.height; y++) {
-		for (size_t x = 0; x < window.width; x++) {
-			float red = rand() % 256;
-			float green = 0.0;
-			float blue = 0.0;
-			//uint32_t colour = (255 << 24) + (int(red) << 16) + (int(green) << 8) + int(blue);
-			window.setPixelColour(x, y, Utils::pack(255, 127, 127, 127));
-		}
-	}
+    depthBuffer.reset();
+    vector<ModelTriangle> tris = model.getTris();
+    for(size_t i = 0; i < tris.size(); i++){
+        ModelTriangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
+        glm::vec3 pt0 = camera.getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
+        glm::vec3 pt1 = camera.getCanvasIntersectionPoint(thisTri.vertices[1]);
+        glm::vec3 pt2 = camera.getCanvasIntersectionPoint(thisTri.vertices[2]);
+        Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
+        t.fill(window, depthBuffer);
+    }
+    //orbit
+    glm::vec3 toModelCentre = glm::vec3(0.01, 0.01, 0.01) * (camera.getPos() - model.getPos());
+    glm::mat3 rot90Y = glm::mat3({0, 0,  1},
+                                 {0, 1,  0},
+                                 {-1, 0, 0});
+    camera.move((toModelCentre * rot90Y));
+
 }
 
 void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera) {
@@ -72,18 +80,13 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera) {
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35);
+    ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35, glm::vec3(0, 0, 0));
     cornellLoader->load();
-//    cornellLoader->printTris();
-
-//    ModelLoader* icosahedron = new ModelLoader("icosahedron.obj", 1.0);
-//    icosahedron->load();
-//    //cornellLoader->printTris();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
 
-	DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
+    DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
@@ -104,17 +107,8 @@ int main(int argc, char *argv[]) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera);
 
-        draw(window);
-        depthBuffer->reset();
-        vector<ModelTriangle> tris = cornellLoader->getTris();
-        for(size_t i = 0; i < tris.size(); i++){
-            ModelTriangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
-            glm::vec3 pt0 = camera->getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
-            glm::vec3 pt1 = camera->getCanvasIntersectionPoint(thisTri.vertices[1]);
-            glm::vec3 pt2 = camera->getCanvasIntersectionPoint(thisTri.vertices[2]);
-            Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
-            t.fill(window, *depthBuffer);
-        }
+        draw(window, *depthBuffer, *cornellLoader, *camera, frame);
+
         //camera->move(glm::vec3(0.0, -0.01, 0));
 //        camera->setRot(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
