@@ -2,7 +2,7 @@
 #include "Line.h"
 #include "Utils.h"
 #include <vector>
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 #include "DrawingWindow.h"
 #include "Colour.h"
 #include "TextureMap.h"
