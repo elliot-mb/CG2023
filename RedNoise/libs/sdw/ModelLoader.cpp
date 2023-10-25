@@ -8,11 +8,12 @@
 #include <iostream>
 #include <fstream>
 
-ModelLoader::ModelLoader(string fileName, float scale) {
+ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
     this->tris = vector<ModelTriangle>{}; //new modeltriangle vector
+    this->position = position;
 }
 //ModelLoader::~ModelLoader(){
 //    delete this->tris;
@@ -80,7 +81,12 @@ void ModelLoader::load() {
             vector<string> floatsStr = Utils::split(floatLine, ' ');
             vector<float> floats;
             for(const string& flt: floatsStr){
-                floats.push_back(stof(flt));
+                try{
+                    floats.push_back(stof(flt));
+                }catch(invalid_argument& err){ //failed to read as float
+                    std::cout << "warning, reading as float failed for '" << flt << "':" << err.what() << std::endl;
+                    floats.push_back(static_cast<float>(stoi(flt)));
+                }
             }
             if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VECTOR conversion resulted in the wrong number of floats");
             verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
@@ -95,13 +101,17 @@ void ModelLoader::load() {
             }
             if(facets.size() != 3) throw runtime_error("ModelLoader::load(): TKN_FACET facet does not have three vertices");
             //create a triangle
-            vec3 v0 = verts[facets[0] - 1];
-            vec3 v1 = verts[facets[1] - 1];
-            vec3 v2 = verts[facets[2] - 1];
+            vec3 v0 = verts[facets[0] - 1] + this->position;
+            vec3 v1 = verts[facets[1] - 1] + this->position;
+            vec3 v2 = verts[facets[2] - 1] + this->position;
             this->tris.push_back(*new ModelTriangle(v0, v1, v2, currentColour));
         }
     }
 
+}
+
+glm::vec3 ModelLoader::getPos(){
+    return this->position;
 }
 
 void ModelLoader::printTris() {

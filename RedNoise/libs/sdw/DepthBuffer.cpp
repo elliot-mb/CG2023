@@ -4,6 +4,7 @@
 
 #include "DepthBuffer.h"
 #include <glm/glm.hpp>
+#include <iostream>
 
 DepthBuffer::DepthBuffer(int width, int height) {
     this->width = width;
@@ -41,5 +42,20 @@ void DepthBuffer::reset(){
         for(int x = 0; x < this->width; x++){
             this->buff[y][x] = 0;
         }
+    }
+}
+
+void DepthBuffer::show(int strideX, int strideY){
+    for(int x = 0; x < this->width; x+=strideX){
+        std::cout << "--" << ' ';
+    }
+    std::cout << std::endl;
+    for(int y = 0; y < this->height; y+=strideY){
+        for(int x = 0; x < this->width; x+=strideX){
+            int readableOut = static_cast<int>( glm::round(this->buff[y][x] * 100));
+            if(readableOut < 10) std::cout << '0';
+            std::cout << readableOut << ' ';
+        }
+        std::cout << std::endl;
     }
 }
