@@ -70,3 +70,7 @@ void Camera::setRot(float angleX, float angleY) {
     this->yT = angleY;
     makeRots();
 }
+
+glm::vec3 Camera::getPos() {
+    return this->position;
+}

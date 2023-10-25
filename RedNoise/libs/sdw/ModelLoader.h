@@ -17,7 +17,7 @@ using namespace glm;
 
 class ModelLoader {
 public:
-    explicit ModelLoader(string fileName, float scale);
+    explicit ModelLoader(string fileName, float scale, glm::vec3 position);
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -27,7 +27,10 @@ public:
     void printTris();
 
     vector<ModelTriangle> getTris();
+
+    glm::vec3 getPos();
 private:
+    glm::vec3 position;
     string afterToken(string& ln, const string& tkn);
     bool isToken(string& ln, const string& tkn);
     string fileName; // name
