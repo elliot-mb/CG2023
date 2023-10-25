@@ -1,0 +1,3 @@
+/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/CMakeFiles/RedNoise.dir
+/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/CMakeFiles/edit_cache.dir
+/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/CMakeFiles/rebuild_cache.dir

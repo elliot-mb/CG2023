@@ -35,15 +35,12 @@ add_executable(RedNoise
         libs/sdw/TextureMap.cpp
         libs/sdw/TexturePoint.cpp
         libs/sdw/Utils.cpp
-        libs/sdw/Line.cpp
-        libs/sdw/Triangle.cpp
         src/RedNoise.cpp
-        libs/sdw/ModelLoader.h
-        libs/sdw/ModelLoader.cpp
-        libs/sdw/Camera.h
-        libs/sdw/Camera.cpp
-        libs/sdw/DepthBuffer.h
-        libs/sdw/DepthBuffer.cpp)
+        src/Line.cpp
+        src/Triangle.cpp
+        src/ModelLoader.cpp
+        src/Camera.cpp
+        src/DepthBuffer.cpp)
 
 if (MSVC)
     target_compile_options(RedNoise
