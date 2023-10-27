@@ -46,3 +46,11 @@
 1324	1500	1698417816176440874	RedNoise	5ca6e990be64491f
 3	1399	1698417995278889439	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	d130610f942dcead
 1400	1587	1698417995466887602	RedNoise	5ca6e990be64491f
+2	885	1698429863264968078	CMakeFiles/RedNoise.dir/libs/sdw/TextureMap.cpp.o	8404d9cacaa2af0d
+2	1255	1698429863632964645	CMakeFiles/RedNoise.dir/src/Utils.cpp.o	c50178e21c3116d8
+3	1393	1698429863768963376	CMakeFiles/RedNoise.dir/src/Line.cpp.o	ac3f7e95ca18ec
+3	1512	1698429863892962218	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	d130610f942dcead
+885	1560	1698429863940961771	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	b2cc109134520d39
+3	1790	1698429864168959644	CMakeFiles/RedNoise.dir/src/Triangle.cpp.o	bd820d3bad04f70d
+4	1843	1698429864220959159	CMakeFiles/RedNoise.dir/src/ModelLoader.cpp.o	f15a4edf7b11b699
+1843	2053	1698429864432957179	RedNoise	5ca6e990be64491f

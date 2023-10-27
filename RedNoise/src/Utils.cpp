@@ -101,8 +101,8 @@ glm::mat3 Utils::rotateY(float angle){
                      {-sTy, 0, cTy});
 }
 
-//if i give no up, they get to assume that my up is that of the world origin
-glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp = glm::vec3(0,1,0)){
+//if i give no up, they get to assume that my up is that of the world origin (see default argument in defn.)
+glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp ){
     glm::mat3 transform = glm::mat3({0, 0, 0},
                                     {0, 0, 0},
                                     {0, 0, 0});
@@ -119,5 +119,9 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp = glm::vec3(0,1,
     transform[1].y = yDir.y;
     transform[1].z = direction.y;
     //column 3
+    transform[2].x = xDir.z;
+    transform[2].y = yDir.z;
+    transform[2].z = direction.z;
 
+    return transform;
 }

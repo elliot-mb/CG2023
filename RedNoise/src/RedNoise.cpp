@@ -34,9 +34,7 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
     glm::mat3 rot90Y = glm::mat3({0, 0,  1},
                                  {0, 1,  0},
                                  {-1, 0, 0});
-    glm::mat3 rot90X = glm::mat3({1, 0,  0},
-                                 {0, 0,  -1},
-                                 {0, 1, 0});
+    camera.lookAt(model.getPos());
     camera.move((rot90Y * toModelCentre));
 
 }
@@ -113,7 +111,7 @@ int main(int argc, char *argv[]) {
         draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
         //camera->move(glm::vec3(0.0, -0.01, 0));
-//        camera->setRot(0.0, 0.0);
+//        camera->lookAt(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
         //if(frame % 6 == 0) std::cout << "frame" << frame << std::endl;
 		window.renderFrame();
