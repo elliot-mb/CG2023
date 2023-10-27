@@ -21,18 +21,23 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
     vector<ModelTriangle> tris = model.getTris();
     for(size_t i = 0; i < tris.size(); i++){
         ModelTriangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
-        glm::vec3 pt0 = camera.getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
-        glm::vec3 pt1 = camera.getCanvasIntersectionPoint(thisTri.vertices[1]);
-        glm::vec3 pt2 = camera.getCanvasIntersectionPoint(thisTri.vertices[2]);
-        Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
-        t.fill(window, depthBuffer);
+        auto [pt0, valid0] = camera.getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
+        auto [pt1, valid1] = camera.getCanvasIntersectionPoint(thisTri.vertices[1]);
+        auto [pt2, valid2] = camera.getCanvasIntersectionPoint(thisTri.vertices[2]);
+        if(valid0 && valid1 && valid2){
+            Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
+            t.fill(window, depthBuffer);
+        }
     }
     //orbit
     glm::vec3 toModelCentre = glm::vec3(0.01, 0.01, 0.01) * (camera.getPos() - model.getPos());
     glm::mat3 rot90Y = glm::mat3({0, 0,  1},
                                  {0, 1,  0},
                                  {-1, 0, 0});
-    camera.move((toModelCentre * rot90Y));
+    glm::mat3 rot90X = glm::mat3({1, 0,  0},
+                                 {0, 0,  -1},
+                                 {0, 1, 0});
+    camera.move((rot90Y * toModelCentre));
 
 }
 
