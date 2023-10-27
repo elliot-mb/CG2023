@@ -17,7 +17,7 @@ public:
     void setPos(glm::vec3 pos); //set
     glm::vec3 getPos();
     void rot(float angleX, float angleY); //move
-    void setRot(float angleX, float angleY); //set
+    void lookAt(glm::vec3 at); //set
 private:
 
     glm::mat3 orientation;

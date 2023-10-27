@@ -48,14 +48,17 @@ void Camera::setPos(glm::vec3 pos) {
 }
 
 void Camera::rot(float angleX, float angleY) {
-    this->orientation = orientation * Utils::rotateX(angleX) * Utils::rotateY(angleY);
+    this->orientation = Utils::rotateX(angleX) * (Utils::rotateY(angleY) * orientation);
 }
 
-void Camera::setRot(float angleX, float angleY) {
-    this->orientation = glm::mat3({1, 0, 0},
-                                  {0, 1, 0},
-                                  {0, 0, 1});
-    rot(angleX, angleY);
+void Camera::lookAt(glm::vec3 at) {
+    glm::vec3 direction = this->position - at;
+    this->orientation = Utils::rotateMeTo(
+            direction,
+            glm::vec3(this->orientation[0].y,
+                      this->orientation[1].y,
+                      this->orientation[2].y)
+            );
 }
 //
 //void Camera::lookAt(glm::vec3 pt){
