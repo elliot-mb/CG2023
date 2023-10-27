@@ -12,7 +12,7 @@ class Camera {
 public:
     Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
 
-    glm::vec3 getCanvasIntersectionPoint(glm::vec3 vertexPosition);
+    std::tuple<glm::vec3, bool> getCanvasIntersectionPoint(glm::vec3 vertexPosition); //vertex and whether we should draw it (not off image plane)
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
     glm::vec3 getPos();
