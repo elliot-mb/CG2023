@@ -45,8 +45,11 @@ void Camera::move(glm::vec3 delta){
 //moves the camera relative to its own coordinate system
 void Camera::moveRelative(glm::vec3 delta){
     //std::cout << myFwd().x << ' ' << myFwd().y << ' ' << myFwd().z << std::endl;
-    glm::mat3 worldToCamera = Utils::rotateMeTo(myFwd()); //transform to rotate the world origin in the direction of the camera
-    this->move(worldToCamera * (delta));
+    glm::mat3 worldToCameraPlane = Utils::rotateMeTo(myFwd()); //transform to rotate the world origin in the direction of the camera
+//    glm::mat3 cameraPlaneToWorld = glm::inverse(worldToCameraPlane);
+//    glm::mat3 cameraPlaneInWorld = cameraPlaneToWorld * this->orientation;
+//
+    this->move(worldToCameraPlane * (delta));
 }
 
 void Camera::setPos(glm::vec3 pos) {
@@ -82,7 +85,7 @@ glm::vec3 Camera::myFwd() {
     //this transformation is applied to get the forward vector, not the backward one
     return glm::mat3({1, 0, 0},
             {0, 1, 0},
-            {0, 0, -1}) *
+            {0, 0, -1}) * //invert z component
             glm::normalize(glm::vec3(this->orientation[0].z,
                      this->orientation[1].z,
                      this->orientation[2].z));

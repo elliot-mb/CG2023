@@ -31,7 +31,7 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
     }
 
     camera.lookAt(model.getPos());
-    camera.moveRelative(glm::vec3(0.01, 0.0, 0.0));
+    camera.moveRelative(glm::vec3(0.1, 0.0, 0.0));
 
 }
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35, glm::vec3(0, 0, 0));
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, 0, 10.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
 
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
