@@ -29,13 +29,9 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
             t.fill(window, depthBuffer);
         }
     }
-    //orbit
-    glm::vec3 toModelCentre = glm::vec3(0.01, 0.01, 0.01) * (camera.getPos() - model.getPos());
-    glm::mat3 rot90Y = glm::mat3({0, 0,  1},
-                                 {0, 1,  0},
-                                 {-1, 0, 0});
+
     camera.lookAt(model.getPos());
-    camera.move((rot90Y * toModelCentre));
+    camera.moveRelative(glm::vec3(0.01, 0.0, 0.0));
 
 }
 
