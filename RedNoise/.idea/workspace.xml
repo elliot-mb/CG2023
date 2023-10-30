@@ -29,8 +29,8 @@
       <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Utils.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +104,7 @@
       <workItem from="1698427713232" duration="4299000" />
       <workItem from="1698435385063" duration="592000" />
       <workItem from="1698668655706" duration="175000" />
-      <workItem from="1698669396905" duration="1000" />
+      <workItem from="1698669396905" duration="1183000" />
     </task>
     <servers />
   </component>
