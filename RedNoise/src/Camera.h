@@ -18,10 +18,14 @@ public:
     glm::vec3 getPos();
     void rot(float angleX, float angleY); //move
     void lookAt(glm::vec3 at); //set
+    void moveRelative(glm::vec3 delta);
 private:
 
+    glm::vec3 myUp();
     glm::mat3 orientation;
     glm::vec3 position;
     float focalLength;
     glm::vec2 screen;
+
+    glm::vec3 myFwd();
 };
