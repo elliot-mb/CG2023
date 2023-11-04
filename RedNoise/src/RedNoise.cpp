@@ -30,12 +30,11 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
         }
     }
 
-    camera.lookAt(model.getPos());
-    camera.moveRelative(glm::vec3(0.1, 0.0, 0.0));
+    camera.doOrbit(model);
 
 }
 
-void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera) {
+void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLoader& model) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_t) {
             camera.move(vec3(0.0, 0.0, -0.2));
@@ -66,6 +65,12 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera) {
         }
         else if (event.key.keysym.sym == SDLK_7) {
             camera.rot(0, 0.2);
+        }
+        else if (event.key.keysym.sym == SDLK_o) {
+            camera.toggleOrbit();
+        }
+        else if (event.key.keysym.sym == SDLK_l) {
+            camera.lookAt(model.getPos());
         }
 
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -102,7 +107,7 @@ int main(int argc, char *argv[]) {
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
-		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera);
+		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornellLoader);
 
         draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
