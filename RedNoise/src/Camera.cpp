@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "math.h";
 #include "Utils.h"
+#include "ModelLoader.h"
 #include <iostream>
 #include <tuple>
 
@@ -15,6 +16,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
     this->orientation = glm::mat3({1, 0, 0},
                            {0, 1, 0},
                            {0, 0, 1});
+    this->isOrbiting = false;
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -62,7 +64,7 @@ void Camera::rot(float angleX, float angleY) {
 
 void Camera::lookAt(glm::vec3 at) {
     glm::vec3 direction = this->position - at;
-    this->orientation = Utils::rotateMeTo(direction, this->myUp());
+    this->orientation = Utils::rotateMeTo(direction, this->myUp(), false);
 }
 //
 //void Camera::lookAt(glm::vec3 pt){
@@ -89,4 +91,15 @@ glm::vec3 Camera::myFwd() {
             glm::normalize(glm::vec3(this->orientation[0].z,
                      this->orientation[1].z,
                      this->orientation[2].z));
+}
+
+void Camera::toggleOrbit() {
+    this->isOrbiting = !this->isOrbiting;
+}
+
+void Camera::doOrbit(ModelLoader model) {
+    if(isOrbiting){
+        this->lookAt(model.getPos());
+        this->moveRelative(glm::vec3(0.1, 0.0, 0.0));
+    }
 }

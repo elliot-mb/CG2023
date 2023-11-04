@@ -102,12 +102,20 @@ glm::mat3 Utils::rotateY(float angle){
 }
 
 //if i give no up, they get to assume that my up is that of the world origin (see default argument in defn.)
-glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp ){
+// noRoll flag tells us if we want to allow roll in the resulting transformation (do we keep the x axis level)
+glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
     glm::vec3 dirNorm = glm::normalize(direction);
     glm::mat3 transform = glm::mat3({0, 0, 0},
                                     {0, 0, 0},
                                     {0, 0, 0});
     glm::vec3 xDir = glm::cross(myUp, dirNorm);
+    if(!canRoll) {
+      //project the vector onto the plane and maintain length (y component zero)
+      float mag = glm::length(xDir);
+      xDir.y = 0;
+      float shortMag = glm::length(xDir);
+      xDir = (mag / shortMag) * xDir; //scale it up again
+    }
     xDir = glm::normalize(xDir);
     glm::vec3 yDir = glm::cross(dirNorm, xDir);
     yDir = glm::normalize(yDir);

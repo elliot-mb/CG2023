@@ -7,6 +7,7 @@
 
 #include "glm/glm.hpp"
 #include "DepthBuffer.h"
+#include "ModelLoader.h"
 
 class Camera {
 public:
@@ -19,6 +20,8 @@ public:
     void rot(float angleX, float angleY); //move
     void lookAt(glm::vec3 at); //set
     void moveRelative(glm::vec3 delta);
+    void toggleOrbit();
+    void doOrbit(ModelLoader model);
 private:
 
     glm::vec3 myUp();
@@ -26,6 +29,7 @@ private:
     glm::vec3 position;
     float focalLength;
     glm::vec2 screen;
-
     glm::vec3 myFwd();
+
+    bool isOrbiting;
 };
