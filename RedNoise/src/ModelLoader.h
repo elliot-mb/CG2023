@@ -31,6 +31,7 @@ public:
     glm::vec3 getPos();
 private:
     glm::vec3 position;
+    std::vector<string> toTokens(string& lnBlock);
     std::vector<string> tailTokens(std::vector<string> ln, const string& tkn);
     bool isLineType(std::vector<string> ln, const string& tkn);
     string fileName; // name

@@ -20,6 +20,19 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
 //    delete this->tris;
 //}
 
+// just returns non-empty strings
+// splits on space character blocks ' ' of any length
+std::vector<string> ModelLoader::toTokens(string& lnBlock){
+    std::vector<string> canEmptyTkns = Utils::split(lnBlock, ' ');
+    std::vector<string> noEmptyTkns = {};
+    for(string& tkn : canEmptyTkns){
+        if(!tkn.empty()){
+            noEmptyTkns.push_back(tkn);
+        }
+    }
+    return noEmptyTkns;
+}
+
 bool ModelLoader::isLineType(std::vector<string> ln, const string& tkn){
     if(ln.empty()) return false; //no tokens?
     return ln[0] == tkn;
@@ -49,19 +62,19 @@ void ModelLoader::load() {
     vector<vec3> verts = {};
 
     for(string& lnBlock: lines){
-        std::vector<string> ln = Utils::split(lnBlock, ' ');
+        std::vector<string> ln = toTokens(lnBlock);
         for(const string& tkn : ln){
             cout << "_" << tkn << "";
         }
         cout << endl;
         if(isLineType(ln, TKN_MTLLIB)){
-            std::vector<string> tkns =  tailTokens(ln, TKN_MTLLIB);
+            std::vector<string> tkns = tailTokens(ln, TKN_MTLLIB);
             string filename = tkns.back();
             string materialBytes = Utils::fileAsString(filename);
             vector<string> materialLines = Utils::split(materialBytes, '\n');
             for(size_t i = 0; i < materialLines.size() - 1; i++){
-                std::vector<string> mtlLn = Utils::split( materialLines[i], ' ');
-                std::vector<string> mtlLnNext = Utils::split(materialLines[i + 1], ' ');
+                std::vector<string> mtlLn = toTokens(materialLines[i]);
+                std::vector<string> mtlLnNext = toTokens(materialLines[i + 1]);
                 if(isLineType(mtlLn, TKN_NEWMTL)){
                     string name = tailTokens(mtlLn, TKN_NEWMTL).back(); //.back used to get last token for a nameline
                     vector<string> channels =  tailTokens(mtlLnNext, TKN_KD);
