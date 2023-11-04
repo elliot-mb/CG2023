@@ -7,6 +7,7 @@
 #include "CanvasTriangle.h"
 #include <iostream>
 #include <fstream>
+#include <string.h>
 
 ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->scale = scale; //scaling factor
@@ -19,21 +20,22 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
 //    delete this->tris;
 //}
 
-//tokens are taken as the very first thing on a line
-bool ModelLoader::isToken(string& ln, const string& tkn){
-    return ln.substr(0, tkn.length()) == tkn;
+bool ModelLoader::isLineType(std::vector<string> ln, const string& tkn){
+    if(ln.empty()) return false; //no tokens?
+    return ln[0] == tkn;
 }
 
-string ModelLoader::afterToken(string& ln, const string& tkn){
+std::vector<string> ModelLoader::tailTokens(std::vector<string> ln, const string& tkn){
+    if(ln.empty()) throw std::runtime_error("ModelLoader::tailTokens: there is no tail to a line with no tokens");
     //single space accounted for via +1
-    return ln.substr(tkn.length() + 1, ln.length() - (tkn.length() + 1));
+    return {ln.begin() + 1, ln.end()}; //chuck away the first element
 }
 
 //void ModelLoader::colourOnMaterial
 
 void ModelLoader::load() {
     this->bytes = Utils::fileAsString(this->fileName);
-    vector<string> lines = Utils::split(this->bytes, '\n');
+    std::vector<string> lines = Utils::split(this->bytes, '\n');
     //tokens
     const string TKN_MTLLIB = "mtllib";
     const string TKN_SUBOBJ = "o";
@@ -46,17 +48,23 @@ void ModelLoader::load() {
     Colour currentColour = Colour(255, 255, 255);
     vector<vec3> verts = {};
 
-    for(string& ln: lines){
-        if(isToken(ln, TKN_MTLLIB)){
-            string filename = afterToken(ln, TKN_MTLLIB);
+    for(string& lnBlock: lines){
+        std::vector<string> ln = Utils::split(lnBlock, ' ');
+        for(const string& tkn : ln){
+            cout << "_" << tkn << "";
+        }
+        cout << endl;
+        if(isLineType(ln, TKN_MTLLIB)){
+            std::vector<string> tkns =  tailTokens(ln, TKN_MTLLIB);
+            string filename = tkns.back();
             string materialBytes = Utils::fileAsString(filename);
             vector<string> materialLines = Utils::split(materialBytes, '\n');
-            for(size_t i = 0; i < materialLines.size(); i++){
-                string mtlLn = materialLines[i];
-                if(isToken(mtlLn, TKN_NEWMTL)){
-                    string name = afterToken(mtlLn, TKN_NEWMTL);
-                    string colour = afterToken(materialLines[i + 1], TKN_KD);
-                    vector<string> channels = Utils::split(colour, ' ');
+            for(size_t i = 0; i < materialLines.size() - 1; i++){
+                std::vector<string> mtlLn = Utils::split( materialLines[i], ' ');
+                std::vector<string> mtlLnNext = Utils::split(materialLines[i + 1], ' ');
+                if(isLineType(mtlLn, TKN_NEWMTL)){
+                    string name = tailTokens(mtlLn, TKN_NEWMTL).back(); //.back used to get last token for a nameline
+                    vector<string> channels =  tailTokens(mtlLnNext, TKN_KD);
                     vector<int> chVals = {};
                     for(string& ch: channels){
                         float chVal = stof(ch) * 255;
@@ -67,20 +75,19 @@ void ModelLoader::load() {
                 }
             }
         }
-        if(isToken(ln, TKN_SUBOBJ)){
+        if(isLineType(ln, TKN_SUBOBJ)){
             //add sub object names if needed
         }
-        if(isToken(ln, TKN_USEMTL)){
+        if(isLineType(ln, TKN_USEMTL)){
             //look up colour in material map and read
-            string name = afterToken(ln, TKN_USEMTL);
+            string name = tailTokens(ln, TKN_USEMTL).back(); //.back used to get last token for a usemtl line
             currentColour = this->materials[name];
         }
-        if(isToken(ln, TKN_VECTOR)){
+        if(isLineType(ln, TKN_VECTOR)){
             //the string of three floats
-            string floatLine = afterToken(ln, TKN_VECTOR);
-            vector<string> floatsStr = Utils::split(floatLine, ' ');
+            std::vector<string> floatsLn = tailTokens(ln, TKN_VECTOR);
             vector<float> floats;
-            for(const string& flt: floatsStr){
+            for(const string& flt: floatsLn){
                 try{
                     floats.push_back(stof(flt));
                 }catch(invalid_argument& err){ //failed to read as float
@@ -91,11 +98,10 @@ void ModelLoader::load() {
             if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VECTOR conversion resulted in the wrong number of floats");
             verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
         }
-        if(isToken(ln, TKN_FACET)){
-            string facetLine = afterToken(ln, TKN_FACET);
-            vector<string> facetsStr = Utils::split(facetLine, ' ');
+        if(isLineType(ln, TKN_FACET)){
+            vector<string> facetsLn = tailTokens(ln, TKN_FACET);
             vector<int> facets;
-            for(const string& fct: facetsStr){
+            for(const string& fct: facetsLn){
                 string num = Utils::split(fct, '/')[0];
                 facets.push_back(stoi(num));
             }
