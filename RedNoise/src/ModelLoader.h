@@ -31,8 +31,8 @@ public:
     glm::vec3 getPos();
 private:
     glm::vec3 position;
-    string afterToken(string& ln, const string& tkn);
-    bool isToken(string& ln, const string& tkn);
+    std::vector<string> tailTokens(std::vector<string> ln, const string& tkn);
+    bool isLineType(std::vector<string> ln, const string& tkn);
     string fileName; // name
     string bytes; // file bytes
     vector<ModelTriangle> tris; //tris generated from verts and facets
