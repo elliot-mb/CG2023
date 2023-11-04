@@ -81,7 +81,7 @@ std::string Utils::fileAsString(std::string& filename){
     return bytes;
 }
 
-glm::mat3 Utils::rotateX(float angle){
+glm::mat3 Utils::pitch(float angle){
     if(angle < 0) angle += M_PI_2f * 4;
     float cTx = glm::cos(angle + (M_PI_2f * 4));
     float sTx = glm::sin(angle + (M_PI_2f * 4));
@@ -90,7 +90,7 @@ glm::mat3 Utils::rotateX(float angle){
                      {0, sTx,  cTx});
 }
 
-glm::mat3 Utils::rotateY(float angle){
+glm::mat3 Utils::yaw(float angle){
     if(angle < 0) angle += M_PI_2f * 4;
     float cTy = glm::cos(angle + (M_PI_2f * 4));
     float sTy = glm::sin(angle + (M_PI_2f * 4));
@@ -107,16 +107,31 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
                                     {0, 0, 0},
                                     {0, 0, 0});
     glm::vec3 xDir = glm::cross(myUp, dirNorm);
-    if(!canRoll) {
-      //project the vector onto the plane and maintain length (y component zero)
-      float mag = glm::length(xDir);
-      xDir.y = 0;
-      float shortMag = glm::length(xDir);
-      xDir = (mag / shortMag) * xDir; //scale it up again
-    }
+//    if(!canRoll) {
+//      //project the vector onto the plane and maintain length (y component zero)
+//      float mag = glm::length(xDir);
+//      xDir.y = 0;
+//      float shortMag = glm::length(xDir);
+//      xDir = (mag / shortMag) * xDir; //scale it up again
+//    }
     xDir = glm::normalize(xDir);
     glm::vec3 yDir = glm::cross(dirNorm, xDir);
     yDir = glm::normalize(yDir);
+    // then we try to roll it back if we're not allowed to roll
+    if(!canRoll) {
+        //rotate by theta (angle the x axis is away from the origin xz plane) around the direction axis
+
+        //generate some vector in the same direction as x but flat to the plane
+        float mag = glm::length(xDir);
+        glm::vec3 xFlatDir = {xDir.x, 0.0, xDir.z};
+        float shortMag = glm::length(xFlatDir);
+        xFlatDir = xFlatDir * shortMag;
+        //calculate how much roll we incurred in the transformation
+        float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir)) / (mag * shortMag));
+
+//      //project the vector onto the plane and maintain length (y component zero)
+
+    }
     //column 1
     transform[0].x = xDir.x;
     transform[0].y = yDir.x;

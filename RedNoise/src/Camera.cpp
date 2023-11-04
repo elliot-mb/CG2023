@@ -37,6 +37,7 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     float u = (static_cast<float>((this->focalLength * ((-dRot.x) / dRot.z) * w2) + (w2)));
     float v = (static_cast<float>((this->focalLength * (dRot.y / dRot.z) * w2) + (h2)));
     float dist = (dRot.x * dRot.x) + (dRot.y * dRot.y) + (dRot.z * dRot.z);
+    //std::cout << dist << std::endl;
     return std::tuple<glm::vec3, bool>{glm::vec3(u, v, dist), true}; //dist is the distance to the camera squared
 }
 
@@ -46,12 +47,13 @@ void Camera::move(glm::vec3 delta){
 
 //moves the camera relative to its own coordinate system
 void Camera::moveRelative(glm::vec3 delta){
-    //std::cout << myFwd().x << ' ' << myFwd().y << ' ' << myFwd().z << std::endl;
-    glm::mat3 worldToCameraPlane = Utils::rotateMeTo(myFwd()); //transform to rotate the world origin in the direction of the camera
-//    glm::mat3 cameraPlaneToWorld = glm::inverse(worldToCameraPlane);
-//    glm::mat3 cameraPlaneInWorld = cameraPlaneToWorld * this->orientation;
-//
-    this->move(worldToCameraPlane * (delta));
+//    //std::cout << myFwd().x << ' ' << myFwd().y << ' ' << myFwd().z << std::endl;
+//    glm::mat3 worldToCameraPlane = Utils::rotateMeTo(myFwd()); //transform to rotate the world origin in the direction of the camera
+////    glm::mat3 cameraPlaneToWorld = glm::inverse(worldToCameraPlane);
+////    glm::mat3 cameraPlaneInWorld = cameraPlaneToWorld * this->orientation;
+////
+//    this->move(worldToCameraPlane * (delta));
+
 }
 
 void Camera::setPos(glm::vec3 pos) {
@@ -59,7 +61,15 @@ void Camera::setPos(glm::vec3 pos) {
 }
 
 void Camera::rot(float angleX, float angleY) {
-    this->orientation = Utils::rotateX(angleX) * (Utils::rotateY(angleY) * orientation);
+    this->orientation = Utils::pitch(angleX) * this->orientation; //does correct pitch rotation
+    //rotate each camera axis around the world y respectively
+    glm::mat3 yaw = Utils::yaw(angleY); //rotation matrix
+    glm::vec3 camX = yaw * glm::vec3(this->orientation[0].x, this->orientation[1].x, this->orientation[2].x);
+    glm::vec3 camY = yaw * glm::vec3(this->orientation[0].y, this->orientation[1].y, this->orientation[2].y);
+    glm::vec3 camZ = yaw * glm::vec3(this->orientation[0].z, this->orientation[1].z, this->orientation[2].z);
+    this->orientation[0] = {camX.x, camY.x, camZ.x};
+    this->orientation[1] = {camX.y, camY.y, camZ.y};
+    this->orientation[2] = {camX.z, camY.z, camZ.z};
 }
 
 void Camera::lookAt(glm::vec3 at) {
@@ -88,7 +98,7 @@ glm::vec3 Camera::myFwd() {
     return glm::mat3({1, 0, 0},
             {0, 1, 0},
             {0, 0, -1}) * //invert z component
-            glm::normalize(glm::vec3(this->orientation[0].z,
+            glm::normalize(glm::vec3(this->orientation[0].z, //column-wise access
                      this->orientation[1].z,
                      this->orientation[2].z));
 }
@@ -99,7 +109,10 @@ void Camera::toggleOrbit() {
 
 void Camera::doOrbit(ModelLoader model) {
     if(isOrbiting){
+        glm::vec3 toModel = this->position - model.getPos();
+        this->position = model.getPos() + (Utils::yaw(0.01) * toModel); //rotate then translate
         this->lookAt(model.getPos());
-        this->moveRelative(glm::vec3(0.1, 0.0, 0.0));
+
+        //this->moveRelative(glm::vec3(0.1, 0.0, 0.0));
     }
 }
