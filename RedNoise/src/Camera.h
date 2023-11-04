@@ -25,7 +25,13 @@ public:
 private:
 
     glm::vec3 myUp();
-    glm::mat3 orientation;
+    glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
+    // a lot like
+    /*
+     * glm::mat3( {camX.x, camY.x, camZ.x},
+                  {camX.y, camY.y, camZ.y},
+                  {camX.z, camY.z, camZ.z})
+     */
     glm::vec3 position;
     float focalLength;
     glm::vec2 screen;
