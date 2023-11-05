@@ -4,6 +4,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include <fstream>
+#include <iostream>
 
 float Utils::max(float a, float b){
 	if (a >= b) return a;
@@ -103,9 +104,9 @@ glm::mat3 Utils::yaw(float angle){
 // noRoll flag tells us if we want to allow roll in the resulting transformation (do we keep the x axis level)
 glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
     glm::vec3 dirNorm = glm::normalize(direction);
-    glm::mat3 transform = glm::mat3({0, 0, 0},
-                                    {0, 0, 0},
-                                    {0, 0, 0});
+    glm::mat3 orientation = glm::mat3({0, 0, 0},
+                                      {0, 0, 0},
+                                      {0, 0, 0});
     glm::vec3 xDir = glm::cross(myUp, dirNorm);
 //    if(!canRoll) {
 //      //project the vector onto the plane and maintain length (y component zero)
@@ -126,24 +127,24 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
         glm::vec3 xFlatDir = {xDir.x, 0.0, xDir.z};
         float shortMag = glm::length(xFlatDir);
         xFlatDir = xFlatDir * shortMag;
-        //calculate how much roll we incurred in the transformation
+        //calculate how rotated around our z axis we are
         float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir)) / (mag * shortMag));
-
+        std::cout << theta << std::endl;
 //      //project the vector onto the plane and maintain length (y component zero)
 
     }
     //column 1
-    transform[0].x = xDir.x;
-    transform[0].y = yDir.x;
-    transform[0].z = dirNorm.x;
+    orientation[0].x = xDir.x;
+    orientation[0].y = yDir.x;
+    orientation[0].z = dirNorm.x;
     //column 2
-    transform[1].x = xDir.y;
-    transform[1].y = yDir.y;
-    transform[1].z = dirNorm.y;
+    orientation[1].x = xDir.y;
+    orientation[1].y = yDir.y;
+    orientation[1].z = dirNorm.y;
     //column 3
-    transform[2].x = xDir.z;
-    transform[2].y = yDir.z;
-    transform[2].z = dirNorm.z;
+    orientation[2].x = xDir.z;
+    orientation[2].y = yDir.z;
+    orientation[2].z = dirNorm.z;
 
-    return transform;
+    return orientation;
 }
