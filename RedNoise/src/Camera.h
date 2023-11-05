@@ -25,7 +25,6 @@ public:
 private:
 
     glm::vec3 myUp(); //return normalised up vector
-    glm::vec3 myFwd(); //return normalised forward vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
     // a lot like
     /*

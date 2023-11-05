@@ -92,17 +92,6 @@ glm::vec3 Camera::myUp() {
                      this->orientation[2].y));
 }
 
-//normalised vector
-glm::vec3 Camera::myFwd() {
-    //this transformation is applied to get the forward vector, not the backward one
-    return glm::mat3({1, 0, 0},
-            {0, 1, 0},
-            {0, 0, -1}) * //invert z component
-            glm::normalize(glm::vec3(this->orientation[0].z, //column-wise access
-                     this->orientation[1].z,
-                     this->orientation[2].z));
-}
-
 void Camera::toggleOrbit() {
     this->isOrbiting = !this->isOrbiting;
 }
