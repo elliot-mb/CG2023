@@ -24,7 +24,8 @@ public:
     void doOrbit(ModelLoader model);
 private:
 
-    glm::vec3 myUp();
+    glm::vec3 myUp(); //return normalised up vector
+    glm::vec3 myFwd(); //return normalised forward vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
     // a lot like
     /*
@@ -32,10 +33,9 @@ private:
                   {camX.y, camY.y, camZ.y},
                   {camX.z, camY.z, camZ.z})
      */
-    glm::vec3 position;
-    float focalLength;
-    glm::vec2 screen;
-    glm::vec3 myFwd();
+    glm::vec3 position; // offset from world origin
+    float focalLength; // distance of the clipping plane along the z axis
+    glm::vec2 screen; //resolution
 
     bool isOrbiting;
 };
