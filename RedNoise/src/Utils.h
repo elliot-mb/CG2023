@@ -17,4 +17,5 @@ namespace Utils{
   glm::mat3 pitch(float theta);
   glm::mat3 yaw(float theta);
   glm::mat3 rotateMeTo(glm::vec3 direction, glm::vec3 myUp = glm::vec3(0,1,0), bool canRoll = true);
+  glm::mat3 rod(glm::vec3 w, float theta);
 }

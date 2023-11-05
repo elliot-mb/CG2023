@@ -100,6 +100,16 @@ glm::mat3 Utils::yaw(float angle){
                      {-sTy, 0, cTy});
 }
 
+//finds the rodrigues rotation formula for rotation around an arbitrary axis
+//more information: https://mathworld.wolfram.com/RodriguesRotationFormula.html
+//w must be noramlised!
+glm::mat3 Utils::rod(glm::vec3 w, float theta){
+    glm::mat3 wTilde = {{0, -w.z, w.y},
+                        {w.z, 0, -w.x},
+                        {-w.y, w.x, 0}};
+    return glm::mat3(1.0) + (glm::sin(theta) * wTilde) + ((1 - glm::cos(theta)) * wTilde * wTilde);
+}
+
 //if i give no up, they get to assume that my up is that of the world origin (see default argument in defn.)
 // noRoll flag tells us if we want to allow roll in the resulting transformation (do we keep the x axis level)
 glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
@@ -108,29 +118,20 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
                                       {0, 0, 0},
                                       {0, 0, 0});
     glm::vec3 xDir = glm::cross(myUp, dirNorm);
-//    if(!canRoll) {
-//      //project the vector onto the plane and maintain length (y component zero)
-//      float mag = glm::length(xDir);
-//      xDir.y = 0;
-//      float shortMag = glm::length(xDir);
-//      xDir = (mag / shortMag) * xDir; //scale it up again
-//    }
     xDir = glm::normalize(xDir);
     glm::vec3 yDir = glm::cross(dirNorm, xDir);
     yDir = glm::normalize(yDir);
     // then we try to roll it back if we're not allowed to roll
     if(!canRoll) {
         //rotate by theta (angle the x axis is away from the origin xz plane) around the direction axis
-
         //generate some vector in the same direction as x but flat to the plane
-        float mag = glm::length(xDir);
-        glm::vec3 xFlatDir = {xDir.x, 0.0, xDir.z};
-        float shortMag = glm::length(xFlatDir);
-        xFlatDir = xFlatDir * shortMag;
+        glm::vec3 xFlatDir = glm::normalize(glm::vec3(xDir.x, 0.0, xDir.z));
         //calculate how rotated around our z axis we are
-        float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir)) / (mag * shortMag));
-        std::cout << theta << std::endl;
-//      //project the vector onto the plane and maintain length (y component zero)
+        float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir))) * glm::normalize(xDir.y); //normalise multiplication is for signing rotation correctly
+        glm::mat3 rotUnroll = Utils::rod(dirNorm, theta); // rotation around z axis theta rads
+        std::cout << glm::normalize(xDir.y) << std::endl;
+        xDir = rotUnroll * xDir;
+        yDir = rotUnroll * yDir;
 
     }
     //column 1
