@@ -101,8 +101,7 @@ glm::mat3 Utils::yaw(float angle){
 }
 
 //finds the rodrigues rotation formula for rotation around an arbitrary axis
-//more information: https://mathworld.wolfram.com/RodriguesRotationFormula.html
-//w must be noramlised!
+//w must be noramlised
 glm::mat3 Utils::rod(glm::vec3 w, float theta){
     glm::mat3 wTilde = {{0, -w.z, w.y},
                         {w.z, 0, -w.x},
@@ -121,18 +120,15 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
     xDir = glm::normalize(xDir);
     glm::vec3 yDir = glm::cross(dirNorm, xDir);
     yDir = glm::normalize(yDir);
-    // then we try to roll it back if we're not allowed to roll
     if(!canRoll) {
-        //rotate by theta (angle the x axis is away from the origin xz plane) around the direction axis
+        //rotate by theta (angle the camera x axis is away from the world xz plane) around the direction (camera z) axis
         //generate some vector in the same direction as x but flat to the plane
         glm::vec3 xFlatDir = glm::normalize(glm::vec3(xDir.x, 0.0, xDir.z));
         //calculate how rotated around our z axis we are
         float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir))) * glm::normalize(xDir.y); //normalise multiplication is for signing rotation correctly
         glm::mat3 rotUnroll = Utils::rod(dirNorm, theta); // rotation around z axis theta rads
-        std::cout << glm::normalize(xDir.y) << std::endl;
         xDir = rotUnroll * xDir;
         yDir = rotUnroll * yDir;
-
     }
     //column 1
     orientation[0].x = xDir.x;
