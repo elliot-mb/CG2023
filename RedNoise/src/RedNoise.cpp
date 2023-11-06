@@ -18,15 +18,20 @@ using namespace glm;
 void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, Camera& camera, int frame) {
 	window.clearPixels();
     depthBuffer.reset();
-    vector<ModelTriangle> tris = model.getTris();
+    vector<Triangle> tris = model.getTris();
     for(size_t i = 0; i < tris.size(); i++){
-        ModelTriangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
-        auto [pt0, valid0] = camera.getCanvasIntersectionPoint(thisTri.vertices[0]); //project to flat (z becomes the distance to the camera)
-        auto [pt1, valid1] = camera.getCanvasIntersectionPoint(thisTri.vertices[1]);
-        auto [pt2, valid2] = camera.getCanvasIntersectionPoint(thisTri.vertices[2]);
+        Triangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
+        auto [pt0, valid0] = camera.getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
+        auto [pt1, valid1] = camera.getCanvasIntersectionPoint(thisTri.v1());
+        auto [pt2, valid2] = camera.getCanvasIntersectionPoint(thisTri.v2());
         if(valid0 && valid1 && valid2){
-            Triangle t = *new Triangle(pt0, pt1, pt2, thisTri.colour);
-            t.fill(window, depthBuffer);
+            Colour thisColour = thisTri.getColour();
+            thisTri.setV0(pt0);
+            thisTri.setV1(pt1);
+            thisTri.setV2(pt2);
+            if(thisTri.isTextured()) {
+                thisTri.fillTexture(window, depthBuffer);
+            } else { thisTri.fill(window, depthBuffer); }
         }
     }
 

@@ -5,6 +5,7 @@
 #include "ModelLoader.h"
 #include "Utils.h"
 #include "CanvasTriangle.h"
+#include "Triangle.h"
 #include <iostream>
 #include <fstream>
 #include <string.h>
@@ -13,6 +14,7 @@ const string ModelLoader::TKN_MTLLIB = "mtllib";
 const string ModelLoader::TKN_SUBOBJ = "o";
 const string ModelLoader::TKN_USEMTL = "usemtl";
 const string ModelLoader::TKN_VERTEX = "v";
+const string ModelLoader::TKN_VTXTEX = "vt";
 const string ModelLoader::TKN_FACET  = "f";
 const string ModelLoader::TKN_NEWMTL = "newmtl";
 const string ModelLoader::TKN_KD     = "Kd";
@@ -23,7 +25,7 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
-    this->tris = vector<ModelTriangle>{}; //new modeltriangle vector
+    this->tris = vector<Triangle>{}; //new modeltriangle vector
     this->position = position;
 }
 //ModelLoader::~ModelLoader(){
@@ -120,28 +122,60 @@ void ModelLoader::asVertex(std::vector<string> ln, vector<vec3>& verts){
     verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
 }
 
-void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, Colour& currentColour, MaybeTexture& currentTexture){
+void ModelLoader::asVertexTexture(std::vector<string> ln, vector<vec2>& textureVerts){
+    std::vector<string> floatsLn = tailTokens(ln, TKN_VTXTEX); //LOOKS LIKE vt x x
+    vector<float> floats;                                          //           where x is a float
+    for(const string& flt: floatsLn){
+        try{
+            floats.push_back(stof(flt));
+        }catch(invalid_argument& err){ //failed to read as float
+            std::cout << "warning, reading as float failed for '" << flt << "':" << err.what() << std::endl;
+            floats.push_back(static_cast<float>(stoi(flt)));
+        }
+    }
+    //two floats
+    if(floats.size() != 2) throw runtime_error("ModelLoader::load(): TKN_VTXTEX conversion resulted in the wrong number of floats");
+    textureVerts.push_back(glm::vec2(floats[0], floats[1]) * this->scale);
+}
+
+
+void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<vec2>& textureVerts, Colour& currentColour, MaybeTexture& currentTexture){
     vector<string> facetsLn = tailTokens(ln, TKN_FACET);
-    vector<int> facetVerts = {};
-    vector<int> textureVerts = {}; //stays empty if no valid texture is present
+    vector<int> facetVertsIndices = {};
+    vector<int> textureVertsIndices = {}; //stays empty if no valid texture is present
     size_t VERT_TEXTURE_LEN = 2;
+    size_t VERT_COUNT = 3;
     for(string& fct: facetsLn){
         std::vector<string> vertMaybeTexture = toTokens(fct, '/'); //vert and potential texture coord
         bool hasTextureVert = vertMaybeTexture.size() == VERT_TEXTURE_LEN;
-        for(string s : vertMaybeTexture) std::cout << "'" << s << "'" << endl;
+        //for(string s : vertMaybeTexture) std::cout << "'" << s << "'" << endl;
         if(hasTextureVert && !currentTexture.second) //there is a texture vertex but no valid current texture
             throw runtime_error("ModelLoader::asFacet: facet has a texture vertex but no valid texture");
-
-        facetVerts.push_back(stoi(vertMaybeTexture[0]));
-        if(hasTextureVert) textureVerts.push_back(stoi(vertMaybeTexture[1]));
+        if(!hasTextureVert && currentTexture.second)
+            throw runtime_error("ModelLoader::asFacet: facet has no texture vertex but a valid texture");
+        facetVertsIndices.push_back(stoi(vertMaybeTexture[0]));
+        if(hasTextureVert) textureVertsIndices.push_back(stoi(vertMaybeTexture[1]));
     }
-    if(facetVerts.size() != 3) throw runtime_error("ModelLoader::load(): TKN_FACET facet does not have three vertices");
-    if(textureVerts.size() != 3 && !textureVerts.empty()) throw runtime_error("ModelLoader::load(): invalid number of texture coordinates (not none, not three)");
+    if(facetVertsIndices.size() != VERT_COUNT) throw runtime_error("ModelLoader::load(): TKN_FACET facet does not have three vertices");
+    if(textureVertsIndices.size() != VERT_COUNT && !textureVertsIndices.empty()) throw runtime_error("ModelLoader::load(): invalid number of texture coordinates (not none, not three)");
     //create a triangle
-    vec3 v0 = verts[facetVerts[0] - 1] + this->position;
-    vec3 v1 = verts[facetVerts[1] - 1] + this->position;
-    vec3 v2 = verts[facetVerts[2] - 1] + this->position;
-    this->tris.push_back(*new ModelTriangle(v0, v1, v2, currentColour));
+    vec3 v0 = verts[facetVertsIndices[0] - 1] + this->position;
+    vec3 v1 = verts[facetVertsIndices[1] - 1] + this->position;
+    vec3 v2 = verts[facetVertsIndices[2] - 1] + this->position;
+    if(currentTexture.second){ //do we have a valid texture mapping
+        TextureMap texture = currentTexture.first;
+        size_t w = texture.width;
+        size_t h = texture.height;
+        glm::vec2 vt0 = textureVerts[textureVertsIndices[0] - 1];
+        glm::vec2 vt1 = textureVerts[textureVertsIndices[1] - 1];
+        glm::vec2 vt2 = textureVerts[textureVertsIndices[2] - 1];
+        CanvasPoint scaledVt0 = *new CanvasPoint(vt0.x * static_cast<float>(w), vt0.y * static_cast<float>(h));
+        CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
+        CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
+        CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
+        this->tris.push_back(*new Triangle(v0, v1, v2, currentColour, texture, textureTri));
+    }else this->tris.push_back(*new Triangle(v0, v1, v2, currentColour));
+
 }
 
 // main object loading function
@@ -152,7 +186,8 @@ void ModelLoader::load() {
 
     Colour currentColour = Colour(255, 255, 255);
     MaybeTexture currentTexture = pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
-    vector<vec3> verts = {};
+    std::vector<vec3> verts = {};
+    std::vector<vec2> textureVerts = {};
 
     for(string& lnBlock: lines){
         std::vector<string> ln = toTokens(lnBlock);
@@ -165,7 +200,8 @@ void ModelLoader::load() {
             if(isLineType(ln, TKN_SUBOBJ)); //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
             if(isLineType(ln, TKN_VERTEX)) asVertex(ln, verts);
-            if(isLineType(ln, TKN_FACET)) asFacet(ln, verts, currentColour, currentTexture);
+            if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
+            if(isLineType(ln, TKN_FACET)) asFacet(ln, verts, textureVerts, currentColour, currentTexture);
         }
     }
 
@@ -176,12 +212,12 @@ glm::vec3 ModelLoader::getPos(){
 }
 
 void ModelLoader::printTris() {
-    for(ModelTriangle& tri : tris){
-        cout << tri << endl;
-        cout << tri.colour << endl;
-    }
+//    for(Triangle& tri : tris){
+//        cout << tri << endl;
+//        cout << tri.colour << endl;
+//    }
 }
 
-vector<ModelTriangle> ModelLoader::getTris() {
+vector<Triangle> ModelLoader::getTris() {
     return this->tris;
 }

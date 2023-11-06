@@ -72,7 +72,7 @@ void Camera::rot(float angleX, float angleY) {
 
 void Camera::lookAt(glm::vec3 at) {
     glm::vec3 direction = this->position - at;
-    this->orientation = Utils::rotateMeTo(direction, this->myUp(), false);
+    this->orientation = Utils::rotateMeTo(direction, glm::vec3(0, 1, 0), true);
 }
 //
 //void Camera::lookAt(glm::vec3 pt){

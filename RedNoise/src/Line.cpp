@@ -18,14 +18,18 @@ void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, flo
     }
 }
 
-void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, vec2 posTA, vec2 posTB, TextureMap& texture, float weight){
-    vector<vec2> pixels = Line::pixels(posA, posB);
+void Line::draw(DrawingWindow& window, DepthBuffer& db, vec3 posA, vec3 posB, vec2 posTA, vec2 posTB, TextureMap& texture, float weight){
+    vector<vec3> pixels = Line::pixels(posA, posB);
     vector<vec2> pixelsT = Line::pixels(posTA, posTB);
     float textureStep = static_cast<float>(pixelsT.size()) / static_cast<float>(pixels.size());
     float texturePoint = 0; //start at 0th texture pixel
-    for(vec2 & pixel : pixels){
+    for(vec3 & pixel : pixels){
+        int x = static_cast<int>(round(pixel.x));
+        int y = static_cast<int>(round(pixel.y));
         uint32_t pt = texture.pixel(static_cast<int>(pixelsT[floor(texturePoint)].x), static_cast<int>(pixelsT[floor(texturePoint)].y));
-        window.setPixelColour(static_cast<ulong>(round(pixel.x)), static_cast<ulong>(round(pixel.y)), pt);
+        if(db.putPixel(glm::vec3(x, y, pixel.z))){
+            window.setPixelColour(static_cast<ulong>(pixel.x), static_cast<ulong>(pixel.y), pt);
+        }
         texturePoint += textureStep;
     }
 

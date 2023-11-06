@@ -12,6 +12,7 @@
 #include <map>
 #include "ModelTriangle.h"
 #include "TextureMap.h"
+#include "Triangle.h"
 
 using namespace std;
 using namespace glm;
@@ -28,7 +29,7 @@ public:
     // shows all tris coords
     void printTris();
 
-    vector<ModelTriangle> getTris();
+    vector<Triangle> getTris();
 
     glm::vec3 getPos();
 private:
@@ -38,7 +39,7 @@ private:
     bool isLineType(std::vector<string> ln, const string& tkn);
     string fileName; // name
     string bytes; // file bytes
-    vector<ModelTriangle> tris; //tris generated from verts and facets
+    vector<Triangle> tris; //tris generated from verts and facets
     map<string, Colour> materials; //vector of colour maps
     map<std::string, TextureMap> textures;
     float scale;
@@ -51,12 +52,16 @@ private:
     static const string TKN_VERTEX;
     void asVertex(vector<string> ln, vector<vec3> &verts);
     static const string TKN_FACET;
-    void asFacet(vector<string> ln, vector<vec3> &verts, Colour &currentColour, MaybeTexture &currentTexture);
+    void asFacet(vector<string> ln, vector<vec3> &verts, vector<vec2>& textureVerts, Colour &currentColour, MaybeTexture &currentTexture);
     static const string TKN_NEWMTL;
     static const string TKN_KD;
     static const string TKN_COMMNT;
     static const string TKN_TXTURE;
 
     vector<string> toTokens(string &lnBlock, char splitOn);
+
+    static const string TKN_VTXTEX;
+
+    void asVertexTexture(vector<string> ln, vector<vec2> &textureVerts);
 };
 
