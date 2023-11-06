@@ -23,10 +23,8 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
 std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexPosition) {
     //assume vertex has already been transposed to world origin
     //y
-    float dz = this->position.z - vertexPosition.z;
-    float dy = this->position.y - vertexPosition.y;
-    float dx = this->position.x - vertexPosition.x;
-    glm::vec3 dRot = this->orientation * (glm::vec3(dx, dy, dz));
+    glm::vec3 dPos = this->position - vertexPosition;
+    glm::vec3 dRot = this->orientation * dPos;
 
     if(dRot.z < this->focalLength){
         //behind image plane
@@ -36,7 +34,7 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     float h2 = screen.y * 0.5;
     float u = (static_cast<float>((this->focalLength * ((-dRot.x) / dRot.z) * w2) + (w2)));
     float v = (static_cast<float>((this->focalLength * (dRot.y / dRot.z) * w2) + (h2)));
-    float dist = (dRot.x * dRot.x) + (dRot.y * dRot.y) + (dRot.z * dRot.z);
+    float dist = 1 / dRot.z; //NOT 1 / glm::length(dRot); //z is literally the depth from the camera
     //std::cout << dist << std::endl;
     return std::tuple<glm::vec3, bool>{glm::vec3(u, v, dist), true}; //dist is the distance to the camera squared
 }
