@@ -20,7 +20,6 @@ DepthBuffer::DepthBuffer(int width, int height) {
 
 //true if pixel is to be replaced
 bool DepthBuffer::putPixel(glm::vec3 pos) {
-    float recip = 1 / pos.z;
     int x = static_cast<int>(pos.x); //these must be rounded
     int y = static_cast<int>(pos.y);
     if(x > width - 1 || x < 0){
@@ -29,8 +28,8 @@ bool DepthBuffer::putPixel(glm::vec3 pos) {
     if(y > height - 1 || y < 0){
         return false; //outside draw window
     }
-    if(recip > this->buff[y][x]){ //replace this pixel!
-        buff[y][x] = recip;
+    if(pos.z > this->buff[y][x]){ //replace this pixel!
+        buff[y][x] = pos.z;
         return true;
     } //else do nothing and return false
 

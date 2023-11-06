@@ -117,15 +117,10 @@ void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
 
     int topLines = static_cast<int>(ceil(hTop)) + 1;
     int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 2;
-
-    auto [topSideA, topSideB] = interpolateTwoSides(glm::vec2(vTop), glm::vec2(vSplit), glm::vec2(vNew), topLines);
-    auto [bottomSideA, bottomSideB] = interpolateTwoSides(glm::vec2(vBottom), glm::vec2(vSplit), glm::vec2(vNew), bottomLines);
-    std::vector<float> depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);
-    std::vector<float> depthsTopSideB = Utils::interpolateSingleFloats(vTop.z, vNew.z, topLines);
-    std::vector<float> depthsBottomSideA = Utils::interpolateSingleFloats(vBottom.z, vSplit.z, bottomLines);
-    std::vector<float> depthsBottomSideB = Utils::interpolateSingleFloats(vBottom.z, vNew.z, bottomLines);
-
-    if(glm::ceil(hTop) > 0.0){
+    if(topLines > 0) {
+        auto [topSideA, topSideB] = interpolateTwoSides(glm::vec2(vTop), glm::vec2(vSplit), glm::vec2(vNew), topLines);
+        std::vector<float> depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);
+        std::vector<float> depthsTopSideB = Utils::interpolateSingleFloats(vTop.z, vNew.z, topLines);
         for(int i = 0; i < topLines; i++){
             float xA = topSideA[i];
             float y = vTop.y + static_cast<float>(i);
@@ -135,7 +130,10 @@ void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
             Line::draw(window, db, glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), this->colour, 1);
         }
     }
-    if(glm::ceil(hBottom) > 0.0) {
+    if(bottomLines > 0){
+        auto [bottomSideA, bottomSideB] = interpolateTwoSides(glm::vec2(vBottom), glm::vec2(vSplit), glm::vec2(vNew), bottomLines);
+        std::vector<float> depthsBottomSideA = Utils::interpolateSingleFloats(vBottom.z, vSplit.z, bottomLines);
+        std::vector<float> depthsBottomSideB = Utils::interpolateSingleFloats(vBottom.z, vNew.z, bottomLines);
         for(int i = 0; i < bottomLines; i++){
             float xA = bottomSideA[i];
             float y = vBottom.y - static_cast<float>(i) + 1;

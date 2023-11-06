@@ -82,7 +82,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35, glm::vec3(0, 0, 0));
+    ModelLoader* cornellLoader = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, 0, 0));
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
