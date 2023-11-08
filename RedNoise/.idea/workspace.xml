@@ -28,14 +28,10 @@
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Line.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Line.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Line.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Line.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Triangle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Triangle.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Utils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/textured-cornell-box.mtl" beforeDir="false" afterPath="$PROJECT_DIR$/textured-cornell-box.mtl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/textured-cornell-box.obj" beforeDir="false" afterPath="$PROJECT_DIR$/textured-cornell-box.obj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +70,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -84,6 +81,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
     </key>
@@ -116,7 +116,8 @@
       <workItem from="1699218752697" duration="6054000" />
       <workItem from="1699267116697" duration="6686000" />
       <workItem from="1699275496703" duration="6957000" />
-      <workItem from="1699283881990" duration="127000" />
+      <workItem from="1699283881990" duration="1591000" />
+      <workItem from="1699476587742" duration="340000" />
     </task>
     <servers />
   </component>

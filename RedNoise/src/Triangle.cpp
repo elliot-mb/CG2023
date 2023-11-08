@@ -98,14 +98,14 @@ std::tuple<std::vector<float>, std::vector<float>> Triangle::interpolateTwoSides
 }
 
 void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
-    std::vector<glm::vec3> vs = {this->tri3[0], this->tri3[1], this->tri3[2]};
+    std::vector<glm::vec3> vs = {v0(), v1(), v2()};
     int outside = 0;
-    for(glm::vec3 v : vs){
-        if (v.x < 0 || v.x > static_cast<float>(window.width) || v.y < 0 || v.y > static_cast<float>(window.height)){
-            outside++;
-        }
-    }
-    if(outside == static_cast<int>(vs.size())) return; //are all the the vertices outside of the screen
+//    for(glm::vec3 v : vs){
+//        if (v.x < 0 || v.x > static_cast<float>(window.width) || v.y < 0 || v.y > static_cast<float>(window.height)){
+//            outside++;
+//        }
+//    }
+//    if(outside == static_cast<int>(vs.size())) return; //are all the the vertices outside of the screen
 
     std::sort(vs.begin(), vs.end(), [] (const glm::vec3& v0, const glm::vec3& v1) -> bool {return v0.y < v1.y;}); //highest to lowest
 
@@ -161,13 +161,12 @@ void Triangle::fillTexture(DrawingWindow &window, DepthBuffer& db){//, glm::vec2
     auto [vTop, vNew, vSplit, vBottom] = splitTriangle(vs);
     float hTop = vSplit.y - vTop.y; //height of top triangle (number of interpolation steps)
     float hBottom = vBottom.y - vSplit.y; //height of bottom triangle (number of interpolation steps)
+    float totalLines = hTop + hBottom;
 
-    int topLines = static_cast<int>(ceil(hTop));
-    int topY = static_cast<int>(round(vTop.y));
+    int topLines = static_cast<int>(ceil(hTop)) + 1;
+    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 2;
+
     auto [topSideA, topSideB] = interpolateTwoSides(glm::vec2(vTop), glm::vec2(vSplit), glm::vec2(vNew), topLines);
-
-    int bottomLines = static_cast<int>(ceil(hBottom));
-    int bottomY = static_cast<int>(round(vBottom.y));
     auto [bottomSideA, bottomSideB] = interpolateTwoSides(glm::vec2(vBottom), glm::vec2(vSplit), glm::vec2(vNew), bottomLines);
 
     std::vector<glm::vec2> vts;
@@ -177,45 +176,36 @@ void Triangle::fillTexture(DrawingWindow &window, DepthBuffer& db){//, glm::vec2
     glm::vec2 vtBot = vts[2];
     float fracDownLongSide = (vSplit.y - vTop.y) / (vBottom.y - vTop.y); //used to place vSplit for texture triangle
     glm::vec2 vtNew = vtTop + (fracDownLongSide * (vtBot - vtTop));
-    std::vector<glm::vec2> topSideTextureA;
-    std::vector<glm::vec2> topSideTextureB;
-    std::vector<float> depthsTopSideA;
-    std::vector<float> depthsTopSideB;
+
     if(topLines > 0){
-        depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);
-        depthsTopSideB = Utils::interpolateSingleFloats(vTop.z, vNew.z, topLines);
-        topSideTextureA = Utils::interpolateTwoElementValues(vtTop, vtMid, topLines); //same number of texture lines as display lines
-        topSideTextureB = Utils::interpolateTwoElementValues(vtTop, vtNew, topLines);
+        std::vector<float> depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);
+        std::vector<float> depthsTopSideB = Utils::interpolateSingleFloats(vTop.z, vNew.z, topLines);
+        std::vector<glm::vec2> topSideTextureA = Utils::interpolateTwoElementValues(vtTop, vtMid, topLines); //same number of texture lines as display lines
+        std::vector<glm::vec2> topSideTextureB = Utils::interpolateTwoElementValues(vtTop, vtNew, topLines);
+        for(int i = 0; i < topLines; i++){
+            float xA = topSideA[i];
+            float y =  vTop.y + static_cast<float>(i); // offset stops it drawing the same line twice
+            float xB = topSideB[i];
+            float zA = depthsTopSideA[i];
+            float zB = depthsTopSideB[i];
+            Line::draw(window, db,  glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), round(topSideTextureA[i]), round(topSideTextureB[i]), this->texture, 1);
+        }
     }
-    std::vector<glm::vec2> bottomSideTextureA;
-    std::vector<glm::vec2> bottomSideTextureB;
-    std::vector<float> depthsBottomSideA;
-    std::vector<float> depthsBottomSideB;
     if(bottomLines > 0){
-        depthsBottomSideA = Utils::interpolateSingleFloats(vBottom.z, vSplit.z, bottomLines);
-        depthsBottomSideB = Utils::interpolateSingleFloats(vBottom.z, vNew.z, bottomLines);
-        bottomSideTextureA = Utils::interpolateTwoElementValues(vtBot, vtMid, bottomLines);
-        bottomSideTextureB = Utils::interpolateTwoElementValues(vtBot, vtNew, bottomLines);
+        std::vector<float> depthsBottomSideA = Utils::interpolateSingleFloats(vBottom.z, vSplit.z, bottomLines);
+        std::vector<float> depthsBottomSideB = Utils::interpolateSingleFloats(vBottom.z, vNew.z, bottomLines);
+        std::vector<glm::vec2> bottomSideTextureA = Utils::interpolateTwoElementValues(vtBot, vtMid, bottomLines);
+        std::vector<glm::vec2> bottomSideTextureB = Utils::interpolateTwoElementValues(vtBot, vtNew, bottomLines);
+        for(int i = 0; i < bottomLines; i++){
+            float xA = bottomSideA[i];
+            float y = vBottom.y - static_cast<float>(i); // offset stops it drawing the same line twice
+            float xB = bottomSideB[i];
+            float zA = depthsBottomSideA[i];
+            float zB = depthsBottomSideB[i];
+            Line::draw(window, db,  glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), round(bottomSideTextureA[i]), round(bottomSideTextureB[i]), this->texture, 1);
+        }
     }
 
-    for(int i = 0; i < topLines; i++){
-        const int xA = static_cast<int>(round(topSideA[i]));
-        const int y = topY + i + 1; // offset stops it drawing the same line twice
-        const int xB = static_cast<int>(round(topSideB[i]));
-        float zA = depthsTopSideA[i];
-        float zB = depthsTopSideB[i];
-        Line::draw(window, db,  glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), round(topSideTextureA[i]), round(topSideTextureB[i]), this->texture, 1);
-    }
-    // draw middle line
-    for(int i = 0; i < bottomLines; i++){
-        const int xA = static_cast<int>(round(bottomSideA[i]));
-        const int y = bottomY - i - 1; // offset stops it drawing the same line twice
-        const int xB = static_cast<int>(round(bottomSideB[i]));
-        float zA = depthsBottomSideA[i];
-        float zB = depthsBottomSideB[i];
-        Line::draw(window, db,  glm::vec3(xA, y, zA), glm::vec3(xB, y, zB), round(bottomSideTextureA[i]), round(bottomSideTextureB[i]), this->texture, 1);
-    }
-    //this->drawOutline(window);
 }
 
 glm::mat3 Triangle::randomCanvasTriangle() {
