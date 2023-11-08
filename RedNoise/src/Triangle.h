@@ -20,11 +20,18 @@ public:
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture);
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri);
 
+    bool isTextured();
     void draw(DrawingWindow& window); //just needs the window to draw tri
-    void fill(DrawingWindow& window);
     void fill(DrawingWindow& window, DepthBuffer& db);
-    void fillTexture(DrawingWindow& window);
+    void fillTexture(DrawingWindow& window, DepthBuffer& db);
     void drawOutline(DrawingWindow& window, Colour colour);
+    glm::vec3 v0();
+    void setV0(glm::vec3 v0);
+    glm::vec3 v1();
+    void setV1(glm::vec3 v1);
+    glm::vec3 v2();
+    void setV2(glm::vec3 v2);
+    Colour getColour();
 private:
     //vtop vnew vsplit vbottom
     std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3> splitTriangle(std::vector<glm::vec3> vs);

@@ -393,6 +393,30 @@ src/DepthBuffer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RedNoise.dir/build.make CMakeFiles/RedNoise.dir/src/DepthBuffer.cpp.s
 .PHONY : src/DepthBuffer.cpp.s
 
+src/Interpolate.o: src/Interpolate.cpp.o
+.PHONY : src/Interpolate.o
+
+# target to build an object file
+src/Interpolate.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RedNoise.dir/build.make CMakeFiles/RedNoise.dir/src/Interpolate.cpp.o
+.PHONY : src/Interpolate.cpp.o
+
+src/Interpolate.i: src/Interpolate.cpp.i
+.PHONY : src/Interpolate.i
+
+# target to preprocess a source file
+src/Interpolate.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RedNoise.dir/build.make CMakeFiles/RedNoise.dir/src/Interpolate.cpp.i
+.PHONY : src/Interpolate.cpp.i
+
+src/Interpolate.s: src/Interpolate.cpp.s
+.PHONY : src/Interpolate.s
+
+# target to generate assembly for a file
+src/Interpolate.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RedNoise.dir/build.make CMakeFiles/RedNoise.dir/src/Interpolate.cpp.s
+.PHONY : src/Interpolate.cpp.s
+
 src/Line.o: src/Line.cpp.o
 .PHONY : src/Line.o
 
@@ -531,6 +555,9 @@ help:
 	@echo "... src/DepthBuffer.o"
 	@echo "... src/DepthBuffer.i"
 	@echo "... src/DepthBuffer.s"
+	@echo "... src/Interpolate.o"
+	@echo "... src/Interpolate.i"
+	@echo "... src/Interpolate.s"
 	@echo "... src/Line.o"
 	@echo "... src/Line.i"
 	@echo "... src/Line.s"
