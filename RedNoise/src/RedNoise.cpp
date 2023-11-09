@@ -12,11 +12,11 @@
 using namespace std;
 using namespace glm;
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 320
+#define HEIGHT 240
 
 void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, Camera& camera, int frame) {
-	window.clearPixels();
+	//window.clearPixels();
     depthBuffer.reset();
     vector<Triangle> tris = model.getTris();
     for(size_t i = 0; i < tris.size(); i++){
@@ -34,8 +34,6 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
             } else { thisTri.fill(window, depthBuffer); }
         }
     }
-
-    camera.doOrbit(model);
 
 }
 
@@ -77,7 +75,9 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
         else if (event.key.keysym.sym == SDLK_l) {
             camera.lookAt(model.getPos());
         }
-
+        else if (event.key.keysym.sym == SDLK_SPACE){
+            camera.toggleRaytrace();
+        }
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
 		window.saveBMP("output.bmp");
@@ -110,11 +110,16 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
+
+
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornellLoader);
+        window.clearPixels();
 
-        draw(window, *depthBuffer, *cornellLoader, *camera, frame);
+        camera->doOrbit(*cornellLoader);
+        camera->doRaytracing(window, *cornellLoader);
+        //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
         //camera->move(glm::vec3(0.0, -0.01, 0));
 //        camera->lookAt(0.0, 0.0);
