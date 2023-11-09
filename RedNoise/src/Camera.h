@@ -21,7 +21,11 @@ public:
     void lookAt(glm::vec3 at); //set
     void moveRelative(glm::vec3 delta);
     void toggleOrbit();
+    void toggleRaytrace();
     void doOrbit(ModelLoader model);
+    pair<Triangle, bool> getClosestIntersection(vec3 rayDir, ModelLoader &model);
+    void raycast(DrawingWindow &window, ModelLoader &model);
+    void doRaytracing(DrawingWindow &window, ModelLoader &model);
 private:
 
     glm::vec3 myUp(); //return normalised up vector
@@ -37,4 +41,12 @@ private:
     glm::vec2 screen; //resolution
 
     bool isOrbiting;
+    bool isRaytracing;
+
+    vec3 myFwd();
+
+    vec3 myRight();
+
+    vec3 buildCameraRay(int x, int y);
+
 };
