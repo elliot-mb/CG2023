@@ -21,12 +21,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-10-27T14-02-31-0604.json" beforeDir="false" afterPath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-11-08T20-57-24-0772.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,6 +92,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -114,7 +121,7 @@
       <workItem from="1699275496703" duration="6957000" />
       <workItem from="1699283881990" duration="1591000" />
       <workItem from="1699476587742" duration="3418000" />
-      <workItem from="1699529422788" duration="1000" />
+      <workItem from="1699529422788" duration="595000" />
     </task>
     <servers />
   </component>

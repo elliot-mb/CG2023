@@ -45,12 +45,7 @@ void Camera::move(glm::vec3 delta){
 
 //moves the camera relative to its own coordinate system
 void Camera::moveRelative(glm::vec3 delta){
-//    //std::cout << myFwd().x << ' ' << myFwd().y << ' ' << myFwd().z << std::endl;
-//    glm::mat3 worldToCameraPlane = Utils::rotateMeTo(myFwd()); //transform to rotate the world origin in the direction of the camera
-////    glm::mat3 cameraPlaneToWorld = glm::inverse(worldToCameraPlane);
-////    glm::mat3 cameraPlaneInWorld = cameraPlaneToWorld * this->orientation;
-////
-//    this->move(worldToCameraPlane * (delta));
+    this->position += glm::transpose(this->orientation) * delta;
 
 }
 
