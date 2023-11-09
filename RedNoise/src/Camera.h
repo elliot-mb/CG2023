@@ -23,7 +23,7 @@ public:
     void toggleOrbit();
     void toggleRaytrace();
     void doOrbit(ModelLoader model);
-    pair<Triangle, bool> getClosestIntersection(vec3 rayDir, ModelLoader &model);
+    pair<int, bool> getClosestIntersection(vec3 rayDir, ModelLoader &model);
     void raycast(DrawingWindow &window, ModelLoader &model);
     void doRaytracing(DrawingWindow &window, ModelLoader &model);
 private:
@@ -39,6 +39,7 @@ private:
     glm::vec3 position; // offset from world origin
     float focalLength; // distance of the clipping plane along the z axis
     glm::vec2 screen; //resolution
+    glm::vec2 screen2; //screen over 2
 
     bool isOrbiting;
     bool isRaytracing;

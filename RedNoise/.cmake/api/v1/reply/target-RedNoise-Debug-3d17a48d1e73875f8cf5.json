@@ -74,7 +74,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++14 -fdiagnostics-color=always"
+					"fragment" : "-g"
 				},
 				{
 					"backtrace" : 4,
@@ -119,6 +119,9 @@
 				{
 					"backtrace" : 5,
 					"fragment" : "-g"
+				},
+				{
+					"fragment" : "-std=gnu++14"
 				}
 			],
 			"includes" : 
