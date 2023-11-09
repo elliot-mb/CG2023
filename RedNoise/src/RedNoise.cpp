@@ -42,22 +42,22 @@ void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, C
 void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLoader& model) {
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_t) {
-            camera.move(vec3(0.0, 0.0, -0.2));
+            camera.moveRelative(vec3(0.0, 0.0, -0.2));
         }
 		else if (event.key.keysym.sym == SDLK_g) {
-            camera.move(vec3(0.0, 0.0, 0.2));
+            camera.moveRelative(vec3(0.0, 0.0, 0.2));
         }
         if (event.key.keysym.sym == SDLK_f) {
-            camera.move(vec3(-0.2, 0.0, 0.0));
+            camera.moveRelative(vec3(-0.2, 0.0, 0.0));
         }
         else if (event.key.keysym.sym == SDLK_h) {
-            camera.move(vec3(0.2, 0.0, 0.0));
+            camera.moveRelative(vec3(0.2, 0.0, 0.0));
         }
         if (event.key.keysym.sym == SDLK_r) {
-            camera.move(vec3(0.0, -0.2, 0.0));
+            camera.moveRelative(vec3(0.0, -0.2, 0.0));
         }
         else if (event.key.keysym.sym == SDLK_y) {
-            camera.move(vec3(0.0, 0.2, 0.0));
+            camera.moveRelative(vec3(0.0, 0.2, 0.0));
         }
         else if (event.key.keysym.sym == SDLK_4) {
             camera.rot(-0.2, 0);
