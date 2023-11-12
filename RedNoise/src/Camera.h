@@ -24,8 +24,8 @@ public:
     void toggleRaytrace();
     void doOrbit(ModelLoader model);
     pair<int, bool> getClosestIntersection(vec3 rayDir, ModelLoader &model);
-    void raycast(DrawingWindow &window, ModelLoader &model);
     void doRaytracing(DrawingWindow &window, ModelLoader &model);
+    void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 private:
 
     glm::vec3 myUp(); //return normalised up vector
@@ -49,5 +49,6 @@ private:
     vec3 myRight();
 
     vec3 buildCameraRay(int x, int y);
-
+    void raycast(DrawingWindow &window, ModelLoader &model);
+    void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 };
