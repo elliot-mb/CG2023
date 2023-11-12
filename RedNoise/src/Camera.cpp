@@ -90,6 +90,26 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model){
     }
 }
 
+void Camera::rasterise(DrawingWindow& window, ModelLoader& model, DepthBuffer& depthBuffer){
+    depthBuffer.reset();
+    vector<Triangle> tris = model.getTris();
+    for(size_t i = 0; i < tris.size(); i++){
+        Triangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
+        auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
+        auto [pt1, valid1] = getCanvasIntersectionPoint(thisTri.v1());
+        auto [pt2, valid2] = getCanvasIntersectionPoint(thisTri.v2());
+        if(valid0 && valid1 && valid2){
+            Colour thisColour = thisTri.getColour();
+            thisTri.setV0(pt0);
+            thisTri.setV1(pt1);
+            thisTri.setV2(pt2);
+            if(thisTri.isTextured()) {
+                thisTri.fillTexture(window, depthBuffer);
+            } else { thisTri.fill(window, depthBuffer); }
+        }
+    }
+}
+
 void Camera::move(glm::vec3 delta){
     this->position = this->position + delta;
 }
@@ -170,5 +190,11 @@ void Camera::toggleRaytrace() {
 void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model) {
     if(this->isRaytracing){
         raycast(window, model);
+    }
+}
+
+void Camera::doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer){
+    if(!this->isRaytracing){
+        rasterise(window, model, depthBuffer);
     }
 }

@@ -12,30 +12,8 @@
 using namespace std;
 using namespace glm;
 
-#define WIDTH 1920
-#define HEIGHT 1080
-
-void draw(DrawingWindow &window, DepthBuffer& depthBuffer, ModelLoader& model, Camera& camera, int frame) {
-	//window.clearPixels();
-    depthBuffer.reset();
-    vector<Triangle> tris = model.getTris();
-    for(size_t i = 0; i < tris.size(); i++){
-        Triangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
-        auto [pt0, valid0] = camera.getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
-        auto [pt1, valid1] = camera.getCanvasIntersectionPoint(thisTri.v1());
-        auto [pt2, valid2] = camera.getCanvasIntersectionPoint(thisTri.v2());
-        if(valid0 && valid1 && valid2){
-            Colour thisColour = thisTri.getColour();
-            thisTri.setV0(pt0);
-            thisTri.setV1(pt1);
-            thisTri.setV2(pt2);
-            if(thisTri.isTextured()) {
-                thisTri.fillTexture(window, depthBuffer);
-            } else { thisTri.fill(window, depthBuffer); }
-        }
-    }
-
-}
+#define WIDTH 320
+#define HEIGHT 240
 
 void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLoader& model) {
 	if (event.type == SDL_KEYDOWN) {
@@ -119,6 +97,7 @@ int main(int argc, char *argv[]) {
 
         camera->doOrbit(*cornellLoader);
         camera->doRaytracing(window, *cornellLoader);
+        camera->doRasterising(window, *cornellLoader, *depthBuffer);
         //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
         //camera->move(glm::vec3(0.0, -0.01, 0));
