@@ -26,8 +26,6 @@
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
@@ -120,7 +118,7 @@
       <workItem from="1699529422788" duration="1313000" />
       <workItem from="1699542400157" duration="2235000" />
       <workItem from="1699561576010" duration="7208000" />
-      <workItem from="1699812405724" duration="273000" />
+      <workItem from="1699812405724" duration="7669000" />
     </task>
     <servers />
   </component>

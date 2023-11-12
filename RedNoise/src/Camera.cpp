@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
                            {0, 1, 0},
                            {0, 0, 1});
     this->isOrbiting = false;
-    this->isRaytracing = false;
+    this->mode = msh;
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -38,7 +38,8 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     return std::tuple<glm::vec3, bool>{glm::vec3(u, v, dist), true}; //dist is the distance to the camera squared
 }
 
-pair<int, bool> Camera::getClosestIntersection(vec3 rayDir, ModelLoader& model){
+//please given -1 for fobiddenIndex if there is no index forbade
+pair<bool, pair<int, glm::vec3>> Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader& model){
     glm::vec3 closestValid = glm::vec3(0, 0, 0); //compare on t (x)
     int closestTri = 0;
     int count = 0;
@@ -47,43 +48,59 @@ pair<int, bool> Camera::getClosestIntersection(vec3 rayDir, ModelLoader& model){
     if(model.getTris().empty())
         throw runtime_error("Camera::getClosestIntersection: this model has no tris");
     for(Triangle& triangle : model.getTris()){
-        glm::vec3 e0 = triangle.v1() - triangle.v0();
-        glm::vec3 e1 = triangle.v2() - triangle.v0();
-        glm::vec3 spVector = this->position - triangle.v0();
-        glm::mat3 diff(-rayDir, e0, e1);
-        glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
-        float* t = &possibleSolution.x;
-        float* u = &possibleSolution.y;
-        float* v = &possibleSolution.z;
-        float tSq = *t * *t;
-        float closeSq = closestValid.x * closestValid.x;
-        if(*u <= 1 && *u >= 0 &&
-           *v <= 1 && *v >= 0 &&
-           *u + *v <= 1 &&
-           (tSq < closeSq || !valid)){ //if it hits the triangle AND its the new smallest OR the first we've seen
-            valid = true;
-            closestValid = possibleSolution;
-            closestTri = count;
+        if(count != forbiddenIndex){
+            glm::vec3 e0 = triangle.v1() - triangle.v0();
+            glm::vec3 e1 = triangle.v2() - triangle.v0();
+            glm::vec3 spVector = origin - triangle.v0(); //origin generalises so we can compute shadows
+            glm::mat3 diff(-rayDir, e0, e1);
+            glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
+            float* t = &possibleSolution.x;
+            float* u = &possibleSolution.y;
+            float* v = &possibleSolution.z;
+            float tSq = *t * *t;
+            float closeSq = closestValid.x * closestValid.x;
+            if(*t > 0 && //is the ray colliding in front of the point (along the ray line)
+               *u <= 1 && *u >= 0 &&
+               *v <= 1 && *v >= 0 &&
+               *u + *v <= 1 &&
+               (tSq < closeSq || !valid)){ //if it hits the triangle AND its the new smallest OR the first we've seen
+                valid = true;
+                closestValid = possibleSolution;
+                closestTri = count;
+            }
         }
         count++;
     }
-    return std::pair<int, bool>{closestTri, valid};
+    return std::pair<bool, std::pair<int, glm::vec3>>{valid, {closestTri, closestValid}};
 }
 //
 glm::vec3 Camera::buildCameraRay(int x, int y){
     glm::vec2 imagePlanePos = (glm::vec2(x, y) - glm::vec2(this->screen2.x, this->screen2.y)) / this->screen2.x; //inverse of what we did for rasterising
-    glm::vec3 infront = this->focalLength * myFwd(); //where does the image plane origin start
-    glm::vec3 ray = infront - (imagePlanePos.x * myRight()) + (imagePlanePos.y * myUp());//relative to cam
+    glm::vec3 infront = this->focalLength * (glm::mat3(-1) * myFwd()); //where does the image plane origin start (flipping is required because of the discrepency between myFwd and the global fwd)
+    glm::vec3 ray = infront + (imagePlanePos.x * myRight()) - (imagePlanePos.y * myUp());//relative to cam
     return ray; //unit length
 }
 
-void Camera::raycast(DrawingWindow& window, ModelLoader& model){
+void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightSource){
+
+    std::vector<Triangle> tris = model.getTris();
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x++){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
             glm::vec3 ray = buildCameraRay(x, y);
-            std::pair<int, bool> maybeTriangle = getClosestIntersection(ray, model);
-            if(maybeTriangle.second){
-                Colour c = model.getTris()[maybeTriangle.first].getColour();
+            //first, cast from the camera to the scene
+            MaybeTriangle intersection = getClosestIntersection(-1, this->position, ray, model);
+            bool hasIntersection = intersection.first; //unpack pairs
+            int triangleIndex = intersection.second.first;
+            float distAlongRay = intersection.second.second.x;
+            if(hasIntersection){ //if its valid...
+                //...cast from the intersection to the light if one is given
+                glm::vec3 intercept = this->position + (distAlongRay * ray); //tried with ray, lets also try with a tri
+                glm::vec3 shadowRay = lightSource - intercept;
+                MaybeTriangle shadowRayIntscnt = getClosestIntersection(triangleIndex, intercept, shadowRay, model);
+                float distAlongShadowRay = shadowRayIntscnt.second.second.x;
+                bool inShadow = shadowRayIntscnt.first && (distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
+                Colour c = tris[triangleIndex].getColour(); //find out what colour we draw it
+                if(inShadow) c = Colour(0, 0, 0);
                 window.setPixelColour(x, y, Utils::pack(255, c.red, c.green, c.blue));
             }
         }
@@ -103,9 +120,15 @@ void Camera::rasterise(DrawingWindow& window, ModelLoader& model, DepthBuffer& d
             thisTri.setV0(pt0);
             thisTri.setV1(pt1);
             thisTri.setV2(pt2);
-            if(thisTri.isTextured()) {
+            if(this->mode == msh){
+                thisTri.draw(window);
+            }
+            if(thisTri.isTextured() && this->mode == rst) {
                 thisTri.fillTexture(window, depthBuffer);
-            } else { thisTri.fill(window, depthBuffer); }
+            }
+            if(!thisTri.isTextured() && this->mode == rst) {
+                thisTri.fill(window, depthBuffer);
+            }
         }
     }
 }
@@ -183,18 +206,18 @@ void Camera::doOrbit(ModelLoader model) {
     }
 }
 
-void Camera::toggleRaytrace() {
-    this->isRaytracing = !this->isRaytracing;
+void Camera::renderMode() {
+    this->mode = (this->mode + 1) % 3;
 }
 
-void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model) {
-    if(this->isRaytracing){
-        raycast(window, model);
+void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model, glm::vec3 lightSource) {
+    if(this->mode == ray){
+        raycast(window, model, lightSource);
     }
 }
 
 void Camera::doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer){
-    if(!this->isRaytracing){
+    if(this->mode == rst || this->mode == msh){
         rasterise(window, model, depthBuffer);
     }
 }

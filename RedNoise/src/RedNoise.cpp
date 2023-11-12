@@ -54,7 +54,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
             camera.lookAt(model.getPos());
         }
         else if (event.key.keysym.sym == SDLK_SPACE){
-            camera.toggleRaytrace();
+            camera.renderMode();
         }
 	} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		window.savePPM("output.ppm");
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *cornellLoader);
+        camera->doRaytracing(window, *cornellLoader, glm::vec3(0.5, 0.9, 0.5));
         camera->doRasterising(window, *cornellLoader, *depthBuffer);
         //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
