@@ -32,6 +32,7 @@ public:
     glm::vec3 v2();
     void setV2(glm::vec3 v2);
     Colour getColour();
+    glm::vec3 getNormal();
 private:
     //vtop vnew vsplit vbottom
     std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3> splitTriangle(std::vector<glm::vec3> vs);
@@ -43,6 +44,7 @@ private:
     glm::vec2 vt0; //texture vertices
     glm::vec2 vt1;
     glm::vec2 vt2;
+    glm::vec3 normal;
     Colour colour;
     TextureMap texture;
     bool hasTexture;

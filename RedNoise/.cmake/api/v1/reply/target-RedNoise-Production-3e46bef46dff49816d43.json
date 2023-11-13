@@ -33,12 +33,6 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 70,
-				"parent" : 0
-			},
-			{
-				"command" : 1,
-				"file" : 0,
 				"line" : 79,
 				"parent" : 0
 			},
@@ -46,12 +40,6 @@
 				"command" : 2,
 				"file" : 0,
 				"line" : 57,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 77,
 				"parent" : 0
 			},
 			{
@@ -74,65 +62,53 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++14 -fdiagnostics-color=always"
+					"fragment" : "-std=gnu++14 -fdiagnostics-color=always"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wall"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wextra"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wcast-align"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wfatal-errors"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Werror=return-type"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wno-unused-parameter"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wno-unused-variable"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"fragment" : "-Wno-ignored-attributes"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "-O2"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "-fno-omit-frame-pointer"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "-g"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 6,
+					"backtrace" : 4,
 					"path" : "/usr/include/SDL2"
 				},
 				{
-					"backtrace" : 6,
+					"backtrace" : 4,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/glm-0.9.7.2"
 				},
 				{
-					"backtrace" : 7,
+					"backtrace" : 5,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/sdw"
 				}
 			],
@@ -171,20 +147,11 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-g",
-				"role" : "flags"
-			},
-			{
 				"fragment" : "",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-Wl,-lasan",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
 				"fragment" : "-L/usr/lib/x86_64-linux-gnu  -lSDL2",
 				"role" : "libraries"
 			}
