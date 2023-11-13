@@ -1,0 +1,7 @@
+#!/bin/zsh 
+
+timeout -s USR1 -k 5s 15s perf record -g './RedNoise' ;\
+perf script > out.perf &&\
+../../stackcollapse-perf.pl out.perf > out.folded &&\
+../../flamegraph.pl out.folded > perf.svg &&\
+firefox perf.svg

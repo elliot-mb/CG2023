@@ -104,11 +104,10 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
     std::vector<Triangle*> tris = model.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
     glm::vec3 lightLoc = glm::vec3(lightSource);
-    int strideX = 1;
-    int strideY = 1;
+    uint stride = 1; //how large are our ray pixels (1 is native resolution)
 
-    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += strideX){
-        for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += strideY){
+    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
+        for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
             std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris);
@@ -134,6 +133,12 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
                 glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
+                if(stride > 1)
+                    for(uint i = 0; i < stride; i++){
+                        for(uint j = 0; j < stride; j++){
+                            window.setPixelColour(x + i, y + j, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
+                        }
+                    }
             }
         }
     }
