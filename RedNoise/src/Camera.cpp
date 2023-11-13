@@ -112,28 +112,28 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
             std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris);
-                if(intersection.first != NONE){ //if its valid...
-                    Triangle* tri = tris[intersection.first];
-                    glm::vec3* norm = tri->getNormal();
-                    //...cast from the intersection to the light if one is given
-                    glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
-                    glm::vec3 shadowRay = lightLoc - intercept;
-                    float len = glm::length(shadowRay);
-                    glm::vec3 shadowRayn = glm::normalize(shadowRay);
+            if(intersection.first != NONE){ //if its valid...
+                Triangle* tri = tris[intersection.first];
+                glm::vec3* norm = tri->getNormal();
+                //...cast from the intersection to the light if one is given
+                glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
+                glm::vec3 shadowRay = lightLoc - intercept;
+                float len = glm::length(shadowRay);
+                glm::vec3 shadowRayn = glm::normalize(shadowRay);
 
-                    float brightness = 1.0;
-                    specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
-                    diffuse(brightness, shadowRayn, *norm);
-                    proximity(brightness, len, lightSource.w);
-                    shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                float brightness = 1.0;
+                specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
+                diffuse(brightness, shadowRayn, *norm);
+                proximity(brightness, len, lightSource.w);
+                shadow(brightness, intersection.first, intercept, shadowRay, tris);
 
-                    if(brightness > this->ambientUpper) brightness = this->ambientUpper;
-                    if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
+                if(brightness > this->ambientUpper) brightness = this->ambientUpper;
+                if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
 
-                    Colour c = tri->getColour(); //find out what colour we draw it
-                    glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
+                Colour c = tri->getColour(); //find out what colour we draw it
+                glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
 
-                    window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
+                window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
             }
         }
     }
