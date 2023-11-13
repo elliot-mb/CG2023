@@ -40,7 +40,7 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
 
 //please given -1 for fobiddenIndex if there is no index forbade
 //returns {index: int ::= index of triangle intersection OR -1 if not found, closestValid: float ::= distance along ray of collision}
-glm::vec2 Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader& model){
+std::pair<int, float> Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader& model){
     float closestValid = INFINITY; //compare on t (x)
     int closestTri = -1;
     glm::vec3 e0;
@@ -52,24 +52,7 @@ glm::vec2 Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, g
     bool valid = false;
     if(model.getTris().empty())
         throw runtime_error("Camera::getClosestIntersection: this model has no tris");
-//    for(int i = 0; i < forbiddenIndex; i++){ //those below the forbidden index
-//        Triangle tri = tris[i];
-//        e0 = tri.v1() - tri.v0();
-//        e1 = tri.v2() - tri.v0();
-//        spVector = origin - tri.v0(); //origin generalises so we can compute shadows
-//        diff[0] = {-rayDir.x, e0.x, e1.x};
-//        diff[1] = {-rayDir.y, e0.y, e1.y};
-//        diff[2] = {-rayDir.z, e0.z, e1.z};
-//        possibleSolution = glm::inverse(diff) * spVector;
-//        if(possibleSolution.x > 0 && //is the ray colliding in front of the point (along the ray line)
-//           possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
-//           possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
-//           possibleSolution.y + possibleSolution.z <= 1 &&
-//           possibleSolution.x < closestValid){ //if it hits the triangle AND its the new smallest OR the first we've seen
-//            closestValid = possibleSolution.x;
-//            closestTri = static_cast<int>(i);
-//        }
-//    }
+
     for(int i = 0; i < static_cast<int>(model.getTris().size()); i++){
         if(i != forbiddenIndex){
             Triangle tri = tris[i];
@@ -88,33 +71,7 @@ glm::vec2 Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, g
             }
         }
     }
-//    for(Triangle& triangle : model.getTris()){
-//        if(count != forbiddenIndex){
-//            e0 = triangle.v1() - triangle.v0();
-//            e1 = triangle.v2() - triangle.v0();
-//            spVector = origin - triangle.v0(); //origin generalises so we can compute shadows
-//            diff[0] = {-rayDir.x, e0.x, e1.x};
-//            diff[1] = {-rayDir.y, e0.y, e1.y};
-//            diff[2] = {-rayDir.z, e0.z, e1.z};
-//            possibleSolution = glm::inverse(diff) * spVector;
-//            float* t = &possibleSolution.x;
-//            float* u = &possibleSolution.y;
-//            float* v = &possibleSolution.z;
-//            float tSq = *t * *t;
-//            float closeSq = closestValid.x * closestValid.x;
-//            if(*t > 0 && //is the ray colliding in front of the point (along the ray line)
-//               *u <= 1 && *u >= 0 &&
-//               *v <= 1 && *v >= 0 &&
-//               *u + *v <= 1 &&
-//               (tSq < closeSq || !valid)){ //if it hits the triangle AND its the new smallest OR the first we've seen
-//                valid = true;
-//                closestValid = possibleSolution;
-//                closestTri = count;
-//            }
-//        }
-//        count++;
-//    }
-    return glm::vec2(closestTri, closestValid); //simply returns the
+    return std::pair<int, float>(closestTri, closestValid); //simply returns the
 }
 //
 glm::vec3 Camera::buildCameraRay(int x, int y){
@@ -131,21 +88,20 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightS
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
             glm::vec3 ray = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            glm::vec2 intersection = getClosestIntersection(-1, this->position, ray, model);
-            int triangleIndex = static_cast<int>(intersection.x);
-            if(triangleIndex != -1){ //if its valid...
-                Triangle tri = model.getTris()[triangleIndex];
+            std::pair<int, float> intersection = getClosestIntersection(-1, this->position, ray, model);
+            if(intersection.first != -1){ //if its valid...
+                Triangle tri = model.getTris()[intersection.first];
                 //...cast from the intersection to the light if one is given
-                glm::vec3 intercept = this->position + (intersection.y * ray); //tried with ray, lets also try with a tri
+                glm::vec3 intercept = this->position + (intersection.second * ray); //tried with ray, lets also try with a tri
                 glm::vec3 shadowRay = lightSource - intercept;
-                glm::vec2 shadowRayIntscnt = getClosestIntersection(triangleIndex, intercept, shadowRay, model);
-                float distAlongShadowRay = shadowRayIntscnt.y;
+                std::pair<int, float> shadowRayIntscnt = getClosestIntersection(intersection.first, intercept, shadowRay, model);
+                float distAlongShadowRay = shadowRayIntscnt.second;
                 float brightness = 1.0 / glm::pow(glm::length(shadowRay), 2);
                 float diffuseLight = glm::dot(tri.getNormal(), glm::normalize(shadowRay));
                 brightness = brightness * diffuseLight;
                 if(brightness < 0.2) brightness = 0.2;
                 if(brightness > 0.9) brightness = 0.9;
-                bool inShadow = (shadowRayIntscnt.x != -1) && (distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
+                bool inShadow = (shadowRayIntscnt.first != -1) && (distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
 
                 Colour c = tri.getColour(); //find out what colour we draw it
                 if(inShadow) brightness = 0.2;

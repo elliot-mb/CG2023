@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Production"
+			"value" : "Speedy"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -154,7 +154,7 @@
 					"value" : "CXX compiler"
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/c++"
 		},
 		{
@@ -238,22 +238,6 @@
 			"value" : "-Os -DNDEBUG"
 		},
 		{
-			"name" : "CMAKE_CXX_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the CXX compiler during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_CXX_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -286,6 +270,22 @@
 			"value" : "-O2 -g -DNDEBUG"
 		},
 		{
+			"name" : "CMAKE_CXX_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during SPEEDY builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_C_COMPILER",
 			"properties" : 
 			[
@@ -298,7 +298,7 @@
 					"value" : "C compiler"
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/cc"
 		},
 		{
@@ -382,22 +382,6 @@
 			"value" : "-Os -DNDEBUG"
 		},
 		{
-			"name" : "CMAKE_C_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the C compiler during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_C_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -428,6 +412,22 @@
 			],
 			"type" : "STRING",
 			"value" : "-O2 -g -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_C_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during SPEEDY builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
 		},
 		{
 			"name" : "CMAKE_DLLTOOL",
@@ -506,22 +506,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_EXE_LINKER_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the linker during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_EXE_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -548,6 +532,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during SPEEDY builds."
 				}
 			],
 			"type" : "STRING",
@@ -754,22 +754,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_MODULE_LINKER_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the linker during the creation of modules during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -796,6 +780,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during the creation of modules during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during SPEEDY builds."
 				}
 			],
 			"type" : "STRING",
@@ -1002,22 +1002,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_SHARED_LINKER_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the linker during the creation of shared libraries during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -1044,6 +1028,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during the creation of shared libraries during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during SPEEDY builds."
 				}
 			],
 			"type" : "STRING",
@@ -1130,22 +1130,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_STATIC_LINKER_FLAGS_PRODUCTION",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags used by the linker during the creation of static libraries during PRODUCTION builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_STATIC_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -1172,6 +1156,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during the creation of static libraries during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_SPEEDY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during SPEEDY builds."
 				}
 			],
 			"type" : "STRING",
