@@ -12,8 +12,8 @@
 using namespace std;
 using namespace glm;
 
-#define WIDTH 320
-#define HEIGHT 240
+#define WIDTH 500
+#define HEIGHT 500
 
 void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLoader& model) {
 	if (event.type == SDL_KEYDOWN) {

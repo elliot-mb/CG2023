@@ -43,6 +43,12 @@
 				"parent" : 0
 			},
 			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 76,
+				"parent" : 0
+			},
+			{
 				"command" : 3,
 				"file" : 0,
 				"line" : 25,
@@ -62,7 +68,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-std=gnu++14 -fdiagnostics-color=always"
+					"fragment" : "-O3 -DNDEBUG"
 				},
 				{
 					"backtrace" : 3,
@@ -95,20 +101,35 @@
 				{
 					"backtrace" : 3,
 					"fragment" : "-Wno-ignored-attributes"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-O3"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-march=native"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-mtune=native"
+				},
+				{
+					"fragment" : "-std=gnu++14"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "/usr/include/SDL2"
 				},
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/glm-0.9.7.2"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/sdw"
 				}
 			],
@@ -146,6 +167,10 @@
 	{
 		"commandFragments" : 
 		[
+			{
+				"fragment" : "-O3 -DNDEBUG",
+				"role" : "flags"
+			},
 			{
 				"fragment" : "",
 				"role" : "flags"
