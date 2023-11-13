@@ -25,7 +25,7 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
-    this->tris = vector<Triangle>{}; //new modeltriangle vector
+    this->tris = vector<Triangle*>{}; //new modeltriangle vector
     this->position = position;
 }
 //ModelLoader::~ModelLoader(){
@@ -173,8 +173,8 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
         CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
-        this->tris.push_back(*new Triangle(v0, v1, v2, currentColour, texture, textureTri));
-    }else this->tris.push_back(*new Triangle(v0, v1, v2, currentColour));
+        this->tris.push_back(new Triangle(v0, v1, v2, currentColour, texture, textureTri));
+    }else this->tris.push_back(new Triangle(v0, v1, v2, currentColour));
 
 }
 
@@ -197,7 +197,7 @@ void ModelLoader::load() {
         cout << endl;
         if(!isLineType(ln, TKN_COMMNT)){
             if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
-            if(isLineType(ln, TKN_SUBOBJ)); //add sub object names if needed
+            if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
             if(isLineType(ln, TKN_VERTEX)) asVertex(ln, verts);
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
@@ -218,6 +218,6 @@ void ModelLoader::printTris() {
 //    }
 }
 
-vector<Triangle> ModelLoader::getTris() {
+vector<Triangle*> ModelLoader::getTris() {
     return this->tris;
 }

@@ -3,7 +3,6 @@
 //
 
 #include "Camera.h"
-#include "math.h";
 #include "Utils.h"
 #include "ModelLoader.h"
 #include <iostream>
@@ -40,27 +39,22 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
 
 //please given -1 for fobiddenIndex if there is no index forbade
 //returns {index: int ::= index of triangle intersection OR -1 if not found, closestValid: float ::= distance along ray of collision}
-std::pair<int, float> Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader& model){
+std::pair<int, float> Camera::getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, std::vector<Triangle*>& tris){
     float closestValid = INFINITY; //compare on t (x)
     int closestTri = -1;
-    glm::vec3 e0;
-    glm::vec3 e1;
-    glm::vec3 spVector ; //origin generalises so we can compute shadows
-    glm::vec3 possibleSolution;
     int count = 0;
-    std::vector<Triangle> tris = model.getTris();
     bool valid = false;
-    if(model.getTris().empty())
+    if(tris.empty())
         throw runtime_error("Camera::getClosestIntersection: this model has no tris");
 
-    for(int i = 0; i < static_cast<int>(model.getTris().size()); i++){
+    for(int i = 0; i < static_cast<int>(tris.size()); i++){
         if(i != forbiddenIndex){
-            Triangle tri = tris[i];
-            e0 = tri.v1() - tri.v0();
-            e1 = tri.v2() - tri.v0();
-            spVector = origin - tri.v0(); //origin generalises so we can compute shadows
+            Triangle* tri = tris[i];
+            glm::vec3 e0 = tri->v1() - tri->v0();
+            glm::vec3 e1 = tri->v2() - tri->v0();
+            glm::vec3 spVector = origin - tri->v0(); //origin generalises so we can compute shadows
             glm::mat3 diff(-rayDir, e0, e1);
-            possibleSolution = glm::inverse(diff) * spVector;
+            glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
             if(possibleSolution.x > 0 && //is the ray colliding in front of the point (along the ray line)
                possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
                possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
@@ -71,39 +65,39 @@ std::pair<int, float> Camera::getClosestIntersection(int forbiddenIndex, glm::ve
             }
         }
     }
-    return std::pair<int, float>(closestTri, closestValid); //simply returns the
+    return {closestTri, closestValid}; //simply returns the
 }
 //
 glm::vec3 Camera::buildCameraRay(int x, int y){
     glm::vec2 imagePlanePos = (glm::vec2(x, y) - glm::vec2(this->screen2.x, this->screen2.y)) / this->screen2.x; //inverse of what we did for rasterising
     glm::vec3 infront = this->focalLength * (glm::mat3(-1) * myFwd()); //where does the image plane origin start (flipping is required because of the discrepency between myFwd and the global fwd)
     glm::vec3 ray = infront + (imagePlanePos.x * myRight()) - (imagePlanePos.y * myUp());//relative to cam
-    return ray; //unit length
+    return ray;
 }
 
 
 void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightSource){
-
+    std::vector<Triangle*> tris = model.getTris();
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x++){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
             glm::vec3 ray = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            std::pair<int, float> intersection = getClosestIntersection(-1, this->position, ray, model);
+            std::pair<int, float> intersection = getClosestIntersection(-1, this->position, ray, tris);
             if(intersection.first != -1){ //if its valid...
-                Triangle tri = model.getTris()[intersection.first];
+                Triangle* tri = tris[intersection.first];
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (intersection.second * ray); //tried with ray, lets also try with a tri
                 glm::vec3 shadowRay = lightSource - intercept;
-                std::pair<int, float> shadowRayIntscnt = getClosestIntersection(intersection.first, intercept, shadowRay, model);
+                std::pair<int, float> shadowRayIntscnt = getClosestIntersection(intersection.first, intercept, shadowRay, tris);
                 float distAlongShadowRay = shadowRayIntscnt.second;
-                float brightness = 1.0 / glm::pow(glm::length(shadowRay), 2);
-                float diffuseLight = glm::dot(tri.getNormal(), glm::normalize(shadowRay));
+                auto brightness = static_cast<float>(1.0 / glm::pow(glm::length(shadowRay), 2));
+                float diffuseLight = glm::dot(tri->getNormal(), glm::normalize(shadowRay));
                 brightness = brightness * diffuseLight;
                 if(brightness < 0.2) brightness = 0.2;
                 if(brightness > 0.9) brightness = 0.9;
                 bool inShadow = (shadowRayIntscnt.first != -1) && (distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
 
-                Colour c = tri.getColour(); //find out what colour we draw it
+                Colour c = tri->getColour(); //find out what colour we draw it
                 if(inShadow) brightness = 0.2;
                 glm::vec3 cVec = glm::vec3(c.red, c.green, c.blue) * brightness;
 
@@ -115,9 +109,9 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightS
 
 void Camera::rasterise(DrawingWindow& window, ModelLoader& model, DepthBuffer& depthBuffer){
     depthBuffer.reset();
-    vector<Triangle> tris = model.getTris();
+    vector<Triangle*> tris = model.getTris();
     for(size_t i = 0; i < tris.size(); i++){
-        Triangle thisTri = tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
+        Triangle thisTri = *tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
         auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
         auto [pt1, valid1] = getCanvasIntersectionPoint(thisTri.v1());
         auto [pt2, valid2] = getCanvasIntersectionPoint(thisTri.v2());
