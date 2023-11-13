@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec3 light =  glm::vec3(0.0, 0.5, 0.2);
+    glm::vec4 light = glm::vec4(0.0, 0.5, 0.2, 1.5); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
