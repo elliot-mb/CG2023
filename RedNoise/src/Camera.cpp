@@ -25,7 +25,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
             this->imageCoords[y].push_back((glm::vec2(x, y) - glm::vec2(this->screen2.x, this->screen2.y)) / this->screen2.x); //inverse of what we did for rasterising
     }
          //populate
-    this->ambientUpper = 0.99;
+    this->ambientUpper = 0.95;
     this->ambientLower = 0.2;
 }
 
@@ -80,14 +80,14 @@ glm::vec3 Camera::buildCameraRay(int& x, int& y){
     return ray;
 }
 
-void Camera::proximity(float& brightness, float& len){
-    brightness = static_cast<float>(1.0 / glm::pow(len, 2));
+void Camera::proximity(float& brightness, float& len, float& strength){
+    brightness = brightness * static_cast<float>(strength / glm::pow(len, 2));
 }
 
 void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay){
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(camRay), incidentRay), 128));
-    brightness = static_cast<float>(brightness + (specStrength * 4));
+    brightness = static_cast<float>(brightness * (specStrength + 0.5));
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
@@ -100,10 +100,10 @@ void Camera::shadow(float& brightness, int& currentTri, glm::vec3& intercept, gl
         brightness = this->ambientLower;
 }
 
-void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3& lightSource){
+void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& lightSource){
     std::vector<Triangle*> tris = model.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
-
+    glm::vec3 lightLoc = glm::vec3(lightSource);
     int strideX = 1;
     int strideY = 1;
 
@@ -117,14 +117,14 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3& light
                     glm::vec3* norm = tri->getNormal();
                     //...cast from the intersection to the light if one is given
                     glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
-                    glm::vec3 shadowRay = lightSource - intercept;
+                    glm::vec3 shadowRay = lightLoc - intercept;
                     float len = glm::length(shadowRay);
-                    shadowRay = glm::normalize(shadowRay);
+                    glm::vec3 shadowRayn = glm::normalize(shadowRay);
 
                     float brightness = 1.0;
-                    specular(brightness, shadowRay, *norm, camRay); //an order which makes sense
-                    diffuse(brightness, shadowRay, *norm);
-                    proximity(brightness, len);
+                    specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
+                    diffuse(brightness, shadowRayn, *norm);
+                    proximity(brightness, len, lightSource.w);
                     shadow(brightness, intersection.first, intercept, shadowRay, tris);
 
                     if(brightness > this->ambientUpper) brightness = this->ambientUpper;
@@ -232,7 +232,7 @@ void Camera::renderMode() {
     this->mode = (this->mode + 1) % 3;
 }
 
-void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model, glm::vec3& lightSource) {
+void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model, glm::vec4& lightSource) {
     if(this->mode == ray){
         raycast(window, model, lightSource);
     }

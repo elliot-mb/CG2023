@@ -21,6 +21,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-11-13T15-41-41-0418.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
@@ -29,8 +30,6 @@
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Triangle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Triangle.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,13 +86,13 @@
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.RedNoise">
-    <configuration name="RedNoise Speedy" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-DCMAKE_BUILD_TYPE=Production" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="RedNoise" TARGET_NAME="RedNoise" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="RedNoise" RUN_TARGET_NAME="RedNoise">
+  <component name="RunManager" selected="CMake Application.RedNoise Speedy">
+    <configuration name="RedNoise Speedy" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="RedNoise" TARGET_NAME="RedNoise" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="RedNoise" RUN_TARGET_NAME="RedNoise">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RedNoise" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="RedNoise" TARGET_NAME="RedNoise" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="RedNoise" RUN_TARGET_NAME="RedNoise">
+    <configuration name="RedNoise" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="$CMakeCurrentProfileName$" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="RedNoise" TARGET_NAME="RedNoise" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="RedNoise" RUN_TARGET_NAME="RedNoise">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -137,7 +136,7 @@
       <workItem from="1699812405724" duration="7669000" />
       <workItem from="1699880428586" duration="5000" />
       <workItem from="1699881239409" duration="17759000" />
-      <workItem from="1699907701969" duration="2612000" />
+      <workItem from="1699907701969" duration="5429000" />
     </task>
     <servers />
   </component>
