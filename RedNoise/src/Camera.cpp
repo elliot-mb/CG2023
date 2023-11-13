@@ -83,8 +83,11 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3& light
     std::vector<Triangle*> tris = model.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
 
-    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x++){
-        for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
+    int strideX = 1;
+    int strideY = 1;
+
+    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += strideX){
+        for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += strideY){
             glm::vec3 ray = buildCameraRay(x, y);
             //first, cast from the camera to the scene
             std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, ray, tris);
