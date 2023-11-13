@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Production-f5ebdc15457944623624.json",
+					"jsonFile" : "directory-.-Speedy-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.12"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Production",
+			"name" : "Speedy",
 			"projects" : 
 			[
 				{
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "RedNoise::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-RedNoise-Production-3e46bef46dff49816d43.json",
+					"jsonFile" : "target-RedNoise-Speedy-3e46bef46dff49816d43.json",
 					"name" : "RedNoise",
 					"projectIndex" : 0
 				}
