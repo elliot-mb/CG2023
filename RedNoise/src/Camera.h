@@ -14,7 +14,6 @@ public:
     typedef std::pair<bool, pair<int, glm::vec3>> MaybeTriangle;
 
     Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
-
     std::tuple<glm::vec3, bool> getCanvasIntersectionPoint(glm::vec3 vertexPosition); //vertex and whether we should draw it (not off image plane)
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
@@ -25,9 +24,10 @@ public:
     void toggleOrbit();
     void renderMode();
     void doOrbit(ModelLoader model);
-    static std::pair<int, float> getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, std::vector<Triangle*>& tris);
-    void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
+    static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris);
+    void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec3& lightSource);
     void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+
 private:
 
     glm::vec3 myUp(); //return normalised up vector
@@ -42,6 +42,7 @@ private:
     float focalLength; // distance of the clipping plane along the z axis
     glm::vec2 screen; //resolution
     glm::vec2 screen2; //screen over 2
+    std::vector<vector<glm::vec2>> imageCoords; // precomputed and referenced in buildCameraRays
 
     bool isOrbiting;
     uint mode;
@@ -50,8 +51,8 @@ private:
 
     vec3 myRight();
 
-    vec3 buildCameraRay(int x, int y);
-    void raycast(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
+    vec3 buildCameraRay(int& x, int& y);
+    void raycast(DrawingWindow &window, ModelLoader &model, glm::vec3& lightSource);
     void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 
 };

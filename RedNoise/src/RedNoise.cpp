@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-
+    glm::vec3 light =  glm::vec3(0.0, 0.5, 0.2);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *cornellLoader, glm::vec3(0.25, 0.8, 0.5));
+        camera->doRaytracing(window, *cornellLoader, light);
         camera->doRasterising(window, *cornellLoader, *depthBuffer);
         //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
