@@ -25,7 +25,7 @@ public:
     void toggleOrbit();
     void renderMode();
     void doOrbit(ModelLoader model);
-    pair<bool, pair<int, glm::vec3>> getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader &model);
+    glm::vec2 getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader &model);
     void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
     void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 private:
