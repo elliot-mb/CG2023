@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
                            {0, 1, 0},
                            {0, 0, 1});
     this->isOrbiting = false;
-    this->mode = msh;
+    this->mode = ray;
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -81,9 +81,9 @@ glm::vec3 Camera::buildCameraRay(int x, int y){
     return ray; //unit length
 }
 
+
 void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightSource){
 
-    std::vector<Triangle> tris = model.getTris();
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x++){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
             glm::vec3 ray = buildCameraRay(x, y);
@@ -93,15 +93,24 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3 lightS
             int triangleIndex = intersection.second.first;
             float distAlongRay = intersection.second.second.x;
             if(hasIntersection){ //if its valid...
+                Triangle tri = model.getTris()[triangleIndex];
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (distAlongRay * ray); //tried with ray, lets also try with a tri
                 glm::vec3 shadowRay = lightSource - intercept;
                 MaybeTriangle shadowRayIntscnt = getClosestIntersection(triangleIndex, intercept, shadowRay, model);
                 float distAlongShadowRay = shadowRayIntscnt.second.second.x;
+                float brightness = 1.0 / glm::pow(glm::length(shadowRay), 2);
+                float diffuseLight = glm::dot(tri.getNormal(), glm::normalize(shadowRay));
+                brightness = brightness * diffuseLight;
+                if(brightness < 0.2) brightness = 0.2;
+                if(brightness > 0.9) brightness = 0.9;
                 bool inShadow = shadowRayIntscnt.first && (distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
-                Colour c = tris[triangleIndex].getColour(); //find out what colour we draw it
+
+                Colour c = tri.getColour(); //find out what colour we draw it
                 if(inShadow) c = Colour(0, 0, 0);
-                window.setPixelColour(x, y, Utils::pack(255, c.red, c.green, c.blue));
+                glm::vec3 cVec = glm::vec3(c.red, c.green, c.blue) * brightness;
+
+                window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(glm::floor(cVec.x)), static_cast<uint8_t>(glm::floor(cVec.y)), static_cast<uint8_t>(glm::floor(cVec.z))));
             }
         }
     }

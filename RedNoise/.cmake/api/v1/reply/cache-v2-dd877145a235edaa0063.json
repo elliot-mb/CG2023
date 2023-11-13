@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Debug"
+			"value" : "Production"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -238,6 +238,22 @@
 			"value" : "-Os -DNDEBUG"
 		},
 		{
+			"name" : "CMAKE_CXX_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during PRODUCTION builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_CXX_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -366,6 +382,22 @@
 			"value" : "-Os -DNDEBUG"
 		},
 		{
+			"name" : "CMAKE_C_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during PRODUCTION builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_C_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -468,6 +500,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during PRODUCTION builds."
 				}
 			],
 			"type" : "STRING",
@@ -706,6 +754,22 @@
 			"value" : ""
 		},
 		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during PRODUCTION builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -938,6 +1002,22 @@
 			"value" : ""
 		},
 		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during PRODUCTION builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS_RELEASE",
 			"properties" : 
 			[
@@ -1044,6 +1124,22 @@
 				{
 					"name" : "HELPSTRING",
 					"value" : "Flags used by the linker during the creation of static libraries during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_PRODUCTION",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during PRODUCTION builds."
 				}
 			],
 			"type" : "STRING",

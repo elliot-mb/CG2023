@@ -53,4 +53,5 @@ private:
     vec3 buildCameraRay(int x, int y);
     void raycast(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
     void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+
 };
