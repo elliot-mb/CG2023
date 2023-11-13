@@ -31,7 +31,7 @@ public:
     void setV1(glm::vec3 v1);
     glm::vec3 v2();
     void setV2(glm::vec3 v2);
-    Colour getColour();
+    Colour& getColour();
     glm::vec3* getNormal();
 
     glm::vec3 e0;

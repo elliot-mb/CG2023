@@ -25,6 +25,8 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
             this->imageCoords[y].push_back((glm::vec2(x, y) - glm::vec2(this->screen2.x, this->screen2.y)) / this->screen2.x); //inverse of what we did for rasterising
     }
          //populate
+    this->ambientUpper = 0.99;
+    this->ambientLower = 0.2;
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -78,6 +80,25 @@ glm::vec3 Camera::buildCameraRay(int& x, int& y){
     return ray;
 }
 
+void Camera::proximity(float& brightness, float& len){
+    brightness = static_cast<float>(1.0 / glm::pow(len, 2));
+}
+
+void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay){
+    glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
+    float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(camRay), incidentRay), 128));
+    brightness = static_cast<float>(brightness + (specStrength * 4));
+}
+
+void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
+    brightness = static_cast<float>(brightness * (glm::dot(norm, shadowRay) + 0.25));
+}
+
+void Camera::shadow(float& brightness, int& currentTri, glm::vec3& intercept, glm::vec3& shadowRay, std::vector<Triangle*>& tris){
+    std::pair<int, float> shadowRayIntscnt = getClosestIntersection(currentTri, intercept, shadowRay, tris);
+    if((shadowRayIntscnt.first != -1) && (shadowRayIntscnt.second < 1)) //less than 1 means we have not hit a triangle behind the light
+        brightness = this->ambientLower;
+}
 
 void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3& lightSource){
     std::vector<Triangle*> tris = model.getTris();
@@ -88,32 +109,26 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec3& light
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += strideX){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += strideY){
-            glm::vec3 ray = buildCameraRay(x, y);
+            glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, ray, tris);
+            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris);
                 if(intersection.first != NONE){ //if its valid...
                     Triangle* tri = tris[intersection.first];
                     glm::vec3* norm = tri->getNormal();
                     //...cast from the intersection to the light if one is given
-                    glm::vec3 intercept = this->position + (intersection.second * ray); //tried with ray, lets also try with a tri
+                    glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
                     glm::vec3 shadowRay = lightSource - intercept;
-                    std::pair<int, float> shadowRayIntscnt = getClosestIntersection(intersection.first, intercept, shadowRay, tris);
-                    float* distAlongShadowRay = &shadowRayIntscnt.second;
+                    float len = glm::length(shadowRay);
+                    shadowRay = glm::normalize(shadowRay);
 
-                    auto brightness = static_cast<float>(1.0 / glm::pow(glm::length(shadowRay), 2));
+                    float brightness = 1.0;
+                    specular(brightness, shadowRay, *norm, camRay); //an order which makes sense
+                    diffuse(brightness, shadowRay, *norm);
+                    proximity(brightness, len);
+                    shadow(brightness, intersection.first, intercept, shadowRay, tris);
 
-                    float diffuseLight = glm::dot(*norm, glm::normalize(shadowRay));
-                    brightness = static_cast<float>(brightness * (diffuseLight + 0.25));
-
-                    bool inShadow = (shadowRayIntscnt.first != NONE) && (*distAlongShadowRay < 1); //less than 1 means we have not hit a triangle behind the light
-
-                    glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * *norm) * (glm::dot(shadowRay, *norm))));
-                    float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(ray), incidentRay), 64));
-
-                    brightness = static_cast<float>(brightness + (specStrength * 0.75));
-
-                    if(brightness > 0.99) brightness = 0.99;
-                    if(brightness < 0.2 || inShadow) brightness = 0.2; //if in shadow set to ambient
+                    if(brightness > this->ambientUpper) brightness = this->ambientUpper;
+                    if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
 
                     Colour c = tri->getColour(); //find out what colour we draw it
                     glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
