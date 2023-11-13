@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "RedNoise::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-RedNoise-Debug-3d17a48d1e73875f8cf5.json",
+					"jsonFile" : "target-RedNoise-Debug-8282628ebc309929adac.json",
 					"name" : "RedNoise",
 					"projectIndex" : 0
 				}
@@ -55,6 +55,6 @@
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 5
 	}
 }
