@@ -29,7 +29,7 @@ public:
     // shows all tris coords
     void printTris();
 
-    vector<Triangle> getTris();
+    vector<Triangle*> getTris();
 
     glm::vec3 getPos();
 private:
@@ -39,7 +39,7 @@ private:
     bool isLineType(std::vector<string> ln, const string& tkn);
     string fileName; // name
     string bytes; // file bytes
-    vector<Triangle> tris; //tris generated from verts and facets
+    vector<Triangle*> tris; //tris generated from verts and facets
     map<string, Colour> materials; //vector of colour maps
     map<std::string, TextureMap> textures;
     float scale;

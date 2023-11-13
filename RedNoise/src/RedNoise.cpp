@@ -75,11 +75,11 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 
 	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
-	for(int i=0; i < result.size(); i++) cout << result[i] << " ";
+	for(int i=0; i < static_cast<int>(result.size()); i++) cout << result[i] << " ";
 	cout << endl;
 
 	vector<vec3> resultVec = Utils::interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
-	for(int i=0; i < resultVec.size(); i++) {
+	for(int i=0; i < static_cast<int>(resultVec.size()); i++) {
 		cout << "(";
 		cout << resultVec[i].x << " ";
 		cout << resultVec[i].y << " ";
