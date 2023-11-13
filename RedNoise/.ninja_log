@@ -6,9 +6,8 @@
 4	268	1699568649671674631	CMakeFiles/RedNoise.dir/libs/sdw/CanvasPoint.cpp.o	1b98acf096bd1ec
 268	1161	1699568650563672088	CMakeFiles/RedNoise.dir/src/Utils.cpp.o	d070c777d2d48132
 464	2002	1699568651403669693	CMakeFiles/RedNoise.dir/src/Triangle.cpp.o	4e65efcdf03f2cdf
-1	37	1699821399495059116	build.ninja	4df360b16ce9fe3d
+1	37	1699824581035877808	build.ninja	4df360b16ce9fe3d
 4	236	1699568649639674722	CMakeFiles/RedNoise.dir/libs/sdw/CanvasTriangle.cpp.o	4c42977b9689d53c
-369	1522	1698248391231355949	CMakeFiles/RedNoise.dir/libs/sdw/Utils.cpp.o	92f92c56f8bca847
 2	1578	1699820385385265142	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	690a1a630bb12ed3
 5	780	1699568650183673171	CMakeFiles/RedNoise.dir/libs/sdw/DrawingWindow.cpp.o	868ccd4fbab2397e
 5	413	1699568649815674221	CMakeFiles/RedNoise.dir/libs/sdw/ModelTriangle.cpp.o	987d6f5e4bdd0acd
