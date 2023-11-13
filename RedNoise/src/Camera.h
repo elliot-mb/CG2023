@@ -43,6 +43,8 @@ private:
     glm::vec2 screen; //resolution
     glm::vec2 screen2; //screen over 2
     std::vector<vector<glm::vec2>> imageCoords; // precomputed and referenced in buildCameraRays
+    float ambientUpper;
+    float ambientLower;
 
     bool isOrbiting;
     uint mode;
@@ -55,4 +57,11 @@ private:
     void raycast(DrawingWindow &window, ModelLoader &model, glm::vec3& lightSource);
     void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 
+    //lighting effects
+    void proximity(float& brightness, float& len);
+    void diffuse(float &brightness, vec3 &shadowRay, vec3 &norm);
+
+    void shadow(float &brightness, int& intersection, vec3 &intercept, vec3 &shadowRay, vector<Triangle *> &tris);
+
+    void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
 };

@@ -250,7 +250,7 @@ glm::vec3 Triangle::v2() {
     return this->tri3[2];
 }
 
-Colour Triangle::getColour() {
+Colour& Triangle::getColour() {
     return this->colour;
 }
 
