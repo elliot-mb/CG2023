@@ -15,22 +15,19 @@ Triangle::Triangle(glm::mat3 tri3, Colour &colour) {
     this->tri3 = glm::mat3(tri3[0], tri3[1], tri3[2]);
     this->colour = colour;
     this->hasTexture = false;
-    //glm::vec3 e0 = this->v2() - this->v0();
-    glm::vec3 e0 = this->v2() - this->v1();
-    //glm::vec3 e1 = this->v2() - this->v0();
-    glm::vec3 e1 = this->v0() - this->v1();
-    this->normal = glm::normalize(glm::cross(e0, e1));
+    this->e0 = this->v1() - this->v0();
+    this->e1 = this->v2() - this->v0();
+    this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
+
 }
 
 Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour) {
     this->tri3 = glm::mat3(v0, v1, v2);
     this->colour = colour;
     this->hasTexture = false;
-    //glm::vec3 e0 = this->v2() - this->v0();
-    glm::vec3 e0 = this->v2() - this->v1();
-    //glm::vec3 e1 = this->v2() - this->v0();
-    glm::vec3 e1 = this->v0() - this->v1();
-    this->normal = glm::normalize(glm::cross(e0, e1));
+    this->e0 = this->v1() - this->v0();
+    this->e1 = this->v2() - this->v0();
+    this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
 }
 
 Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture) {
@@ -41,11 +38,9 @@ Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, Tex
     this->colour = colour;
     this->texture = texture;
     this->hasTexture = true;
-    //glm::vec3 e0 = this->v2() - this->v0();
-    glm::vec3 e0 = this->v2() - this->v1();
-    //glm::vec3 e1 = this->v2() - this->v0();
-    glm::vec3 e1 = this->v0() - this->v1();
-    this->normal = glm::normalize(glm::cross(e0, e1));
+    this->e0 = this->v1() - this->v0();
+    this->e1 = this->v2() - this->v0();
+    this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
 }
 
 Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture, CanvasTriangle textureTri) {
@@ -56,11 +51,10 @@ Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, Tex
     this->colour = colour;
     this->texture = texture;
     this->hasTexture = true;
-    //glm::vec3 e0 = this->v2() - this->v0();
-    glm::vec3 e0 = this->v2() - this->v1();
-    //glm::vec3 e1 = this->v2() - this->v0();
-    glm::vec3 e1 = this->v0() - this->v1();
-    this->normal = glm::normalize(glm::cross(e0, e1));
+    this->e0 = this->v1() - this->v0();
+    this->e1 = this->v2() - this->v0();
+    this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
+
 }
 
 
@@ -276,6 +270,6 @@ void Triangle::setV2(glm::vec3 v2) {
     this->tri3[2] = v2;
 }
 
-glm::vec3 Triangle::getNormal() {
-    return this->normal;
+glm::vec3* Triangle::getNormal() {
+    return &this->normal;
 }

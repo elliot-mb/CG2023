@@ -111,7 +111,7 @@ glm::mat3 Utils::rod(glm::vec3 w, float theta){
 
 //if i give no up, they get to assume that my up is that of the world origin (see default argument in defn.)
 // noRoll flag tells us if we want to allow roll in the resulting transformation (do we keep the x axis level)
-glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
+glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp){
     glm::vec3 dirNorm = glm::normalize(direction);
     glm::mat3 orientation = glm::mat3({0, 0, 0},
                                       {0, 0, 0},
@@ -120,16 +120,7 @@ glm::mat3 Utils::rotateMeTo(glm::vec3 direction, glm::vec3 myUp, bool canRoll){
     xDir = glm::normalize(xDir);
     glm::vec3 yDir = glm::cross(dirNorm, xDir);
     yDir = glm::normalize(yDir);
-//    if(!canRoll) { old roll prevention code
-//        //rotate by theta (angle the camera x axis is away from the world xz plane) around the direction (camera z) axis
-//        //generate some vector in the same direction as x but flat to the plane
-//        glm::vec3 xFlatDir = glm::normalize(glm::vec3(xDir.x, 0.0, xDir.z));
-//        //calculate how rotated around our z axis we are
-//        float theta = glm::asin(glm::length(glm::cross(xDir, xFlatDir))) * glm::normalize(xDir.y); //normalise multiplication is for signing rotation correctly
-//        glm::mat3 rotUnroll = Utils::rod(dirNorm, theta); // rotation around z axis theta rads
-//        xDir = rotUnroll * xDir;
-//        yDir = rotUnroll * yDir;
-//    }
+
     //column 1
     orientation[0].x = xDir.x;
     orientation[0].y = yDir.x;
