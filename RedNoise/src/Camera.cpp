@@ -5,8 +5,11 @@
 #include "Camera.h"
 #include "Utils.h"
 #include "ModelLoader.h"
+#include "Line.h"
 #include <iostream>
 #include <tuple>
+
+glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
     this->position = cameraPosition;
@@ -48,7 +51,8 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
 
 //please given -1 for fobiddenIndex if there is no index forbade
 //returns {index: int ::= index of triangle intersection OR -1 if not found, closestValid: float ::= distance along ray of collision}
-std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris){
+//sets (by ref) the u and v of the intersection (intersectLoc) corresponding to the edges distance for conversion to barycentric coords
+std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, glm::vec2& intersectLoc){
     float closestValid = INFINITY; //compare on t (x)
     int closestTri = -1;
     if(tris.empty())
@@ -65,6 +69,7 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
                possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
                possibleSolution.y + possibleSolution.z <= 1 &&
                possibleSolution.x < closestValid){ //if it hits the triangle AND its the new smallest OR the first we've seen
+                intersectLoc = {possibleSolution.y, possibleSolution.z}; //u and v to be returned via reference setting
                 closestValid = possibleSolution.x;
                 closestTri = i;
             }
@@ -110,10 +115,27 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris);
+            glm::vec2 uv = {0.0, 0.0};
+            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, uv);
             if(intersection.first != NONE){ //if its valid...
                 Triangle* tri = tris[intersection.first];
-                glm::vec3* norm = tri->getNormal();
+                glm::vec3* norm;
+                if(true){
+                    float u = 1 - uv.x - uv.y;
+                    float v = uv.x;
+                    float w = uv.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
+                    //std::cout << baryCoord.x << ',' << baryCoord.y << ',' << baryCoord.z << std::endl;
+                    //linear combination of vertex normals
+                    glm::vec3 normSum = {0.0, 0.0, 0.0};
+                    std::vector<glm::vec3*> norms = model.getNormsForTri(intersection.first);
+                    normSum += *norms[0] * u;
+                    normSum += *norms[1] * v;
+                    normSum += *norms[2] * w;
+                    normSum = glm::normalize(normSum); //the normal at THIS point on the triangles surface
+                    norm = &normSum;
+                }else{
+                    norm = tri->getNormal();//this is the face normal
+                }
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
                 glm::vec3 shadowRay = lightLoc - intercept;
@@ -124,7 +146,7 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
                 specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
                 diffuse(brightness, shadowRayn, *norm);
                 proximity(brightness, len, lightSource.w);
-                shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                //shadow(brightness, intersection.first, intercept, shadowRay, tris);
 
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;
                 if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient

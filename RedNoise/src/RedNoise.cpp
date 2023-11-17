@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec4 light = glm::vec4(0.0, 1.5, 0.2, 1.5); //final is a strength
+    glm::vec4 light = glm::vec4(0.0, 0.35, 1.0, 1.0); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         camera->doRaytracing(window, *cornellLoader, light);
         camera->doRasterising(window, *cornellLoader, *depthBuffer);
         //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
-
+        //light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.02) * 0.02, 0);
         //camera->move(glm::vec3(0.0, -0.01, 0));
 //        camera->lookAt(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
