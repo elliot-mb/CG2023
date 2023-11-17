@@ -217,6 +217,7 @@ void ModelLoader::load() {
         }
     }
     this->makeVertexNorms();
+    //this->putVertNormsInTris();
 }
 
 void ModelLoader::makeVertexNorms() {
@@ -233,16 +234,25 @@ void ModelLoader::makeVertexNorms() {
         this->vertNorms.push_back(normSum);
     }
 }
+//
+//void ModelLoader::putVertNormsInTris(){
+//    for(size_t i = 0; i < this->tris.size(); i++){
+//        std::vector<int> triVertIndices = this->triToVerts[i];
+//        int v0i = triVertIndices[0];
+//        int v1i = triVertIndices[1];
+//        int v2i = triVertIndices[2];
+//        this->tris[i]->setN0(this->vertNorms[v0i]);
+//        this->tris[i]->setN1(this->vertNorms[v1i]);
+//        this->tris[i]->setN2(this->vertNorms[v2i]);
+//    }
+}
 
-std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex){
+std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex) {
     std::vector<int> triVertIndices = this->triToVerts[triIndex];
     int v0i = triVertIndices[0];
     int v1i = triVertIndices[1];
     int v2i = triVertIndices[2];
-    glm::vec3* norm0 = &this->vertNorms[v0i];
-    glm::vec3* norm1 = &this->vertNorms[v1i];
-    glm::vec3* norm2 = &this->vertNorms[v2i];
-    return {norm0, norm1, norm2};
+    return {&this->vertNorms[v0i], &this->vertNorms[v1i], &this->vertNorms[v2i]};
 }
 
 glm::vec3 ModelLoader::getPos(){
