@@ -43,9 +43,10 @@ private:
     map<string, Colour> materials; //vector of colour maps
     map<std::string, TextureMap> textures;
     float scale;
-    std::vector<glm::vec3> uniqueVerts; //just those vertices which are used to build facets
+    std::vector<glm::vec3> verts; //just those vertices which are used to build facets
+    std::vector<glm::vec3> vertNorms; //one to one correspondance to the verts list
     std::vector<std::vector<Triangle*>> vertToTris; //a lookup for which triangles use the ith vert
-    std::vector<std::vector<int>> triToVerts; //a lookup for which vertices are used by the ith triangle in tris
+    std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
 
     static const string TKN_MTLLIB;
     void asMaterial(vector<string> ln);

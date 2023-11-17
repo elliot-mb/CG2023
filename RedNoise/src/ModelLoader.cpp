@@ -26,9 +26,9 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->fileName = fileName;
     this->bytes = ""; //new string
     this->tris = vector<Triangle*>{};
-    this->uniqueVerts = std::vector<glm::vec3>{};
-    this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of uniqueVerts)
-    this->triToVerts = std::vector<std::vector<int>>{}; //the indices of uniqueVerts that tri[i] is made from
+    this->verts = std::vector<glm::vec3>{};
+    this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
+    this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
 }
 //ModelLoader::~ModelLoader(){
@@ -169,6 +169,7 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
     vec3 v0 = verts[i0] + this->position;
     vec3 v1 = verts[i1] + this->position;
     vec3 v2 = verts[i2] + this->position;
+    Triangle* tri;
     if(currentTexture.second){ //do we have a valid texture mapping
         TextureMap texture = currentTexture.first;
         size_t w = texture.width;
@@ -180,11 +181,14 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
         CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
-        this->tris.push_back(new Triangle(v0, v1, v2, currentColour, texture, textureTri));
-    }else this->tris.push_back(new Triangle(v0, v1, v2, currentColour));
+        tri = new Triangle(v0, v1, v2, currentColour, texture, textureTri);
+    }else tri = new Triangle(v0, v1, v2, currentColour);
 
+    this->tris.push_back(tri);
     this->triToVerts.push_back(std::vector<int>{i0, i1, i2});
-    this->vertToTris[i0].push_back()
+    this->vertToTris[i0].push_back(tri);
+    this->vertToTris[i1].push_back(tri);
+    this->vertToTris[i2].push_back(tri);
 }
 
 // main object loading function
@@ -207,11 +211,15 @@ void ModelLoader::load() {
             if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
             if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
-            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->uniqueVerts);
+            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
-            if(isLineType(ln, TKN_FACET)) asFacet(ln, this->uniqueVerts, textureVerts, currentColour, currentTexture);
+            if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
     }
+
+}
+
+void ModelLoader::makeVertexNorms() {
 
 }
 
