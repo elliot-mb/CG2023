@@ -32,7 +32,7 @@ public:
     vector<Triangle*> getTris();
 
     glm::vec3 getPos();
-    std::vector<glm::vec3*> getNormsForTri(int &triIndex);
+    std::vector<glm::vec3*> getNormsForTri(int& triIndex);
 private:
 
     glm::vec3 position;
@@ -70,5 +70,6 @@ private:
     void asVertexTexture(vector<string> ln, vector<vec2> &textureVerts);
 
     void makeVertexNorms(); //compute all vertex normals through finding all unique vertices, and seeing which triangles share them
+    //void putVertNormsInTris();
 };
 

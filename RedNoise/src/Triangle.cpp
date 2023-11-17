@@ -273,3 +273,23 @@ void Triangle::setV2(glm::vec3 v2) {
 glm::vec3* Triangle::getNormal() {
     return &this->normal;
 }
+
+void Triangle::setN0(glm::vec3 n0) {
+    this->nrm0 = n0;
+}
+void Triangle::setN1(glm::vec3 n1) {
+    this->nrm1 = n1;
+}
+void Triangle::setN2(glm::vec3 n2) {
+    this->nrm2 = n2;
+}
+glm::vec3* Triangle::n0() {
+    return &this->nrm0;
+}
+glm::vec3* Triangle::n1() {
+    return &this->nrm1;
+}
+glm::vec3* Triangle::n2() {
+    return &this->nrm2;
+}
+

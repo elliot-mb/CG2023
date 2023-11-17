@@ -34,6 +34,13 @@ public:
     Colour& getColour();
     glm::vec3* getNormal();
 
+    void setN0(glm::vec3 nrm0);
+    void setN1(glm::vec3 nrm1);
+    void setN2(glm::vec3 nrm2);
+    glm::vec3* n0();
+    glm::vec3* n1();
+    glm::vec3* n2();
+
     glm::vec3 e0;
     glm::vec3 e1;
 private:
@@ -47,6 +54,10 @@ private:
     glm::vec2 vt0; //texture vertices
     glm::vec2 vt1;
     glm::vec2 vt2;
+    glm::vec3 nrm0; //vertex normals
+    glm::vec3 nrm1;
+    glm::vec3 nrm2;
+
 
     glm::vec3 normal;
     Colour colour;

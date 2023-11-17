@@ -109,7 +109,7 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
     std::vector<Triangle*> tris = model.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
     glm::vec3 lightLoc = glm::vec3(lightSource);
-    uint stride = 1; //how large are our ray pixels (1 is native resolution)
+    uint stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
@@ -124,7 +124,6 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
                     float u = 1 - uv.x - uv.y;
                     float v = uv.x;
                     float w = uv.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                    //std::cout << baryCoord.x << ',' << baryCoord.y << ',' << baryCoord.z << std::endl;
                     //linear combination of vertex normals
                     glm::vec3 normSum = {0.0, 0.0, 0.0};
                     std::vector<glm::vec3*> norms = model.getNormsForTri(intersection.first);
