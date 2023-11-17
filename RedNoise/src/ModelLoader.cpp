@@ -216,11 +216,23 @@ void ModelLoader::load() {
             if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
     }
-
+    this->vertNorms = this->makeVertexNorms();
 }
 
-void ModelLoader::makeVertexNorms() {
-
+vector<vec3> ModelLoader::makeVertexNorms() {
+    vector<vec3> vNorms = {};
+    // average all the normals of all the triangles connected to each vertex
+    for(size_t i = 0; i < this->verts.size(); i++){
+        //all the triangles connected to each vertex
+        std::vector<Triangle*> sharedTris = this->vertToTris[i];
+        glm::vec3 normSum = {0.0, 0.0, 0.0};
+        for(Triangle* & sharedTri : sharedTris){
+            normSum = normSum + *sharedTri->getNormal();
+        }
+        normSum = glm::normalize(normSum); //the vertex normal
+        vNorms.push_back(normSum);
+    }
+    return vNorms;
 }
 
 glm::vec3 ModelLoader::getPos(){
