@@ -142,10 +142,11 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
                 glm::vec3 shadowRayn = glm::normalize(shadowRay);
 
                 float brightness = 1.0;
+
                 specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
                 diffuse(brightness, shadowRayn, *norm);
                 proximity(brightness, len, lightSource.w);
-                //shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                shadow(brightness, intersection.first, intercept, shadowRay, tris);
 
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;
                 if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
