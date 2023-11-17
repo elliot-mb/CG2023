@@ -123,6 +123,7 @@ void ModelLoader::asVertex(std::vector<string> ln, vector<vec3>& verts){
     }
     if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VERTEX conversion resulted in the wrong number of floats");
     verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
+    this->vertToTris.push_back({}); //empty list to be populated with triangles
 }
 
 void ModelLoader::asVertexTexture(std::vector<string> ln, vector<vec2>& textureVerts){
@@ -181,8 +182,9 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
         this->tris.push_back(new Triangle(v0, v1, v2, currentColour, texture, textureTri));
     }else this->tris.push_back(new Triangle(v0, v1, v2, currentColour));
-    this->triToVerts.push_back(std::vector<int>{i0, i1, i2});
 
+    this->triToVerts.push_back(std::vector<int>{i0, i1, i2});
+    this->vertToTris[i0].push_back()
 }
 
 // main object loading function
