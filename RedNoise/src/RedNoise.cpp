@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         camera->doRaytracing(window, *cornellLoader, light);
         camera->doRasterising(window, *cornellLoader, *depthBuffer);
         //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
-        //light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.02) * 0.02, 0);
+        light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.2) * 0.02, 0);
         //camera->move(glm::vec3(0.0, -0.01, 0));
 //        camera->lookAt(0.0, 0.0);
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !

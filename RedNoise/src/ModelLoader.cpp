@@ -245,7 +245,7 @@ void ModelLoader::makeVertexNorms() {
 //        this->tris[i]->setN1(this->vertNorms[v1i]);
 //        this->tris[i]->setN2(this->vertNorms[v2i]);
 //    }
-}
+//}
 
 std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex) {
     std::vector<int> triVertIndices = this->triToVerts[triIndex];
