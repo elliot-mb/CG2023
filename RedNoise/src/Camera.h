@@ -24,12 +24,12 @@ public:
     void toggleOrbit();
     void renderMode();
     void doOrbit(ModelLoader model);
-    static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris);
+    static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
     void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
     void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
 
 private:
-
+    static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
     // a lot like

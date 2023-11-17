@@ -216,11 +216,11 @@ void ModelLoader::load() {
             if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
     }
-    this->vertNorms = this->makeVertexNorms();
+    this->makeVertexNorms();
 }
 
-vector<vec3> ModelLoader::makeVertexNorms() {
-    vector<vec3> vNorms = {};
+void ModelLoader::makeVertexNorms() {
+    std::vector<glm::vec3> vNorms = {};
     // average all the normals of all the triangles connected to each vertex
     for(size_t i = 0; i < this->verts.size(); i++){
         //all the triangles connected to each vertex
@@ -230,9 +230,19 @@ vector<vec3> ModelLoader::makeVertexNorms() {
             normSum = normSum + *sharedTri->getNormal();
         }
         normSum = glm::normalize(normSum); //the vertex normal
-        vNorms.push_back(normSum);
+        this->vertNorms.push_back(normSum);
     }
-    return vNorms;
+}
+
+std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex){
+    std::vector<int> triVertIndices = this->triToVerts[triIndex];
+    int v0i = triVertIndices[0];
+    int v1i = triVertIndices[1];
+    int v2i = triVertIndices[2];
+    glm::vec3* norm0 = &this->vertNorms[v0i];
+    glm::vec3* norm1 = &this->vertNorms[v1i];
+    glm::vec3* norm2 = &this->vertNorms[v2i];
+    return {norm0, norm1, norm2};
 }
 
 glm::vec3 ModelLoader::getPos(){
