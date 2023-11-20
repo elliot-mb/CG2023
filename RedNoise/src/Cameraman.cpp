@@ -19,6 +19,7 @@ std::vector<glm::vec3> Cameraman::Lerp::act() {
     glm::vec3* current = &this->args[0];
     glm::vec3* target = &this->args[1];
     float timeframe = this->args[2].x;
+    if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
     int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
     return Utils::interpolateThreeElementValues(*current, *target, steps);
 }
@@ -31,6 +32,7 @@ std::vector<glm::vec3> Cameraman::Wait::act() {
     std::cout << "wait" << std::endl;
     glm::vec3* target = &this->args[0];
     float timeframe = this->args[1].x;
+    if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
     int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
     return Utils::interpolateThreeElementValues(*target, *target, steps); // essentially just how many frames we need to say in the same place
 }
@@ -41,7 +43,7 @@ Cameraman::Cameraman(Camera* cam, string outPath, Colour background) {
     this->background = background;
 }
 
-void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light) {
+void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview) {
     std::vector<glm::vec3> positionBuffer = {};
     uint frameID = 0;
     SDL_Event event;
@@ -56,12 +58,20 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoa
             this->cam->setPos(pos);
             this->cam->doRaytracing(window, model, light);
             this->cam->doRasterising(window, model, depthBuffer);
-
-            window.saveBMP(this->outPath + "frame_" + std::to_string(frameID) + ".bpm");
+            if(withPreview){ window.renderFrame(); }
+            window.savePPM(this->outPath + "frame_" + std::to_string(frameID) + ".ppm");
             frameID++;
         }
     }
     std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
+
+    /**
+     * run the following to compile the frames into a video at 25fps:
+     *
+     * ffmpeg -framerate 25 -i frame_%d.ppm -c:v libx264 -movflags +faststart output.mp4
+     *
+     */
+
 }
 
 void Cameraman::drawBackground(DrawingWindow &window) {

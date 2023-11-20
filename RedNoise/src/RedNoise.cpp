@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     Cameraman* cm = new Cameraman(camera, "./render/", Colour(0, 0, 0));
 
-    cm->render(window, *depthBuffer, *cornellLoader, light);
+    cm->render(window, *depthBuffer, *cornellLoader, light, true);
 
 
 	while (true) {
