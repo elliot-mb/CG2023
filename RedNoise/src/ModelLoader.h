@@ -20,7 +20,7 @@ using MaybeTexture = pair<TextureMap, bool>; //a texture and its validity
 
 class ModelLoader {
 public:
-    explicit ModelLoader(string fileName, float scale, glm::vec3 position);
+    explicit ModelLoader(string fileName, float scale, glm::vec3 position, int shading);
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -33,11 +33,14 @@ public:
 
     glm::vec3 getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
+    //shading mode
+    enum Shading {nrm, grd, phg};// normal(s), gouraud, phong
+    int* getShading();
 private:
-
     glm::vec3 position;
     std::vector<string> tailTokens(std::vector<string> ln, const string& tkn);
     bool isLineType(std::vector<string> ln, const string& tkn);
+    int shading;
     string fileName; // name
     string bytes; // file bytes
     vector<Triangle*> tris; //tris generated from verts and facets

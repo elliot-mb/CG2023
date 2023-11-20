@@ -120,19 +120,24 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
             if(intersection.first != NONE){ //if its valid...
                 Triangle* tri = tris[intersection.first];
                 glm::vec3* norm;
-                if(true){
+                int shading = *model.getShading();
+                if(shading == ModelLoader::phg) {
                     float u = 1 - uv.x - uv.y;
                     float v = uv.x;
                     float w = uv.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
                     //linear combination of vertex normals
                     glm::vec3 normSum = {0.0, 0.0, 0.0};
-                    std::vector<glm::vec3*> norms = model.getNormsForTri(intersection.first);
+                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
                     normSum += *norms[0] * u;
                     normSum += *norms[1] * v;
                     normSum += *norms[2] * w;
                     normSum = glm::normalize(normSum); //the normal at THIS point on the triangles surface
                     norm = &normSum;
-                }else{
+                }
+                if(shading == ModelLoader::grd){
+                    throw runtime_error("Camera::raycast: gouraud shading not yet implemented");
+                }
+                if(shading == ModelLoader::nrm){
                     norm = tri->getNormal();//this is the face normal
                 }
                 //...cast from the intersection to the light if one is given
