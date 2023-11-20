@@ -21,27 +21,64 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Cameraman.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/cache-v2-76c110cd9018c5a865c4.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/cmakeFiles-v1-63f37f4af2796c8d666a.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/codemodel-v2-054fb2292488bd3520f0.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-11-17T18-45-03-0662.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/target-RedNoise-Debug-3d17a48d1e73875f8cf5.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeFiles/rules.ninja" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/build.ninja" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_0.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_1.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_10.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_11.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_12.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_13.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_14.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_15.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_16.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_17.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_18.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_19.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_2.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_20.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_21.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_22.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_23.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_24.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_25.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_26.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_27.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_28.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_29.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_3.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_30.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_31.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_32.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_33.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_34.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_35.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_36.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_37.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_38.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_39.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_4.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_40.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_41.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_42.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_43.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_44.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_45.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_46.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_47.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_48.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_49.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_5.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_6.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_7.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_8.bpm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/frame_9.bpm" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -158,7 +195,7 @@
       <workItem from="1700225595835" duration="1205000" />
       <workItem from="1700238377215" duration="12764000" />
       <workItem from="1700490060328" duration="1860000" />
-      <workItem from="1700492640095" duration="4433000" />
+      <workItem from="1700492640095" duration="5472000" />
     </task>
     <servers />
   </component>

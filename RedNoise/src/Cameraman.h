@@ -12,7 +12,7 @@ class Cameraman {
 public:
     Cameraman(Camera* cam, string outPath, Colour background);
 
-    void render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light);//renders all frames of the animation
+    void render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview);//renders all frames of the animation
 
 
 private:
@@ -39,6 +39,7 @@ private:
     std::vector<Action*> actions = {
             new Lerp(glm::mat3({0, -0.5, 4}, {1, -0.5, 4}, {1, 0, 0})),
             new Wait(glm::mat3({1, -0.5, 4}, {1, 0, 0}, {0, 0, 0})),
+            new Lerp(glm::mat3({1, -0.5, 4}, {0, -0.5, 2}, {1, 0, 0})),
     };
 
     Camera* cam;
