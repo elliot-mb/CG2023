@@ -223,6 +223,14 @@ void Camera::rot(float angleX, float angleY) {
     this->orientation[2] = {camX.z, camY.z, camZ.z};
 }
 
+
+void Camera::setRot(float angleX, float angleY) {
+    this->orientation = glm::mat3({1, 0, 0},
+                                  {0, 1, 0},
+                                  {0, 0, 1});
+    rot(angleX, angleY);
+}
+
 void Camera::lookAt(glm::vec3 at) {
     glm::vec3 direction = this->position - at;
     this->orientation = Utils::rotateMeTo(direction, glm::vec3(0, 1, 0));

@@ -19,18 +19,24 @@ private:
     class Action { //private action class
     public:
         explicit Action(glm::mat3 args);
-        virtual std::vector<glm::vec3> act() = 0; // =0 is a pure specifier (weird c++ stuff)
+        //this act function modifies the camera and renders frames and saves them for a given action
+        //returns the frames rendered
+        virtual uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) = 0; // =0 is a pure specifier (weird c++ stuff)
     protected:
         glm::mat3 args;
     };
 
     class Lerp: public Action{
         using Action::Action;
-        std::vector<glm::vec3> act() override;
+        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
     };
     class Wait: public Action{
         using Action::Action;
-        std::vector<glm::vec3> act() override;
+        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
+    };
+    class LerpRot: public Action{
+        using Action::Action;
+        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
     };
 
     static const int FRAMERATE = 25; //fps (static)
