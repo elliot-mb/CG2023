@@ -64,4 +64,6 @@ private:
     void shadow(float &brightness, int& intersection, vec3 &intercept, vec3 &shadowRay, vector<Triangle *> &tris);
 
     void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
+
+    void setRot(float angleX, float angleY);
 };
