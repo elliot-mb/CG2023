@@ -21,7 +21,7 @@ const string ModelLoader::TKN_KD     = "Kd";
 const string ModelLoader::TKN_COMMNT = "#";
 const string ModelLoader::TKN_TXTURE = "map_Kd";
 
-ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
+ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
@@ -30,6 +30,7 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
     this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
+    this->shading = shading;
 }
 //ModelLoader::~ModelLoader(){
 //    delete this->tris;
@@ -268,6 +269,10 @@ void ModelLoader::printTris() {
 
 vector<Triangle*> ModelLoader::getTris() {
     return this->tris;
+}
+
+int* ModelLoader::getShading() {
+    return &this->shading;
 }
 
 //vector<glm::vec3> ModelLoader::makeVertexNorms() {
