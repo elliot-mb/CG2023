@@ -10,33 +10,63 @@
  */
 class Cameraman {
 public:
-    Cameraman(Camera* cam, string outPath, Colour background);
+    Cameraman(Camera* cam, string outPath);
 
     void render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview);//renders all frames of the animation
 
-
+    static Colour background;
 private:
     class Action { //private action class
     public:
         explicit Action(glm::mat3 args);
         //this act function modifies the camera and renders frames and saves them for a given action
         //returns the frames rendered
-        virtual uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) = 0; // =0 is a pure specifier (weird c++ stuff)
+        virtual void act(DrawingWindow& window,
+                         Camera& camera,
+                         uint& frameID,
+                         string& outPath,
+                         ModelLoader& model,
+                         DepthBuffer& depthBuffer,
+                         glm::vec4 light,
+                         bool withPreview) = 0; // =0 is a pure specifier (weird c++ stuff)
+        void drawBackground(DrawingWindow& window);
     protected:
         glm::mat3 args;
+
     };
 
     class Lerp: public Action{
         using Action::Action;
-        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& outPath,
+                 ModelLoader& model,
+                 DepthBuffer& depthBuffer,
+                 glm::vec4 light,
+                 bool withPreview) override;
     };
     class Wait: public Action{
         using Action::Action;
-        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& out,
+                 ModelLoader& model,
+                 DepthBuffer& depthBuffer,
+                 glm::vec4 light,
+                 bool withPreview) override;
     };
     class LerpRot: public Action{
         using Action::Action;
-        uint act(DrawingWindow& window, Camera& camera, uint frameID, string& outFile) override;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& out,
+                 ModelLoader& model,
+                 DepthBuffer& depthBuffer,
+                 glm::vec4 light,
+                 bool withPreview) override;
     };
 
     static const int FRAMERATE = 25; //fps (static)
@@ -50,9 +80,7 @@ private:
 
     Camera* cam;
     string outPath;
-    Colour background;
 
-    void drawBackground(DrawingWindow& window);
 };
 
 
