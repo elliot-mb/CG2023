@@ -9,6 +9,9 @@
 #include "DepthBuffer.h"
 #include "ModelLoader.h"
 
+using namespace std;
+using namespace glm;
+
 class Camera {
 public:
     typedef std::pair<bool, pair<int, glm::vec3>> MaybeTriangle;
