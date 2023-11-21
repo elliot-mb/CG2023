@@ -62,7 +62,11 @@ private:
     void proximity(float& brightness, float& len, float& strength);
     void diffuse(float &brightness, vec3 &shadowRay, vec3 &norm);
 
-    void shadow(float &brightness, int& intersection, vec3 &intercept, vec3 &shadowRay, vector<Triangle *> &tris);
+    void shadow(float &brightness, vec3 &shadowRay, int& intersection, vec3 &intercept, vector<Triangle *> &tris);
 
     void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
+
+    void
+    gouraud(float &brightness, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
+            vec3 &camRay);
 };
