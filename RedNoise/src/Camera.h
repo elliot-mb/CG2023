@@ -14,7 +14,6 @@ public:
     typedef std::pair<bool, pair<int, glm::vec3>> MaybeTriangle;
 
     Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
-
     std::tuple<glm::vec3, bool> getCanvasIntersectionPoint(glm::vec3 vertexPosition); //vertex and whether we should draw it (not off image plane)
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
@@ -25,11 +24,13 @@ public:
     void toggleOrbit();
     void renderMode();
     void doOrbit(ModelLoader model);
-    pair<bool, pair<int, glm::vec3>> getClosestIntersection(int forbiddenIndex, glm::vec3 origin, glm::vec3 rayDir, ModelLoader &model);
-    void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
+    static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
+    void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
     void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
-private:
+    void setRot(float angleX, float angleY);
 
+private:
+    static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
     // a lot like
@@ -42,6 +43,9 @@ private:
     float focalLength; // distance of the clipping plane along the z axis
     glm::vec2 screen; //resolution
     glm::vec2 screen2; //screen over 2
+    std::vector<vector<glm::vec2>> imageCoords; // precomputed and referenced in buildCameraRays
+    float ambientUpper;
+    float ambientLower;
 
     bool isOrbiting;
     uint mode;
@@ -50,7 +54,15 @@ private:
 
     vec3 myRight();
 
-    vec3 buildCameraRay(int x, int y);
-    void raycast(DrawingWindow &window, ModelLoader &model, glm::vec3 lightSource);
+    vec3 buildCameraRay(int& x, int& y);
+    void raycast(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
     void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+
+    //lighting effects
+    void proximity(float& brightness, float& len, float& strength);
+    void diffuse(float &brightness, vec3 &shadowRay, vec3 &norm);
+
+    void shadow(float &brightness, int& intersection, vec3 &intercept, vec3 &shadowRay, vector<Triangle *> &tris);
+
+    void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
 };

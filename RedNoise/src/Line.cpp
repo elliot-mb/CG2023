@@ -8,22 +8,19 @@
 #include "TextureMap.h"
 #include "DepthBuffer.h"
 
-using namespace std;
-using namespace glm;
-
-void Line::draw(DrawingWindow& window, vec2 posA, vec2 posB, Colour &colour, float weight){
-    vector<vec2> pixels = Line::pixels(posA, posB);
-    for(vec2 & pixel : pixels){
+void Line::draw(DrawingWindow& window, glm::vec2 posA, glm::vec2 posB, Colour &colour, float weight){
+    std::vector<glm::vec2> pixels = Line::pixels(posA, posB);
+    for(glm::vec2 & pixel : pixels){
         window.setPixelColour(static_cast<ulong>(round(pixel.x)), static_cast<ulong>(round(pixel.y)), Utils::pack(255, colour.red, colour.green, colour.blue));
     }
 }
 
-void Line::draw(DrawingWindow& window, DepthBuffer& db, vec3 posA, vec3 posB, vec2 posTA, vec2 posTB, TextureMap& texture, float weight){
-    vector<vec3> pixels = Line::pixels(posA, posB);
-    vector<vec2> pixelsT = Line::pixels(posTA, posTB);
+void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec3 posB, glm::vec2 posTA, glm::vec2 posTB, TextureMap& texture, float weight){
+    std::vector<glm::vec3> pixels = Line::pixels(posA, posB);
+    std::vector<glm::vec2> pixelsT = Line::pixels(posTA, posTB);
     float textureStep = static_cast<float>(pixelsT.size()) / static_cast<float>(pixels.size());
     float texturePoint = 0; //start at 0th texture pixel
-    for(vec3 & pixel : pixels){
+    for(glm::vec3 & pixel : pixels){
         int x = static_cast<int>(round(pixel.x));
         int y = static_cast<int>(round(pixel.y));
         uint32_t pt = texture.pixel(static_cast<int>(pixelsT[floor(texturePoint)].x), static_cast<int>(pixelsT[floor(texturePoint)].y));
@@ -37,8 +34,8 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, vec3 posA, vec3 posB, ve
 
 // this function is used just with a 2d depth matrix that stores the colour and
 void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec3 posB, Colour &colour, float weight){
-    vector<vec3> pixels = Line::pixels(posA, posB);
-    for(vec3& pixel : pixels){
+    std::vector<glm::vec3> pixels = Line::pixels(posA, posB);
+    for(glm::vec3& pixel : pixels){
         int x = static_cast<int>(round(pixel.x));
         int y = static_cast<int>(round(pixel.y));
         if(db.putPixel(glm::vec3(x, y, pixel.z))){
@@ -47,30 +44,30 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec
     }
 }
 
-vector<vec2> Line::pixels(vec2 posA, vec2 posB){
-    vec2 delta = posB - posA;
+std::vector<glm::vec2> Line::pixels(glm::vec2 posA, glm::vec2 posB){
+    glm::vec2 delta = posB - posA;
     float steps = Utils::max(abs(delta.x), abs(delta.y));
     if(steps == 0) steps = 1;
-    vec2 stepSize = delta / steps;
-    vector<vec2> pixels = {};
+    glm::vec2 stepSize = delta / steps;
+    std::vector<glm::vec2> pixels = {};
     for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
-        vec2 now = posA + (stepSize * static_cast<float>(i));
-        pixels.push_back(vec2(round(now.x), round(now.y)));
+        glm::vec2 now = posA + (stepSize * static_cast<float>(i));
+        pixels.push_back(glm::vec2(round(now.x), round(now.y)));
     }
-    pixels.push_back(vec2(round(posB.x), round(posB.y)));
+    pixels.push_back(glm::vec2(round(posB.x), round(posB.y)));
     return pixels;
 }
 
 //all of these vec3s are projected onto the image plane, and just retain their z from distance to the camera. z is interpolated for occlusion purposes
 //stored in the z is the distance to the camera, which is reciprocated and compared in the draw function which takes an additional parameter of a depth buffer
-vector<vec3> Line::pixels(vec3 posA, vec3 posB){
-    vec3 delta = posB - posA;
+std::vector<glm::vec3> Line::pixels(glm::vec3 posA, glm::vec3 posB){
+    glm::vec3 delta = posB - posA;
     float steps = Utils::max(abs(delta.x), abs(delta.y)); //steps depends just on the largest distance we have to cross in the (2D) projected plane
     if(steps == 0) steps = 1;
-    vec3 stepSize = delta / steps;
-    vector<vec3> pixels = {};
+    glm::vec3 stepSize = delta / steps;
+    std::vector<glm::vec3> pixels = {};
     for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
-        vec3 now = posA + (stepSize * static_cast<float>(i));
+        glm::vec3 now = posA + (stepSize * static_cast<float>(i));
         pixels.push_back(glm::vec3(glm::round(now.x), glm::round(now.y), now.z));
     }
     pixels.push_back(round(posB));

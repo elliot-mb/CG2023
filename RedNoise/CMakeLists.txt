@@ -40,7 +40,8 @@ add_executable(RedNoise
         src/Triangle.cpp
         src/ModelLoader.cpp
         src/Camera.cpp
-        src/DepthBuffer.cpp)
+        src/DepthBuffer.cpp
+        src/Cameraman.cpp)
 
 if (MSVC)
     target_compile_options(RedNoise

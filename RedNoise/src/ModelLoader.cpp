@@ -21,12 +21,16 @@ const string ModelLoader::TKN_KD     = "Kd";
 const string ModelLoader::TKN_COMMNT = "#";
 const string ModelLoader::TKN_TXTURE = "map_Kd";
 
-ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position) {
+ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
-    this->tris = vector<Triangle>{}; //new modeltriangle vector
+    this->tris = vector<Triangle*>{};
+    this->verts = std::vector<glm::vec3>{};
+    this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
+    this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
+    this->shading = shading;
 }
 //ModelLoader::~ModelLoader(){
 //    delete this->tris;
@@ -120,6 +124,7 @@ void ModelLoader::asVertex(std::vector<string> ln, vector<vec3>& verts){
     }
     if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VERTEX conversion resulted in the wrong number of floats");
     verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
+    this->vertToTris.push_back({}); //empty list to be populated with triangles
 }
 
 void ModelLoader::asVertexTexture(std::vector<string> ln, vector<vec2>& textureVerts){
@@ -159,9 +164,13 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
     if(facetVertsIndices.size() != VERT_COUNT) throw runtime_error("ModelLoader::load(): TKN_FACET facet does not have three vertices");
     if(textureVertsIndices.size() != VERT_COUNT && !textureVertsIndices.empty()) throw runtime_error("ModelLoader::load(): invalid number of texture coordinates (not none, not three)");
     //create a triangle
-    vec3 v0 = verts[facetVertsIndices[0] - 1] + this->position;
-    vec3 v1 = verts[facetVertsIndices[1] - 1] + this->position;
-    vec3 v2 = verts[facetVertsIndices[2] - 1] + this->position;
+    int i0 = facetVertsIndices[0] - 1;
+    int i1 = facetVertsIndices[1] - 1;
+    int i2 = facetVertsIndices[2] - 1; //indices of vertices
+    vec3 v0 = verts[i0] + this->position;
+    vec3 v1 = verts[i1] + this->position;
+    vec3 v2 = verts[i2] + this->position;
+    Triangle* tri;
     if(currentTexture.second){ //do we have a valid texture mapping
         TextureMap texture = currentTexture.first;
         size_t w = texture.width;
@@ -173,9 +182,14 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
         CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
-        this->tris.push_back(*new Triangle(v0, v1, v2, currentColour, texture, textureTri));
-    }else this->tris.push_back(*new Triangle(v0, v1, v2, currentColour));
+        tri = new Triangle(v0, v1, v2, currentColour, texture, textureTri);
+    }else tri = new Triangle(v0, v1, v2, currentColour);
 
+    this->tris.push_back(tri);
+    this->triToVerts.push_back(std::vector<int>{i0, i1, i2});
+    this->vertToTris[i0].push_back(tri);
+    this->vertToTris[i1].push_back(tri);
+    this->vertToTris[i2].push_back(tri);
 }
 
 // main object loading function
@@ -186,7 +200,6 @@ void ModelLoader::load() {
 
     Colour currentColour = Colour(255, 255, 255);
     MaybeTexture currentTexture = pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
-    std::vector<vec3> verts = {};
     std::vector<vec2> textureVerts = {};
 
     for(string& lnBlock: lines){
@@ -197,14 +210,50 @@ void ModelLoader::load() {
         cout << endl;
         if(!isLineType(ln, TKN_COMMNT)){
             if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
-            if(isLineType(ln, TKN_SUBOBJ)); //add sub object names if needed
+            if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
-            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, verts);
+            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
-            if(isLineType(ln, TKN_FACET)) asFacet(ln, verts, textureVerts, currentColour, currentTexture);
+            if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
     }
+    this->makeVertexNorms();
+    //this->putVertNormsInTris();
+}
 
+void ModelLoader::makeVertexNorms() {
+    std::vector<glm::vec3> vNorms = {};
+    // average all the normals of all the triangles connected to each vertex
+    for(size_t i = 0; i < this->verts.size(); i++){
+        //all the triangles connected to each vertex
+        std::vector<Triangle*> sharedTris = this->vertToTris[i];
+        glm::vec3 normSum = {0.0, 0.0, 0.0};
+        for(Triangle* & sharedTri : sharedTris){
+            normSum = normSum + *sharedTri->getNormal();
+        }
+        normSum = glm::normalize(normSum); //the vertex normal
+        this->vertNorms.push_back(normSum);
+    }
+}
+//
+//void ModelLoader::putVertNormsInTris(){
+//    for(size_t i = 0; i < this->tris.size(); i++){
+//        std::vector<int> triVertIndices = this->triToVerts[i];
+//        int v0i = triVertIndices[0];
+//        int v1i = triVertIndices[1];
+//        int v2i = triVertIndices[2];
+//        this->tris[i]->setN0(this->vertNorms[v0i]);
+//        this->tris[i]->setN1(this->vertNorms[v1i]);
+//        this->tris[i]->setN2(this->vertNorms[v2i]);
+//    }
+//}
+
+std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex) {
+    std::vector<int> triVertIndices = this->triToVerts[triIndex];
+    int v0i = triVertIndices[0];
+    int v1i = triVertIndices[1];
+    int v2i = triVertIndices[2];
+    return {&this->vertNorms[v0i], &this->vertNorms[v1i], &this->vertNorms[v2i]};
 }
 
 glm::vec3 ModelLoader::getPos(){
@@ -218,6 +267,14 @@ void ModelLoader::printTris() {
 //    }
 }
 
-vector<Triangle> ModelLoader::getTris() {
+vector<Triangle*> ModelLoader::getTris() {
     return this->tris;
 }
+
+int* ModelLoader::getShading() {
+    return &this->shading;
+}
+
+//vector<glm::vec3> ModelLoader::makeVertexNorms() {
+//
+//}
