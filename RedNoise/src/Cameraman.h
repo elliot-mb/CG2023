@@ -74,15 +74,17 @@ private:
     constexpr static const float STEP = static_cast<float>(1.0) / FRAMERATE; //evaulate at compile time
 
     std::vector<Action*> actions = {
-            new Lerp(glm::mat3({0, -0.5, 4}, {1, -0.5, 4}, {0.5, 0, 0})),
-            new Wait(glm::mat3({1, -0.5, 4}, {0, 0, 0}, {0.5, 0, 0})),
-            new Lerp(glm::mat3({1, -0.5, 4}, {0, -0.5, 0.5}, {1, 0, 0})),
-            new LerpRot(glm::mat3({0, 0, 0}, {M_PI / 8, -M_PI / 2, 0}, {1, 0, 0})),
-            new LerpRot(glm::mat3({M_PI / 8, -M_PI / 2, 0}, {0, 0, 0}, {0.5, 0, 0})),
-            new Lerp(glm::mat3({0, -0.5, 0.5}, {0, -0.5, 4}, {0.5, 0, 0})),
-            new Wait(glm::mat3({0, -0.5, 4}, {0, 0, 0}, {0.75, 0, 0})),
-            new Lerp(glm::mat3({0, -0.5, 4}, {0, -0.5, 0.5}, {0.15, 0, 0})),
-            new LerpRot(glm::mat3({0, 2 * M_PI, 0}, {0, 0, 0}, {2.5, 0, 0})),
+            new Lerp(glm::mat3({0, -0.5, 4}, {0, 0.5, 2}, {0.5, 0, 0})),
+            new Wait(glm::mat3({0, 0.5, 2}, {0, 0, 0}, {0.5, 0, 0})),
+            new LerpRot(glm::mat3({0, 0, 0}, {-M_PI / 8, 0, 0}, {1, 0, 0})),
+            new Lerp(glm::mat3({0, 0.5, 2}, {0, -0.5, 4}, {0.5, 0, 0})),
+//            new Lerp(glm::mat3({1, -0.5, 4}, {0, -0.5, 0.5}, {1, 0, 0})),
+//            new LerpRot(glm::mat3({0, 0, 0}, {M_PI / 8, -M_PI / 2, 0}, {1, 0, 0})),
+//            new LerpRot(glm::mat3({M_PI / 8, -M_PI / 2, 0}, {0, 0, 0}, {0.5, 0, 0})),
+//            new Lerp(glm::mat3({0, -0.5, 0.5}, {0, -0.5, 4}, {0.5, 0, 0})),
+//            new Wait(glm::mat3({0, -0.5, 4}, {0, 0, 0}, {0.75, 0, 0})),
+//            new Lerp(glm::mat3({0, -0.5, 4}, {0, -0.5, 0.5}, {0.15, 0, 0})),
+//            new LerpRot(glm::mat3({0, 2 * M_PI, 0}, {0, 0, 0}, {2.5, 0, 0})),
     };
 
     Camera* cam;
