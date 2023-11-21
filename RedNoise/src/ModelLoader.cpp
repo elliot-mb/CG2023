@@ -10,6 +10,9 @@
 #include <fstream>
 #include <string.h>
 
+using namespace std;
+using namespace glm;
+
 const string ModelLoader::TKN_MTLLIB = "mtllib";
 const string ModelLoader::TKN_SUBOBJ = "o";
 const string ModelLoader::TKN_USEMTL = "usemtl";

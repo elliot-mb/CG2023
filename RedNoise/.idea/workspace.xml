@@ -21,12 +21,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Scene.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Scene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/codemodel-v2-50080fa3fd4e6f677df3.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-11-21T10-56-25-0116.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/target-RedNoise-Debug-755b824afe2bc77ea009.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/textured-cornell-box.mtl" beforeDir="false" afterPath="$PROJECT_DIR$/textured-cornell-box.mtl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +93,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.RedNoise">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RedNoise Speedy" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="RedNoise" TARGET_NAME="RedNoise" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="RedNoise" RUN_TARGET_NAME="RedNoise">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -139,6 +153,8 @@
       <workItem from="1700490060328" duration="1860000" />
       <workItem from="1700492640095" duration="11805000" />
       <workItem from="1700557736735" duration="6188000" />
+      <workItem from="1700570730189" duration="395000" />
+      <workItem from="1700571134716" duration="548000" />
     </task>
     <servers />
   </component>
