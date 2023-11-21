@@ -8,6 +8,7 @@
 #include "glm/glm.hpp"
 #include "DepthBuffer.h"
 #include "ModelLoader.h"
+#include "Scene.h"
 
 using namespace std;
 using namespace glm;
@@ -29,7 +30,7 @@ public:
     void doOrbit(ModelLoader model);
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
     void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
-    void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+    void doRasterising(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
     void setRot(float angleX, float angleY);
 
 private:
@@ -59,7 +60,7 @@ private:
 
     vec3 buildCameraRay(int& x, int& y);
     void raycast(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
-    void rasterise(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+    void rasterise(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
 
     //lighting effects
     void proximity(float& brightness, float& len, float& strength);

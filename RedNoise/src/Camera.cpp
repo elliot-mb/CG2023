@@ -6,6 +6,7 @@
 #include "Utils.h"
 #include "ModelLoader.h"
 #include "Line.h"
+#include "Scene.h"
 #include <iostream>
 #include <tuple>
 
@@ -183,9 +184,9 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
     }
 }
 
-void Camera::rasterise(DrawingWindow& window, ModelLoader& model, DepthBuffer& depthBuffer){
+void Camera::rasterise(DrawingWindow& window, Scene &scene, DepthBuffer& depthBuffer){
     depthBuffer.reset();
-    vector<Triangle*> tris = model.getTris();
+    vector<Triangle*> tris = scene.getTris();
     for(size_t i = 0; i < tris.size(); i++){
         Triangle thisTri = *tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
         auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
@@ -290,8 +291,8 @@ void Camera::doRaytracing(DrawingWindow& window, ModelLoader& model, glm::vec4& 
     }
 }
 
-void Camera::doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer){
+void Camera::doRasterising(DrawingWindow &window, Scene& scene, DepthBuffer &depthBuffer){
     if(this->mode == rst || this->mode == msh){
-        rasterise(window, model, depthBuffer);
+        rasterise(window, scene, depthBuffer);
     }
 }

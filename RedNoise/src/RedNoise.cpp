@@ -9,6 +9,7 @@
 #include "ModelLoader.h"
 #include "Camera.h"
 #include "Cameraman.h"
+#include "Scene.h"
 
 using namespace std;
 using namespace glm;
@@ -85,10 +86,15 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
-    Cameraman* cm = new Cameraman(camera, "./render/");
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//
+//    cm->render(window, *depthBuffer, *cornellLoader, light, true);
 
-    //cm->render(window, *depthBuffer, *cornellLoader, light, true);
-
+    Scene* s = new Scene({
+        new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
+        new ModelLoader("sphere.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm)
+    });
+    s->load();
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
@@ -97,7 +103,7 @@ int main(int argc, char *argv[]) {
 
         camera->doOrbit(*cornellLoader);
         camera->doRaytracing(window, *cornellLoader, light);
-        camera->doRasterising(window, *cornellLoader, *depthBuffer);
+        camera->doRasterising(window, *s, *depthBuffer);
 
         //light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.2) * 0.02, 0);
 
