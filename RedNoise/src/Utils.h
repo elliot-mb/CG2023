@@ -16,6 +16,7 @@ namespace Utils{
   std::vector<glm::vec2> interpolateTwoElementValues(glm::vec2 from, glm::vec2 to, int steps);
   glm::mat3 pitch(float theta);
   glm::mat3 yaw(float theta);
-  glm::mat3 rotateMeTo(glm::vec3 direction, glm::vec3 myUp = glm::vec3(0,1,0), bool canRoll = true);
+  glm::mat3 rotateMeTo(glm::vec3 direction, glm::vec3 myUp = glm::vec3(0,1,0));
   glm::mat3 rod(glm::vec3 w, float theta);
+  //glm::vec3 weightedMeanVects(glm::vec3& vects, std::vector<float> weights);
 }

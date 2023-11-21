@@ -8,12 +8,13 @@
 #include "Triangle.h"
 #include "ModelLoader.h"
 #include "Camera.h"
+#include "Cameraman.h"
 
 using namespace std;
 using namespace glm;
 
-#define WIDTH 320
-#define HEIGHT 240
+#define WIDTH 640
+#define HEIGHT 480
 
 void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLoader& model) {
 	if (event.type == SDL_KEYDOWN) {
@@ -65,21 +66,17 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornellLoader = new ModelLoader("cornell-box.obj", 0.35, glm::vec3(0, 0, 0));
+    ModelLoader* cornellLoader = new ModelLoader("sphere.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::grd);
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    glm::vec4 light = glm::vec4(0.0, 1.0, 2.0, 2.75); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
-	vector<float> result = Utils::interpolateSingleFloats(2.2, 8.5, 7);
-	for(int i=0; i < result.size(); i++) cout << result[i] << " ";
-	cout << endl;
-
 	vector<vec3> resultVec = Utils::interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
-	for(int i=0; i < resultVec.size(); i++) {
+	for(int i=0; i < static_cast<int>(resultVec.size()); i++) {
 		cout << "(";
 		cout << resultVec[i].x << " ";
 		cout << resultVec[i].y << " ";
@@ -88,6 +85,9 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
+    Cameraman* cm = new Cameraman(camera, "./render/");
+
+    cm->render(window, *depthBuffer, *cornellLoader, light, true);
 
 
 	while (true) {
@@ -96,15 +96,12 @@ int main(int argc, char *argv[]) {
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *cornellLoader, glm::vec3(0.5, 0.9, 0.5));
+        camera->doRaytracing(window, *cornellLoader, light);
         camera->doRasterising(window, *cornellLoader, *depthBuffer);
-        //draw(window, *depthBuffer, *cornellLoader, *camera, frame);
 
-        //camera->move(glm::vec3(0.0, -0.01, 0));
-//        camera->lookAt(0.0, 0.0);
-		// Need to render the frame at the end, or nothing actually gets shown on the screen !
-        //if(frame % 6 == 0) std::cout << "frame" << frame << std::endl;
-		window.renderFrame();
+        //light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.2) * 0.02, 0);
+
+        window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);
 	}
 }
