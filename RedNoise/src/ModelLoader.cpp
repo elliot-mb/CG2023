@@ -198,7 +198,7 @@ void ModelLoader::load() {
     std::vector<string> lines = Utils::split(this->bytes, '\n');
     //tokens
 
-    Colour currentColour = Colour(255, 255, 255);
+    Colour currentColour = Colour(255, 0, 0);
     MaybeTexture currentTexture = pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
     std::vector<vec2> textureVerts = {};
 

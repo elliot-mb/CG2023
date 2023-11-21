@@ -92,17 +92,29 @@ void Camera::proximity(float& brightness, float& len, float& strength){
 void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay){
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(camRay), incidentRay), 128));
-    brightness = static_cast<float>(brightness * (specStrength + 0.5));
+    brightness = static_cast<float>(brightness * (specStrength + 0.75));
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
-    brightness = static_cast<float>(brightness * (glm::dot(norm, shadowRay) + 0.25));
+    brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay));
 }
 
-void Camera::shadow(float& brightness, int& currentTri, glm::vec3& intercept, glm::vec3& shadowRay, std::vector<Triangle*>& tris){
+void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, glm::vec3& intercept,  std::vector<Triangle*>& tris){
     std::pair<int, float> shadowRayIntscnt = getClosestIntersection(currentTri, intercept, shadowRay, tris);
     if((shadowRayIntscnt.first != -1) && (shadowRayIntscnt.second < 1)) //less than 1 means we have not hit a triangle behind the light
         brightness = this->ambientLower;
+}
+
+void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay){
+    float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
+    diffuse(diffV1, shadowRayn, *norms[0]);
+    specular(diffV1, shadowRayn, *norms[0], camRay);
+    diffuse(diffV2, shadowRayn, *norms[1]);
+    specular(diffV2, shadowRayn, *norms[1], camRay);
+    diffuse(diffV3, shadowRayn, *norms[2]);
+    specular(diffV3, shadowRayn, *norms[2], camRay);
+    //interpolate brightnesses
+    brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
 }
 
 void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& lightSource){
@@ -119,38 +131,38 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
             std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, vw);
             if(intersection.first != NONE){ //if its valid...
                 Triangle* tri = tris[intersection.first];
-                glm::vec3 norm;
-                int shading = *model.getShading();
-                if(shading == ModelLoader::phg) {
-
-                }
-                if(shading == ModelLoader::grd){
-                    float u = 1 - vw.x - vw.y;
-                    float v = vw.x;
-                    float w = vw.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                    //linear combination of vertex normals
-                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
-                    norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-                }
-                if(shading == ModelLoader::nrm){
-                    norm = *tri->getNormal();//this is the face normal
-                }
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
                 glm::vec3 shadowRay = lightLoc - intercept;
                 float len = glm::length(shadowRay);
                 glm::vec3 shadowRayn = glm::normalize(shadowRay);
+                //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
+                float u = 1 - vw.x - vw.y;
+                float v = vw.x;
+                float w = vw.y;
 
                 float brightness = 1.0;
 
-                specular(brightness, shadowRayn, norm, camRay); //an order which makes sense
-                diffuse(brightness, shadowRayn, norm);
-                proximity(brightness, len, lightSource.w);
+                glm::vec3 norm;
+                int shading = *model.getShading();
+                if(shading == ModelLoader::phg) {
+                     //linear combination of vertex normals
+                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
+                    norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
+                    specular(brightness, shadowRayn, norm, camRay);
+                    diffuse(brightness, shadowRayn, norm);
+                }
+                if(shading == ModelLoader::grd){
+                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
+                    gouraud(brightness, shadowRayn, u, v, w, norms, camRay);
+                }
                 if(shading == ModelLoader::nrm){
-                    shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                    norm = *tri->getNormal();//this is the face normal
+                    shadow(brightness, shadowRay, intersection.first, intercept, tris);
                 }
 
-
+                proximity(brightness, len, lightSource.w);
+//
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;
                 if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
 
