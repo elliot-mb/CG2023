@@ -12,7 +12,7 @@ class Cameraman {
 public:
     Cameraman(Camera* cam, string outPath);
 
-    void render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview);//renders all frames of the animation
+    void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview);//renders all frames of the animation
 
     static Colour background;
     static SDL_Event event;
@@ -26,7 +26,7 @@ private:
                          Camera& camera,
                          uint& frameID,
                          string& outPath,
-                         ModelLoader& model,
+                         Scene &scene,
                          DepthBuffer& depthBuffer,
                          glm::vec4 light,
                          bool withPreview) = 0; // =0 is a pure specifier (weird c++ stuff)
@@ -42,7 +42,7 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& outPath,
-                 ModelLoader& model,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;
@@ -53,7 +53,7 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& out,
-                 ModelLoader& model,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;
@@ -64,7 +64,7 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& out,
-                 ModelLoader& model,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;

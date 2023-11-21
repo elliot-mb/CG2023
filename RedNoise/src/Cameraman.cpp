@@ -29,7 +29,7 @@ void Cameraman::Lerp::act(DrawingWindow& window,
                           Camera& camera,
                           uint& frameID,
                           string& out,
-                          ModelLoader& model,
+                          Scene &scene,
                           DepthBuffer& depthBuffer,
                           glm::vec4 light,
                           bool withPreview) {
@@ -47,8 +47,8 @@ void Cameraman::Lerp::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setPos(pos);
-        camera.doRaytracing(window, model, light);
-        camera.doRasterising(window, model, depthBuffer);
+        //camera.doRaytracing(window, *scene, light); ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
         frameID++;
@@ -63,7 +63,7 @@ void Cameraman::Wait::act(DrawingWindow& window,
                           Camera& camera,
                           uint& frameID,
                           string& out,
-                          ModelLoader& model,
+                          Scene &scene,
                           DepthBuffer& depthBuffer,
                           glm::vec4 light,
                           bool withPreview) {
@@ -78,8 +78,8 @@ void Cameraman::Wait::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-        camera.doRaytracing(window, model, light);
-        camera.doRasterising(window, model, depthBuffer);
+        //camera.doRaytracing(window, model, light);ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
         frameID++;
@@ -94,7 +94,7 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
                              Camera& camera,
                              uint& frameID,
                              string& out,
-                             ModelLoader& model,
+                             Scene &scene,
                              DepthBuffer& depthBuffer,
                              glm::vec4 light,
                              bool withPreview) {
@@ -114,8 +114,8 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setRot(angles.x, angles.y);
-        camera.doRaytracing(window, model, light);
-        camera.doRasterising(window, model, depthBuffer);
+        //camera.doRaytracing(window, model, light); ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
         frameID++;
@@ -128,7 +128,7 @@ Cameraman::Cameraman(Camera* cam, string outPath) {
     this->outPath = outPath;
 }
 
-void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview) {
+void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview) {
     uint frameID = 0;
 
     for(Action* a : this->actions){
@@ -136,7 +136,7 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoa
               *this->cam,
               frameID,
               this->outPath,
-              model,
+              scene,
               depthBuffer,
               light,
               withPreview);
