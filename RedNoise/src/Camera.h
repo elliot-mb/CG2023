@@ -27,6 +27,7 @@ public:
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
     void doRaytracing(DrawingWindow &window, ModelLoader &model, glm::vec4& lightSource);
     void doRasterising(DrawingWindow &window, ModelLoader &model, DepthBuffer &depthBuffer);
+    void setRot(float angleX, float angleY);
 
 private:
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
@@ -64,6 +65,4 @@ private:
     void shadow(float &brightness, int& intersection, vec3 &intercept, vec3 &shadowRay, vector<Triangle *> &tris);
 
     void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
-
-    void setRot(float angleX, float angleY);
 };
