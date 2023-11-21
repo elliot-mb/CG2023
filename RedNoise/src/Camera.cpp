@@ -109,36 +109,31 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
     std::vector<Triangle*> tris = model.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
     glm::vec3 lightLoc = glm::vec3(lightSource);
-    uint stride = 1; //how large are our ray pixels (1 is native resolution)
+    uint stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            glm::vec2 uv = {0.0, 0.0};
-            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, uv);
+            glm::vec2 vw = {0.0, 0.0};
+            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, vw);
             if(intersection.first != NONE){ //if its valid...
                 Triangle* tri = tris[intersection.first];
-                glm::vec3* norm;
+                glm::vec3 norm;
                 int shading = *model.getShading();
                 if(shading == ModelLoader::phg) {
-                    float u = 1 - uv.x - uv.y;
-                    float v = uv.x;
-                    float w = uv.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                    //linear combination of vertex normals
-                    glm::vec3 normSum = {0.0, 0.0, 0.0};
-                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
-                    normSum += *norms[0] * u;
-                    normSum += *norms[1] * v;
-                    normSum += *norms[2] * w;
-                    normSum = glm::normalize(normSum); //the normal at THIS point on the triangles surface
-                    norm = &normSum;
+
                 }
                 if(shading == ModelLoader::grd){
-                    throw runtime_error("Camera::raycast: gouraud shading not yet implemented");
+                    float u = 1 - vw.x - vw.y;
+                    float v = vw.x;
+                    float w = vw.y; //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
+                    //linear combination of vertex normals
+                    std::vector<glm::vec3 *> norms = model.getNormsForTri(intersection.first);
+                    norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
                 }
                 if(shading == ModelLoader::nrm){
-                    norm = tri->getNormal();//this is the face normal
+                    norm = *tri->getNormal();//this is the face normal
                 }
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
@@ -148,10 +143,13 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
 
                 float brightness = 1.0;
 
-                specular(brightness, shadowRayn, *norm, camRay); //an order which makes sense
-                diffuse(brightness, shadowRayn, *norm);
+                specular(brightness, shadowRayn, norm, camRay); //an order which makes sense
+                diffuse(brightness, shadowRayn, norm);
                 proximity(brightness, len, lightSource.w);
-                shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                if(shading == ModelLoader::nrm){
+                    shadow(brightness, intersection.first, intercept, shadowRay, tris);
+                }
+
 
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;
                 if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
