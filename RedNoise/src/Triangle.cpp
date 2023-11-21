@@ -130,7 +130,7 @@ void Triangle::fill(DrawingWindow &window, DepthBuffer& db) {
     float totalLines = hTop + hBottom;
 
     int topLines = static_cast<int>(ceil(hTop)) + 1;
-    int bottomLines = static_cast<int>(ceil(totalLines - static_cast<float>(topLines))) + 2;
+    int bottomLines = static_cast<int>(ceil(hBottom)) + 1;
     if(topLines > 0) {
         auto [topSideA, topSideB] = interpolateTwoSides(glm::vec2(vTop), glm::vec2(vSplit), glm::vec2(vNew), topLines);
         std::vector<float> depthsTopSideA = Utils::interpolateSingleFloats(vTop.z, vSplit.z, topLines);

@@ -66,11 +66,11 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornellLoader = new ModelLoader("sphere.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::phg);
+    ModelLoader* cornellLoader = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec4 light = glm::vec4(0.0, 1.0,  1.5, 2.0); //final is a strength
+    glm::vec4 light = glm::vec4(0.0, 1.0,  1.5, 5.0); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;

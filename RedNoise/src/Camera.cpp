@@ -158,6 +158,8 @@ void Camera::raycast(DrawingWindow& window, ModelLoader& model, glm::vec4& light
                 }
                 if(shading == ModelLoader::nrm){
                     norm = *tri->getNormal();//this is the face normal
+                    specular(brightness, shadowRayn, norm, camRay);
+                    diffuse(brightness, shadowRayn, norm);
                     shadow(brightness, shadowRay, intersection.first, intercept, tris);
                 }
 
