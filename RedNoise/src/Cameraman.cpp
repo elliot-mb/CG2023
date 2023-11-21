@@ -7,6 +7,7 @@
 //std::vector<glm::vec3> Cameraman::Action::act();
 
 Colour Cameraman::background = Colour(0, 0, 0);
+SDL_Event Cameraman::event;
 
 Cameraman::Action::Action(glm::mat3 args) {
     this->args = args; //used differently depending on underlying implement
@@ -32,6 +33,7 @@ void Cameraman::Lerp::act(DrawingWindow& window,
                           DepthBuffer& depthBuffer,
                           glm::vec4 light,
                           bool withPreview) {
+
     std::cout << "lerp" << std::endl;
     glm::vec3* current = &this->args[0];
     glm::vec3* target = &this->args[1];
@@ -39,7 +41,6 @@ void Cameraman::Lerp::act(DrawingWindow& window,
     if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
     int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
     std::vector<glm::vec3> frames =  Utils::interpolateThreeElementValues(*current, *target, steps);
-    SDL_Event event;
     for(glm::vec3 pos : frames){
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
@@ -56,8 +57,8 @@ void Cameraman::Lerp::act(DrawingWindow& window,
 
 // mat3
 // row 1: target position x, target position y, target position z
-// row 2: timeframe x,       IGNORED y,         IGNORED z
-// row 3:                    IGNORED
+// row 2:                    IGNORED
+// row 3: timeframe x,       IGNORED y,         IGNORED z
 void Cameraman::Wait::act(DrawingWindow& window,
                           Camera& camera,
                           uint& frameID,
@@ -66,12 +67,12 @@ void Cameraman::Wait::act(DrawingWindow& window,
                           DepthBuffer& depthBuffer,
                           glm::vec4 light,
                           bool withPreview) {
+
     std::cout << "wait" << std::endl;
     glm::vec3* target = &this->args[0];
-    float timeframe = this->args[1].x;
+    float timeframe = this->args[2].x;
     if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
     int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
-    SDL_Event event;
     camera.setPos(*target);
     for(int i = 0; i < steps; i++){
         if (window.pollForInputEvents(event)){} //mandatory
@@ -97,6 +98,29 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
                              DepthBuffer& depthBuffer,
                              glm::vec4 light,
                              bool withPreview) {
+
+    std::cout << "rot" << std::endl;
+    float* xCurrent = &this->args[0].x;
+    float* yCurrent = &this->args[0].y;
+    float* xTarget = &this->args[1].x;
+    float* yTarget = &this->args[1].y;
+    float* timeframe = &this->args[2].x;
+    if(*timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
+    int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * *timeframe));
+    std::vector<glm::vec2> frames = Utils::interpolateTwoElementValues(glm::vec2(*xCurrent, *yCurrent), glm::vec2(*xTarget, *yTarget), steps);
+    for(glm::vec2 angles : frames){
+        if (window.pollForInputEvents(event)){} //mandatory
+        window.clearPixels();
+        drawBackground(window);
+
+        camera.setRot(angles.x, angles.y);
+        camera.doRaytracing(window, model, light);
+        camera.doRasterising(window, model, depthBuffer);
+        if(withPreview){ window.renderFrame(); }
+        window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
+        frameID++;
+    }
+
 }
 
 Cameraman::Cameraman(Camera* cam, string outPath) {
