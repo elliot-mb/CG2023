@@ -185,9 +185,9 @@ void Triangle::fillTexture(DrawingWindow &window, DepthBuffer& db){//, glm::vec2
 
     std::vector<glm::vec2> vts;
     for(std::tuple<glm::vec3, glm::vec2> v: vsAndVts) vts.push_back(std::get<1>(v)); //unpack texture vertices sorted which correspond to the triangle vertices
-    glm::vec2 vtTop = vts[0];
-    glm::vec2 vtMid = vts[1];
-    glm::vec2 vtBot = vts[2];
+    glm::vec2 vtTop = vts[0]; /// this->v0().z;
+    glm::vec2 vtMid = vts[1]; /// this->v1().z;
+    glm::vec2 vtBot = vts[2]; /// this->v2().z;
     float fracDownLongSide = (vSplit.y - vTop.y) / (vBottom.y - vTop.y); //used to place vSplit for texture triangle
     glm::vec2 vtNew = vtTop + (fracDownLongSide * (vtBot - vtTop));
 

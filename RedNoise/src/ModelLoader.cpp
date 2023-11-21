@@ -123,7 +123,7 @@ void ModelLoader::asVertex(std::vector<string> ln, vector<vec3>& verts){
         }
     }
     if(floats.size() != 3) throw runtime_error("ModelLoader::load(): TKN_VERTEX conversion resulted in the wrong number of floats");
-    verts.push_back(vec3(floats[0], floats[1], floats[2]) * scale);
+    verts.push_back(vec3(floats[0], floats[1], floats[2]) * this->scale);
     this->vertToTris.push_back({}); //empty list to be populated with triangles
 }
 
@@ -140,7 +140,7 @@ void ModelLoader::asVertexTexture(std::vector<string> ln, vector<vec2>& textureV
     }
     //two floats
     if(floats.size() != 2) throw runtime_error("ModelLoader::load(): TKN_VTXTEX conversion resulted in the wrong number of floats");
-    textureVerts.push_back(glm::vec2(floats[0], floats[1]) * this->scale);
+    textureVerts.push_back(glm::vec2(floats[0], floats[1]));
 }
 
 
