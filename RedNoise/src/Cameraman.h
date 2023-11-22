@@ -12,7 +12,7 @@ class Cameraman {
 public:
     Cameraman(Camera* cam, string outPath);
 
-    void render(DrawingWindow& window, DepthBuffer& depthBuffer, ModelLoader& model, glm::vec4& light, bool withPreview);//renders all frames of the animation
+    void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview);//renders all frames of the animation
 
     static Colour background;
     static SDL_Event event;
@@ -26,7 +26,7 @@ private:
                          Camera& camera,
                          uint& frameID,
                          string& outPath,
-                         ModelLoader& model,
+                         Scene &scene,
                          DepthBuffer& depthBuffer,
                          glm::vec4 light,
                          bool withPreview) = 0; // =0 is a pure specifier (weird c++ stuff)
@@ -42,7 +42,7 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& outPath,
-                 ModelLoader& model,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;
@@ -53,7 +53,7 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& out,
-                 ModelLoader& model,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;
@@ -64,7 +64,18 @@ private:
                  Camera& camera,
                  uint& frameID,
                  string& out,
-                 ModelLoader& model,
+                 Scene &scene,
+                 DepthBuffer& depthBuffer,
+                 glm::vec4 light,
+                 bool withPreview) override;
+    };
+    class LerpModel: public Action{
+        using Action::Action;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& out,
+                 Scene &scene,
                  DepthBuffer& depthBuffer,
                  glm::vec4 light,
                  bool withPreview) override;
@@ -74,7 +85,9 @@ private:
     constexpr static const float STEP = static_cast<float>(1.0) / FRAMERATE; //evaulate at compile time
 
     std::vector<Action*> actions = {
-            new Lerp(glm::mat3({0, -0.5, 4}, {0, 0.5, 2}, {0.5, 0, 0})),
+            new Wait(glm::mat3({0, 0, 4}, {0, 0, 0}, {0.25, 0, 0})),
+            new LerpModel(glm::mat3({0, 0, 0}, {0, 2.0, 0}, {1.0, 1.0, 0.0})),
+            new Lerp(glm::mat3({0, 0, 4}, {0, 0.5, 2}, {0.5, 0, 0})),
             new Wait(glm::mat3({0, 0.5, 2}, {0, 0, 0}, {0.5, 0, 0})),
             new LerpRot(glm::mat3({0, 0, 0}, {-M_PI / 8, 0, 0}, {1, 0, 0})),
             new Wait(glm::mat3({0, 0.5, 2}, {0, 0, 0}, {1.5, 0, 0})),
