@@ -108,17 +108,17 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float len, glm::vec4* light){
+void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
     specular(diffV1, shadowRayn, *norms[0], camRay);
     diffuse(diffV1, shadowRayn, *norms[0]);
-    proximity(brightness, len, light->w);
+    proximity(brightness, len, strength);
     specular(diffV2, shadowRayn, *norms[1], camRay);
     diffuse(diffV2, shadowRayn, *norms[1]);
-    proximity(brightness, len, light->w);
+    proximity(brightness, len, strength);
     specular(diffV3, shadowRayn, *norms[2], camRay);
     diffuse(diffV3, shadowRayn, *norms[2]);
-    proximity(brightness, len, light->w);
+    proximity(brightness, len, strength);
     //interpolate brightnesses
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
 }
@@ -127,7 +127,17 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
     std::vector<Triangle*> tris = scene.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
     std::vector<glm::vec4*> lightSources = scene.getLights();
-    glm::vec3 lightLoc = glm::vec3(*lightSources[0]);
+    //glm::vec3 lightLoc = glm::vec3(*lightSources[0]);
+    std::vector<glm::vec3> lightLocs = {}; //unpack the light sources into useful lists
+    std::vector<float*> lightStrengths = {};
+    std::vector<float> initBrightness = {}; //COPY each time
+
+    for(glm::vec4* loc : lightSources){
+        lightLocs.push_back(glm::vec3(*loc));
+        lightStrengths.push_back(&loc->w); //address of the ws
+        initBrightness.push_back(1.0);
+    }
+
     int stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
@@ -143,15 +153,27 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                 Triangle* tri = tris[intersection.first];
                 //...cast from the intersection to the light if one is given
                 glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
-                glm::vec3 shadowRay = lightLoc - intercept;
-                float len = glm::length(shadowRay);
-                glm::vec3 shadowRayn = glm::normalize(shadowRay);
+                //glm::vec3 shadowRay = lightLoc - intercept;
+                std::vector<glm::vec3> shadowRays = {};
+                for(glm::vec3 loc : lightLocs){
+                    shadowRays.push_back(loc - intercept);
+                }
+                //float len = glm::length(shadowRay);
+                std::vector<float> lens = {};
+                for(glm::vec3 shdR : shadowRays){
+                    lens.push_back(glm::length(shdR));
+                }
+//                glm::vec3 shadowRayn = glm::normalize(shadowRay);
+                std::vector<glm::vec3> shadowRayNrmls = {};
+                for(glm::vec3 shdR : shadowRays){
+                    shadowRayNrmls.push_back(glm::normalize(shdR));
+                }
                 //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
                 float u = 1 - vw.x - vw.y;
                 float v = vw.x;
                 float w = vw.y;
 
-                float brightness = 1.0;
+                std::vector<float> brightnesses(initBrightness); //supposedly a deep copy
 
                 glm::vec3 norm;
                 int shading = *model->getShading();
@@ -159,27 +181,37 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                      //linear combination of vertex normals
                     std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
                     norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-                    specular(brightness, shadowRayn, norm, camRay);
-                    diffuse(brightness, shadowRayn, norm);
-                    proximity(brightness, len, (*lightSources[0]).w);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
+                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                    }
                 }
                 if(shading == ModelLoader::grd){
                     std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
-                    gouraud(brightness, shadowRayn, u, v, w, norms, camRay, len, lightSources[0]);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                        gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
+                    }
                 }
                 if(shading == ModelLoader::nrm){
                     norm = *tri->getNormal();//this is the face normal
-                    specular(brightness, shadowRayn, norm, camRay);
-                    diffuse(brightness, shadowRayn, norm);
-                    shadow(brightness, shadowRay, intersection.first, intercept, tris, scene);
-                    proximity(brightness, len, (*lightSources[0]).w);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                        shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, scene);
+                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                    }
                 }
 //
                 Colour c = tri->getColour(); //find out what colour we draw it
-                if(brightness > this->ambientUpper) brightness = this->ambientUpper;
-                if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
+                float finalBrightness = 0;
+                for(float brightness : brightnesses){ //total them up
+                    finalBrightness += brightness;
+                }
+                if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
+                if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
 
-                glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
+                glm::vec3 cVec = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
                 if(stride > 1)
