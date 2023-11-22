@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec4 light = glm::vec4(0.0, 1.0,  1.5, 5.0); //final is a strength
+    glm::vec4 light = glm::vec4(0.0, 1.0,  1.5, 1.0); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -91,9 +91,9 @@ int main(int argc, char *argv[]) {
         new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::phg)
     }, {&light});
 
-
-    Cameraman* cm = new Cameraman(camera, "./render/");
-    cm->render(window, *depthBuffer, *s, light, true);
+//
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !

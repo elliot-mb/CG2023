@@ -91,15 +91,15 @@ void Camera::proximity(float& brightness, float& len, float& strength){
 }
 
 void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay){
-    glm::vec3 incidentRay = glm::normalize(shadowRay - (norm * (glm::dot(shadowRay, norm))));
+    glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
     if(similarity < 0) return;
-    float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(camRay), incidentRay), 128));
+    float specStrength = static_cast<float>(glm::pow(similarity, 64));
     brightness = static_cast<float>(brightness + specStrength);
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
-    brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay) * 0.5);
+    brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay));
 }
 
 void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, glm::vec3& intercept,  std::vector<Triangle*>& tris, Scene& scene){
