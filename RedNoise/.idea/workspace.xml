@@ -21,14 +21,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/cache-v2-8c8fdbe7d1cd222ac2b6.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/codemodel-v2-23054cdaf1e6c4488f7a.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/directory-.-Release-f5ebdc15457944623624.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/index-2023-11-22T18-11-08-0602.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/api/v1/reply/target-RedNoise-Release-8ec2e67e40ca0f2172af.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeFiles/rules.ninja" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Cameraman.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -146,7 +155,7 @@
       <workItem from="1700571134716" duration="1082000" />
       <workItem from="1700577468441" duration="28000" />
       <workItem from="1700664781619" duration="11967000" />
-      <workItem from="1700685991142" duration="1101000" />
+      <workItem from="1700685991142" duration="3560000" />
     </task>
     <servers />
   </component>
