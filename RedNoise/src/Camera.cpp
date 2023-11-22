@@ -131,6 +131,26 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
     std::vector<glm::vec3> lightLocs = {}; //unpack the light sources into useful lists
     std::vector<float*> lightStrengths = {};
     std::vector<float> initBrightness = {}; //COPY each time
+    glm::vec3 camRay;
+    glm::vec2 vw;
+    std::pair<int, float> intersection;
+    int modelIndex;
+    ModelLoader* model;
+    int modelTriIndex;
+    Triangle* tri;
+    glm::vec3 intercept;
+    std::vector<glm::vec3> shadowRays;
+    std::vector<float> lens;
+    std::vector<glm::vec3> shadowRayNrmls;
+    float u;
+    float v;
+    float w;
+    glm::vec3 norm;
+    int shading;
+    std::vector<glm::vec3 *> norms;
+    Colour c;
+    float finalBrightness;
+    glm::vec3 cVec;
 
     for(glm::vec4* loc : lightSources){
         lightLocs.push_back(glm::vec3(*loc));
@@ -142,44 +162,43 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
-            glm::vec3 camRay = buildCameraRay(x, y);
+            camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            glm::vec2 vw = {0.0, 0.0};
-            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, scene, vw);
+            vw = {0.0, 0.0};
+            intersection = getClosestIntersection(NONE, this->position, camRay, tris, scene, vw);
             if(intersection.first != NONE){ //if its valid...
-                int modelIndex = scene.getModelFromTri(intersection.first);
-                ModelLoader* model = scene.getModel(modelIndex);
-                int modelTriIndex = intersection.first - scene.getModelOffset(modelIndex);
-                Triangle* tri = tris[intersection.first];
+                modelIndex = scene.getModelFromTri(intersection.first);
+                model = scene.getModel(modelIndex);
+                modelTriIndex = intersection.first - scene.getModelOffset(modelIndex);
+                tri = tris[intersection.first];
                 //...cast from the intersection to the light if one is given
-                glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
+                intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
                 //glm::vec3 shadowRay = lightLoc - intercept;
-                std::vector<glm::vec3> shadowRays = {};
+                shadowRays = {};
                 for(glm::vec3 loc : lightLocs){
                     shadowRays.push_back(loc - intercept);
                 }
                 //float len = glm::length(shadowRay);
-                std::vector<float> lens = {};
+                lens = {};
                 for(glm::vec3 shdR : shadowRays){
                     lens.push_back(glm::length(shdR));
                 }
 //                glm::vec3 shadowRayn = glm::normalize(shadowRay);
-                std::vector<glm::vec3> shadowRayNrmls = {};
+                shadowRayNrmls = {};
                 for(glm::vec3 shdR : shadowRays){
                     shadowRayNrmls.push_back(glm::normalize(shdR));
                 }
                 //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                float u = 1 - vw.x - vw.y;
-                float v = vw.x;
-                float w = vw.y;
+                u = 1 - vw.x - vw.y;
+                v = vw.x;
+                w = vw.y;
 
                 std::vector<float> brightnesses(initBrightness); //supposedly a deep copy
 
-                glm::vec3 norm;
-                int shading = *model->getShading();
+                shading = *model->getShading();
                 if(shading == ModelLoader::phg) {
                      //linear combination of vertex normals
-                    std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
+                    norms = model->getNormsForTri(modelTriIndex);
                     norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
                     for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
                         specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
@@ -188,7 +207,7 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                     }
                 }
                 if(shading == ModelLoader::grd){
-                    std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
+                    norms = model->getNormsForTri(modelTriIndex);
                     for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
                         gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
                     }
@@ -203,15 +222,16 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                     }
                 }
 //
-                Colour c = tri->getColour(); //find out what colour we draw it
-                float finalBrightness = 0;
+                c = tri->getColour(); //find out what colour we draw it
+                if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+                finalBrightness = 0;
                 for(float brightness : brightnesses){ //total them up
                     finalBrightness += brightness;
                 }
                 if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
                 if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
 
-                glm::vec3 cVec = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
+                cVec = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
                 if(stride > 1)

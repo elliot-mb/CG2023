@@ -71,8 +71,9 @@ int main(int argc, char *argv[]) {
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec4 light = glm::vec4(0.0, -0.5,  1.5, 2.0); //final is a strength
-    glm::vec4 light2 = glm::vec4(0.5, -0.5,  1.5, 2.0); //so good they made a second one
+    glm::vec4 light = glm::vec4(0.0, -1,  0.45, 1.0); //final is a strength
+    glm::vec4 light2 = glm::vec4(0.15, -1,  0.45, 1.0); //so good they made a second one
+    glm::vec4 light3 = glm::vec4(-0.15, -1,  0.45, 1.0); //so good they made a second second one
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -90,11 +91,11 @@ int main(int argc, char *argv[]) {
     Scene* s = new Scene({
         new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
         new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::phg)
-    }, {&light, &light2});
+    }, {&light, &light2, &light3});
 
 //
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//    cm->render(window, *depthBuffer, *s, light, true);
+    Cameraman* cm = new Cameraman(camera, "./render/");
+    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]) {
         camera->doRaytracing(window, *s);
         camera->doRasterising(window, *s, *depthBuffer);
 
-        //light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
+//        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

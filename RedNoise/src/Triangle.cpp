@@ -293,3 +293,9 @@ glm::vec3* Triangle::n2() {
     return &this->nrm2;
 }
 
+Colour Triangle::getTextureColour(float u, float v, float w) {
+    int x = static_cast<int>(glm::floor((this->vt0.x * u) + (this->vt1.x * v) + (this->vt2.x * w)));
+    int y = static_cast<int>(glm::floor((this->vt0.y * u) + (this->vt1.y * v) + (this->vt2.y * w)));
+    return Utils::unpack(this->texture.pixel(x, y));
+}
+
