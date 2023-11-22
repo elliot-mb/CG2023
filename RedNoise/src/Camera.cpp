@@ -108,14 +108,17 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay){
+void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float len, glm::vec4* light){
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
     specular(diffV1, shadowRayn, *norms[0], camRay);
     diffuse(diffV1, shadowRayn, *norms[0]);
+    proximity(brightness, len, light->w);
     specular(diffV2, shadowRayn, *norms[1], camRay);
     diffuse(diffV2, shadowRayn, *norms[1]);
+    proximity(brightness, len, light->w);
     specular(diffV3, shadowRayn, *norms[2], camRay);
     diffuse(diffV3, shadowRayn, *norms[2]);
+    proximity(brightness, len, light->w);
     //interpolate brightnesses
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
 }
@@ -158,19 +161,19 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                     norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
                     specular(brightness, shadowRayn, norm, camRay);
                     diffuse(brightness, shadowRayn, norm);
+                    proximity(brightness, len, (*lightSources[0]).w);
                 }
                 if(shading == ModelLoader::grd){
                     std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
-                    gouraud(brightness, shadowRayn, u, v, w, norms, camRay);
+                    gouraud(brightness, shadowRayn, u, v, w, norms, camRay, len, lightSources[0]);
                 }
                 if(shading == ModelLoader::nrm){
                     norm = *tri->getNormal();//this is the face normal
                     specular(brightness, shadowRayn, norm, camRay);
                     diffuse(brightness, shadowRayn, norm);
                     shadow(brightness, shadowRay, intersection.first, intercept, tris, scene);
+                    proximity(brightness, len, (*lightSources[0]).w);
                 }
-
-                proximity(brightness, len, (*lightSources[0]).w);
 //
                 Colour c = tri->getColour(); //find out what colour we draw it
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;

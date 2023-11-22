@@ -72,5 +72,5 @@ private:
 
     void
     gouraud(float &brightness, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
-            vec3 &camRay);
+            vec3 &camRay, float len, glm::vec4* light);
 };
