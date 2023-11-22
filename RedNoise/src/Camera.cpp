@@ -91,15 +91,15 @@ void Camera::proximity(float& brightness, float& len, float& strength){
 }
 
 void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay){
-    glm::vec3 incidentRay = glm::normalize(shadowRay - (norm * (glm::dot(shadowRay, norm))));
+    glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
     if(similarity < 0) return;
-    float specStrength = static_cast<float>(glm::pow(glm::dot(glm::normalize(camRay), incidentRay), 128));
+    float specStrength = static_cast<float>(glm::pow(similarity, 128));
     brightness = static_cast<float>(brightness + specStrength);
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
-    brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay) * 0.5);
+    brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay));
 }
 
 void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, glm::vec3& intercept,  std::vector<Triangle*>& tris, Scene& scene){
@@ -108,74 +108,130 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay){
+void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
     specular(diffV1, shadowRayn, *norms[0], camRay);
     diffuse(diffV1, shadowRayn, *norms[0]);
+    proximity(brightness, len, strength);
     specular(diffV2, shadowRayn, *norms[1], camRay);
     diffuse(diffV2, shadowRayn, *norms[1]);
+    proximity(brightness, len, strength);
     specular(diffV3, shadowRayn, *norms[2], camRay);
     diffuse(diffV3, shadowRayn, *norms[2]);
+    proximity(brightness, len, strength);
     //interpolate brightnesses
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
 }
 
-void Camera::raycast(DrawingWindow& window, Scene& scene, glm::vec4& lightSource){
+void Camera::raycast(DrawingWindow& window, Scene& scene){
     std::vector<Triangle*> tris = scene.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
-    glm::vec3 lightLoc = glm::vec3(lightSource);
+    std::vector<glm::vec4*> lightSources = scene.getLights();
+    //glm::vec3 lightLoc = glm::vec3(*lightSources[0]);
+    std::vector<glm::vec3> lightLocs = {}; //unpack the light sources into useful lists
+    std::vector<float*> lightStrengths = {};
+    std::vector<float> initBrightness = {}; //COPY each time
+    glm::vec3 camRay;
+    glm::vec2 vw;
+    std::pair<int, float> intersection;
+    int modelIndex;
+    ModelLoader* model;
+    int modelTriIndex;
+    Triangle* tri;
+    glm::vec3 intercept;
+    std::vector<glm::vec3> shadowRays;
+    std::vector<float> lens;
+    std::vector<glm::vec3> shadowRayNrmls;
+    float u;
+    float v;
+    float w;
+    glm::vec3 norm;
+    int shading;
+    std::vector<glm::vec3 *> norms;
+    Colour c;
+    float finalBrightness;
+    glm::vec3 cVec;
+
+    for(glm::vec4* loc : lightSources){
+        lightLocs.push_back(glm::vec3(*loc));
+        lightStrengths.push_back(&loc->w); //address of the ws
+        initBrightness.push_back(1.0);
+    }
+
     int stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
-            glm::vec3 camRay = buildCameraRay(x, y);
+            camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            glm::vec2 vw = {0.0, 0.0};
-            std::pair<int, float> intersection = getClosestIntersection(NONE, this->position, camRay, tris, scene, vw);
+            vw = {0.0, 0.0};
+            intersection = getClosestIntersection(NONE, this->position, camRay, tris, scene, vw);
             if(intersection.first != NONE){ //if its valid...
-                int modelIndex = scene.getModelFromTri(intersection.first);
-                ModelLoader* model = scene.getModel(modelIndex);
-                int modelTriIndex = intersection.first - scene.getModelOffset(modelIndex);
-                Triangle* tri = tris[intersection.first];
+                modelIndex = scene.getModelFromTri(intersection.first);
+                model = scene.getModel(modelIndex);
+                modelTriIndex = intersection.first - scene.getModelOffset(modelIndex);
+                tri = tris[intersection.first];
                 //...cast from the intersection to the light if one is given
-                glm::vec3 intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
-                glm::vec3 shadowRay = lightLoc - intercept;
-                float len = glm::length(shadowRay);
-                glm::vec3 shadowRayn = glm::normalize(shadowRay);
+                intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
+                //glm::vec3 shadowRay = lightLoc - intercept;
+                shadowRays = {};
+                for(glm::vec3 loc : lightLocs){
+                    shadowRays.push_back(loc - intercept);
+                }
+                //float len = glm::length(shadowRay);
+                lens = {};
+                for(glm::vec3 shdR : shadowRays){
+                    lens.push_back(glm::length(shdR));
+                }
+//                glm::vec3 shadowRayn = glm::normalize(shadowRay);
+                shadowRayNrmls = {};
+                for(glm::vec3 shdR : shadowRays){
+                    shadowRayNrmls.push_back(glm::normalize(shdR));
+                }
                 //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                float u = 1 - vw.x - vw.y;
-                float v = vw.x;
-                float w = vw.y;
+                u = 1 - vw.x - vw.y;
+                v = vw.x;
+                w = vw.y;
 
-                float brightness = 1.0;
+                std::vector<float> brightnesses(initBrightness); //supposedly a deep copy
 
-                glm::vec3 norm;
-                int shading = *model->getShading();
+                shading = *model->getShading();
                 if(shading == ModelLoader::phg) {
                      //linear combination of vertex normals
-                    std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
+                    norms = model->getNormsForTri(modelTriIndex);
                     norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-                    specular(brightness, shadowRayn, norm, camRay);
-                    diffuse(brightness, shadowRayn, norm);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
+                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                    }
                 }
                 if(shading == ModelLoader::grd){
-                    std::vector<glm::vec3 *> norms = model->getNormsForTri(modelTriIndex);
-                    gouraud(brightness, shadowRayn, u, v, w, norms, camRay);
+                    norms = model->getNormsForTri(modelTriIndex);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                        gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
+                    }
                 }
                 if(shading == ModelLoader::nrm){
                     norm = *tri->getNormal();//this is the face normal
-                    specular(brightness, shadowRayn, norm, camRay);
-                    diffuse(brightness, shadowRayn, norm);
-                    shadow(brightness, shadowRay, intersection.first, intercept, tris, scene);
+                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                        shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, scene);
+                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                    }
                 }
-
-                proximity(brightness, len, lightSource.w);
 //
-                if(brightness > this->ambientUpper) brightness = this->ambientUpper;
-                if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
+                c = tri->getColour(); //find out what colour we draw it
+                if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+                finalBrightness = 0;
+                for(float brightness : brightnesses){ //total them up
+                    finalBrightness += brightness;
+                }
+                if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
+                if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
 
-                Colour c = tri->getColour(); //find out what colour we draw it
-                glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
+                cVec = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
                 if(stride > 1)
@@ -290,9 +346,9 @@ void Camera::renderMode() {
     this->mode = (this->mode + 1) % 3;
 }
 
-void Camera::doRaytracing(DrawingWindow& window, Scene& scene, glm::vec4& lightSource) {
+void Camera::doRaytracing(DrawingWindow& window, Scene& scene) {
     if(this->mode == ray){
-        raycast(window, scene, lightSource);
+        raycast(window, scene);
     }
 }
 

@@ -70,6 +70,13 @@ uint32_t Utils::pack(uint8_t a, uint8_t r, uint8_t g, uint8_t b) {
 	return (a << 24) + (r << 16) + (g << 8) + b;
 }
 
+Colour Utils::unpack(uint32_t pixel){
+    uint8_t r = static_cast<uint8_t>(pixel >> 16); //delibarate narrowing
+    uint8_t g = static_cast<uint8_t>(pixel >> 8);
+    uint8_t b = static_cast<uint8_t>(pixel);
+    return Colour(r, g, b);
+}
+
 std::string Utils::fileAsString(std::string& filename){
     std::ifstream inputStream(filename, std::ifstream::binary);
     if(!inputStream.good()) throw std::invalid_argument("Utils::fileAsString(): file '"+ filename + "' not found"); //invalid_argument("ModelLoader::load(): model file not found");
