@@ -6,7 +6,7 @@
 
 #include <utility>
 
-Scene::Scene(std::vector<ModelLoader *> models, std::vector<glm::vec3*> lights) {
+Scene::Scene(std::vector<ModelLoader *> models, std::vector<glm::vec4*> lights) {
     this->models = std::move(models);
     this->allTris = {};
     this->toModel = {};

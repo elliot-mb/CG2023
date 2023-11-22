@@ -47,3 +47,12 @@
 2	1175	1700670782448795927	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	d130610f942dcead
 2	1188	1700670782460795995	CMakeFiles/RedNoise.dir/src/Cameraman.cpp.o	83f5b88983c1fb80
 1188	1364	1700670782636796998	RedNoise	2ac1699bc21b2aa0
+3	1011	1700671024306174226	CMakeFiles/RedNoise.dir/src/Scene.cpp.o	b108ec25b1ccf8bb
+2	1229	1700671024522175458	CMakeFiles/RedNoise.dir/src/Cameraman.cpp.o	83f5b88983c1fb80
+2	1284	1700671024578175776	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	b2cc109134520d39
+2	2157	1700671025446180723	CMakeFiles/RedNoise.dir/src/ModelLoader.cpp.o	f15a4edf7b11b699
+3	982	1700671099330601772	CMakeFiles/RedNoise.dir/src/Scene.cpp.o	b108ec25b1ccf8bb
+2	1217	1700671099562603095	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	b2cc109134520d39
+2	1219	1700671099566603118	CMakeFiles/RedNoise.dir/src/Cameraman.cpp.o	83f5b88983c1fb80
+2	1236	1700671099582603209	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	d130610f942dcead
+1236	1383	1700671099730604053	RedNoise	2ac1699bc21b2aa0
