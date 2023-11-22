@@ -33,7 +33,7 @@ public:
     glm::vec3* getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
     //shading mode
-    enum Shading {nrm, grd, phg};// normal(s), gouraud, phong
+    enum Shading {nrm, grd, phg, mrr};// normal(s), gouraud, phong, mirror
     int* getShading();
 
 private:

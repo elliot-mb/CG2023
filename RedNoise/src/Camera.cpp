@@ -158,7 +158,7 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
         initBrightness.push_back(1.0);
     }
 
-    int stride = 1; //how large are our ray pixels (1 is native resolution)
+    int stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){

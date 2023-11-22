@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         new ModelLoader("sphere.obj", 0.35, glm::vec3(0.25, -0.70, 0), ModelLoader::phg)
     }, {&light, &light2, &light3});
 
-////
+//// comment to stop the render
 //    Cameraman* cm = new Cameraman(camera, "./render/");
 //    cm->render(window, *depthBuffer, *s, light, true);
 
