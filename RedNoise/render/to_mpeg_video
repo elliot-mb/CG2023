@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+ffmpeg -framerate 25 -i frame_%d.ppm -c:v mpeg2video -b:v 6000k -target pal-dvd -movflags +faststart output.mp4
