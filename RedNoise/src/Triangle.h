@@ -33,6 +33,7 @@ public:
     void setV2(glm::vec3 v2);
     Colour& getColour();
     glm::vec3* getNormal();
+    Colour getTextureColour(float u, float v, float w); //get texture colour with bary's coords
 
     void setN0(glm::vec3 nrm0);
     void setN1(glm::vec3 nrm1);

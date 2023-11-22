@@ -29,7 +29,7 @@ public:
     void renderMode();
     void doOrbit(ModelLoader model);
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, Scene& scene, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
-    void doRaytracing(DrawingWindow &window, Scene& scene, glm::vec4& lightSource);
+    void doRaytracing(DrawingWindow &window, Scene& scene);
     void doRasterising(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
     void setRot(float angleX, float angleY);
 
@@ -59,7 +59,7 @@ private:
     vec3 myRight();
 
     vec3 buildCameraRay(int& x, int& y);
-    void raycast(DrawingWindow &window, Scene &scene, glm::vec4& lightSource);
+    void raycast(DrawingWindow &window, Scene &scene);
     void rasterise(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
 
     //lighting effects
@@ -72,5 +72,5 @@ private:
 
     void
     gouraud(float &brightness, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
-            vec3 &camRay);
+            vec3 &camRay, float& len, float& strength);
 };
