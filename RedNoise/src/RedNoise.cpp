@@ -53,7 +53,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
             camera.toggleOrbit();
         }
         else if (event.key.keysym.sym == SDLK_l) {
-            camera.lookAt(model.getPos());
+            camera.lookAt(*model.getPos());
         }
         else if (event.key.keysym.sym == SDLK_SPACE){
             camera.renderMode();
@@ -86,26 +86,25 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//
-//    cm->render(window, *depthBuffer, *cornellLoader, light, true);
-
     Scene* s = new Scene({
         new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
-        new ModelLoader("sphere.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm)
+        new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::phg)
     });
-    s->load();
 
-	while (true) {
+
+    Cameraman* cm = new Cameraman(camera, "./render/");
+    cm->render(window, *depthBuffer, *s, light, true);
+
+    while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornellLoader);
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *cornellLoader, light);
+        camera->doRaytracing(window, *s, light);
         camera->doRasterising(window, *s, *depthBuffer);
 
-        //light += glm::vec4(0.0, 0.0, glm::sin(frame * 0.2) * 0.02, 0);
+        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0);
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

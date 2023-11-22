@@ -29,7 +29,8 @@ public:
 
     std::vector<Triangle*> getTris();
 
-    glm::vec3 getPos();
+    void setPos(glm::vec3 pos);
+    glm::vec3* getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
     //shading mode
     enum Shading {nrm, grd, phg};// normal(s), gouraud, phong

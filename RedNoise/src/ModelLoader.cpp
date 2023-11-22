@@ -259,8 +259,12 @@ std::vector<glm::vec3*> ModelLoader::getNormsForTri(int& triIndex) {
     return {&this->vertNorms[v0i], &this->vertNorms[v1i], &this->vertNorms[v2i]};
 }
 
-glm::vec3 ModelLoader::getPos(){
-    return this->position;
+glm::vec3* ModelLoader::getPos(){
+    return &this->position;
+}
+
+void ModelLoader::setPos(glm::vec3 pos) {
+    this->position = pos;
 }
 
 void ModelLoader::printTris() {
@@ -277,6 +281,8 @@ vector<Triangle*> ModelLoader::getTris() {
 int* ModelLoader::getShading() {
     return &this->shading;
 }
+
+
 
 //vector<glm::vec3> ModelLoader::makeVertexNorms() {
 //
