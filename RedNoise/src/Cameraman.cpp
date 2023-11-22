@@ -47,7 +47,7 @@ void Cameraman::Lerp::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setPos(pos);
-        camera.doRaytracing(window, scene, light);
+        camera.doRaytracing(window, scene);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
@@ -78,7 +78,7 @@ void Cameraman::Wait::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-        camera.doRaytracing(window, scene, light);
+        camera.doRaytracing(window, scene);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
@@ -114,7 +114,7 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setRot(angles.x, angles.y);
-        camera.doRaytracing(window, scene, light);
+        camera.doRaytracing(window, scene);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
@@ -149,7 +149,7 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
 
         scene.setModelPosition(modelIndex, pos);
 
-        camera.doRaytracing(window, scene, light);
+        camera.doRaytracing(window, scene);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");

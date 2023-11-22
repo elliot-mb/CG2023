@@ -52,3 +52,7 @@ glm::vec3 *Scene::getModelPosition(int modelIndex) {
 void Scene::setModelPosition(int modelIndex, glm::vec3 pos) {
     this->models[modelIndex]->setPos(pos);
 }
+
+std::vector<glm::vec4 *> Scene::getLights() {
+    return this->lights;
+}
