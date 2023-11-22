@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     ModelLoader* cornellLoader = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    Camera* camera = new Camera(glm::vec3(0.0, -0.75, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
     glm::vec4 light = glm::vec4(0.0, -0.5,  0.45, 0.5); //final is a strength
     glm::vec4 light2 = glm::vec4(0.15, -0.5,  0.45, 0.5); //so good they made a second one
     glm::vec4 light3 = glm::vec4(-0.15, -0.5,  0.45, 0.5); //so good they made a second second one
@@ -90,7 +90,8 @@ int main(int argc, char *argv[]) {
 
     Scene* s = new Scene({
         new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
-        new ModelLoader("sphere.obj", 0.35, glm::vec3(0.25, -0.70, 0), ModelLoader::phg)
+        new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::phg),
+        new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr)
     }, {&light, &light2, &light3});
 
 //// comment to stop the render

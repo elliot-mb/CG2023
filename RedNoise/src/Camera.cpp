@@ -76,7 +76,7 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
             }
         }
     }
-    return {closestTri, closestValid}; //simply returns the
+    return {closestTri, closestValid}; //simply returns the index and distance along the ray
 }
 //
 glm::vec3 Camera::buildCameraRay(int& x, int& y){
@@ -132,6 +132,7 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
     std::vector<float*> lightStrengths = {};
     std::vector<float> initBrightness = {}; //COPY each time
     glm::vec3 camRay;
+    glm::vec3 camRayNrml;
     glm::vec2 vw;
     std::pair<int, float> intersection;
     int modelIndex;
@@ -146,7 +147,6 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
     float v;
     float w;
     glm::vec3 norm;
-    int shading;
     std::vector<glm::vec3 *> norms;
     Colour c;
     float finalBrightness;
@@ -194,36 +194,56 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
                 w = vw.y;
 
                 std::vector<float> brightnesses(initBrightness); //supposedly a deep copy
-
-                shading = *model->getShading();
-                if(shading == ModelLoader::phg) {
-                     //linear combination of vertex normals
-                    norms = model->getNormsForTri(modelTriIndex);
-                    norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
-                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
-                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
-                    }
-                }
-                if(shading == ModelLoader::grd){
-                    norms = model->getNormsForTri(modelTriIndex);
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                        gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
-                    }
-                }
-                if(shading == ModelLoader::nrm){
-                    norm = *tri->getNormal();//this is the face normal
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
-                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                        shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, scene);
-                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
-                    }
-                }
-//
-                c = tri->getColour(); //find out what colour we draw it
+                c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
                 if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+                // c is mutated by some methods below
+
+                switch(*model->getShading()){
+                    case ModelLoader::mrr:
+                        norm = *tri->getNormal();//this is the face normal
+                        camRayNrml = glm::normalize(camRay);
+                        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                            glm::vec3 incidentRay = glm::normalize(camRayNrml - (static_cast<float>(2) * norm * glm::dot(camRayNrml, norm)));
+                            std::pair<int, float> shadowRayIntscnt = getClosestIntersection(intersection.first, intercept, incidentRay, tris, scene, vw);
+                            u = 1 - vw.x - vw.y;
+                            v = vw.x;
+                            w = vw.y;
+                            tri = tris[shadowRayIntscnt.first];
+                            if(shadowRayIntscnt.first == -1){
+                                brightnesses[i] = 0;
+                            }
+                            if(shadowRayIntscnt.first != -1){
+                                c = tri->getColour();
+                                if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+                            }
+                        }
+                        break;
+                    case ModelLoader::phg:
+                        norms = model->getNormsForTri(modelTriIndex);
+                        norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
+                        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
+                            specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                            proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                        }
+                        break;
+                    case ModelLoader::grd:
+                        norms = model->getNormsForTri(modelTriIndex);
+                        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                            gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
+                        }
+                        break;
+                    case ModelLoader::nrm:
+                        norm = *tri->getNormal();//this is the face normal
+                        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+                            specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
+                            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+                            shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, scene);
+                            proximity(brightnesses[i], lens[i], *lightStrengths[i]);
+                        }
+                        break;
+                }
+
                 finalBrightness = 0;
                 for(float brightness : brightnesses){ //total them up
                     finalBrightness += brightness;

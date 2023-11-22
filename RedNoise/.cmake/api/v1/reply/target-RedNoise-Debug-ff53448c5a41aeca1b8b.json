@@ -33,6 +33,12 @@
 			{
 				"command" : 1,
 				"file" : 0,
+				"line" : 72,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
 				"line" : 81,
 				"parent" : 0
 			},
@@ -45,7 +51,7 @@
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 78,
+				"line" : 79,
 				"parent" : 0
 			},
 			{
@@ -68,65 +74,65 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-O3 -DNDEBUG -std=gnu++14 -fdiagnostics-color=always"
+					"fragment" : "-g -std=gnu++14 -fdiagnostics-color=always"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wall"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wextra"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wcast-align"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wfatal-errors"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Werror=return-type"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wno-unused-parameter"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wno-unused-variable"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"fragment" : "-Wno-ignored-attributes"
 				},
 				{
-					"backtrace" : 4,
-					"fragment" : "-O3"
+					"backtrace" : 5,
+					"fragment" : "-O2"
 				},
 				{
-					"backtrace" : 4,
-					"fragment" : "-march=native"
+					"backtrace" : 5,
+					"fragment" : "-fno-omit-frame-pointer"
 				},
 				{
-					"backtrace" : 4,
-					"fragment" : "-mtune=native"
+					"backtrace" : 5,
+					"fragment" : "-g"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/SDL2"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/glm-0.9.7.2"
 				},
 				{
-					"backtrace" : 6,
+					"backtrace" : 7,
 					"path" : "/home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/libs/sdw"
 				}
 			],
@@ -167,7 +173,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-O3 -DNDEBUG",
+				"fragment" : "-g",
 				"role" : "flags"
 			},
 			{
@@ -176,6 +182,11 @@
 			},
 			{
 				"backtrace" : 2,
+				"fragment" : "-Wl,-lasan",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
 				"fragment" : "-L/usr/lib/x86_64-linux-gnu  -lSDL2",
 				"role" : "libraries"
 			}
