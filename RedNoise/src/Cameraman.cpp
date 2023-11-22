@@ -47,7 +47,7 @@ void Cameraman::Lerp::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setPos(pos);
-        //camera.doRaytracing(window, *scene, light); ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRaytracing(window, scene, light);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
@@ -78,7 +78,7 @@ void Cameraman::Wait::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-        //camera.doRaytracing(window, model, light);ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRaytracing(window, scene, light);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
@@ -114,13 +114,47 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
         drawBackground(window);
 
         camera.setRot(angles.x, angles.y);
-        //camera.doRaytracing(window, model, light); ADD THIS BACK WHEN FUNC TAKES SCENES
+        camera.doRaytracing(window, scene, light);
         camera.doRasterising(window, scene, depthBuffer);
         if(withPreview){ window.renderFrame(); }
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
         frameID++;
     }
 
+}
+
+// row 1: start position x, start position y, start position z
+// row 2: end position x,   end position y,   end position z
+// row 3: timeframe,        model index,      IGNORED
+void Cameraman::LerpModel::act(DrawingWindow &window,
+                               Camera &camera,
+                               uint &frameID,
+                               string &out,
+                               Scene &scene,
+                               DepthBuffer &depthBuffer,
+                               glm::vec4 light,
+                               bool withPreview) {
+    std::cout << "lerp model" << std::endl;
+    glm::vec3 *start = &this->args[0];
+    glm::vec3 *end = &this->args[1];
+    float timeframe = this->args[2].x;
+    int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    if(this->args[2].y - static_cast<float>(modelIndex) != 0){ throw runtime_error("Cameraman::LerpModel::act: cannot lerp model at non integer index"); }
+    int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
+    std::vector<glm::vec3> frames =  Utils::interpolateThreeElementValues(*start, *end, steps);
+    for(glm::vec3 pos : frames){
+        if (window.pollForInputEvents(event)){} //mandatory
+        window.clearPixels();
+        drawBackground(window);
+
+        scene.setModelPosition(modelIndex, pos);
+
+        camera.doRaytracing(window, scene, light);
+        camera.doRasterising(window, scene, depthBuffer);
+        if(withPreview){ window.renderFrame(); }
+        window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
+        frameID++;
+    }
 }
 
 Cameraman::Cameraman(Camera* cam, string outPath) {

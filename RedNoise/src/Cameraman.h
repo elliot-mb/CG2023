@@ -69,12 +69,25 @@ private:
                  glm::vec4 light,
                  bool withPreview) override;
     };
+    class LerpModel: public Action{
+        using Action::Action;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& out,
+                 Scene &scene,
+                 DepthBuffer& depthBuffer,
+                 glm::vec4 light,
+                 bool withPreview) override;
+    };
 
     static const int FRAMERATE = 25; //fps (static)
     constexpr static const float STEP = static_cast<float>(1.0) / FRAMERATE; //evaulate at compile time
 
     std::vector<Action*> actions = {
-            new Lerp(glm::mat3({0, -0.5, 4}, {0, 0.5, 2}, {0.5, 0, 0})),
+            new Wait(glm::mat3({0, 0, 4}, {0, 0, 0}, {0.25, 0, 0})),
+            new LerpModel(glm::mat3({0, 0, 0}, {0, 2.0, 0}, {1.0, 1.0, 0.0})),
+            new Lerp(glm::mat3({0, 0, 4}, {0, 0.5, 2}, {0.5, 0, 0})),
             new Wait(glm::mat3({0, 0.5, 2}, {0, 0, 0}, {0.5, 0, 0})),
             new LerpRot(glm::mat3({0, 0, 0}, {-M_PI / 8, 0, 0}, {1, 0, 0})),
             new Wait(glm::mat3({0, 0.5, 2}, {0, 0, 0}, {1.5, 0, 0})),
