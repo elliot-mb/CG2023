@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
     Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
     glm::vec4 light = glm::vec4(0.0, -0.5,  1.5, 2.0); //final is a strength
+    glm::vec4 light2 = glm::vec4(0.5, -0.5,  1.5, 2.0); //so good they made a second one
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
     Scene* s = new Scene({
         new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
         new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::grd)
-    }, {&light});
+    }, {&light, &light2});
 
 //
 //    Cameraman* cm = new Cameraman(camera, "./render/");
