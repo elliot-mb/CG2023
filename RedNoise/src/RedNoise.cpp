@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
     ModelLoader* cornellLoader = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
     cornellLoader->load();
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
-    glm::vec4 light = glm::vec4(0.0, 1.0,  1.5, 1.0); //final is a strength
+    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT));
+    glm::vec4 light = glm::vec4(0.0, -0.5,  1.5, 2.0); //final is a strength
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -101,10 +101,10 @@ int main(int argc, char *argv[]) {
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *s, light);
+        camera->doRaytracing(window, *s);
         camera->doRasterising(window, *s, *depthBuffer);
 
-        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0);
+        //light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

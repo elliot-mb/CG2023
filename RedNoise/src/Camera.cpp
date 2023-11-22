@@ -94,7 +94,7 @@ void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, 
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
     if(similarity < 0) return;
-    float specStrength = static_cast<float>(glm::pow(similarity, 64));
+    float specStrength = static_cast<float>(glm::pow(similarity, 128));
     brightness = static_cast<float>(brightness + specStrength);
 }
 
@@ -120,10 +120,11 @@ void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& 
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
 }
 
-void Camera::raycast(DrawingWindow& window, Scene& scene, glm::vec4& lightSource){
+void Camera::raycast(DrawingWindow& window, Scene& scene){
     std::vector<Triangle*> tris = scene.getTris();
     int NONE = -1; //common none value for return of get closest intersection and forbidden index
-    glm::vec3 lightLoc = glm::vec3(lightSource);
+    std::vector<glm::vec4*> lightSources = scene.getLights();
+    glm::vec3 lightLoc = glm::vec3(*lightSources[0]);
     int stride = 2; //how large are our ray pixels (1 is native resolution)
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
@@ -169,12 +170,12 @@ void Camera::raycast(DrawingWindow& window, Scene& scene, glm::vec4& lightSource
                     shadow(brightness, shadowRay, intersection.first, intercept, tris, scene);
                 }
 
-                proximity(brightness, len, lightSource.w);
+                proximity(brightness, len, (*lightSources[0]).w);
 //
+                Colour c = tri->getColour(); //find out what colour we draw it
                 if(brightness > this->ambientUpper) brightness = this->ambientUpper;
                 if(brightness < this->ambientLower) brightness = this->ambientLower; //if in shadow set to ambient
 
-                Colour c = tri->getColour(); //find out what colour we draw it
                 glm::vec3 cVec = glm::floor(brightness * glm::vec3(c.red, c.green, c.blue));
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
@@ -290,9 +291,9 @@ void Camera::renderMode() {
     this->mode = (this->mode + 1) % 3;
 }
 
-void Camera::doRaytracing(DrawingWindow& window, Scene& scene, glm::vec4& lightSource) {
+void Camera::doRaytracing(DrawingWindow& window, Scene& scene) {
     if(this->mode == ray){
-        raycast(window, scene, lightSource);
+        raycast(window, scene);
     }
 }
 

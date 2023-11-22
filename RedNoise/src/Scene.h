@@ -29,7 +29,10 @@ public:
     int getModelOffset(int modelIndex);
 
     glm::vec3* getModelPosition(int modelIndex);
+
     void setModelPosition(int modelIndex, glm::vec3 pos);
+
+    std::vector<glm::vec4*> getLights();
 private:
     //delegates to all models
     void load();
