@@ -6,12 +6,12 @@
 
 #include <utility>
 
-Scene::Scene(std::vector<ModelLoader *> models, glm::vec3 lights) {
+Scene::Scene(std::vector<ModelLoader *> models, std::vector<glm::vec3*> lights) {
     this->models = std::move(models);
     this->allTris = {};
     this->toModel = {};
     this->modelOffset = {}; //the offset each model's triangles have in the allTris list
-    this->light = light;
+    this->lights = lights;
     load(); //private because we should really only do it once
 }
 
