@@ -18,7 +18,7 @@
 
 class Scene {
 public:
-    Scene(std::vector<ModelLoader *> models); //just a collection of models (world-like, always at world origin)
+    Scene(std::vector<ModelLoader *> models, std::vector<glm::vec3*> lights); //just a collection of models (world-like, always at world origin)
 
     std::vector<Triangle*> getTris(); //gets the tris of all models
 
@@ -38,7 +38,7 @@ private:
     std::vector<Triangle*> allTris; //tris of all models for raycasting into
     std::vector<int> toModel;
     std::vector<int> modelOffset;
-    glm::vec3 lights;
+    std::vector<glm::vec3*> lights;
 };
 
 
