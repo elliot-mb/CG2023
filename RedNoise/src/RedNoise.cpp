@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     Scene* s = new Scene({
         new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
-        new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::grd)
+        new ModelLoader("sphere.obj", 0.35, glm::vec3(0, 0, 0), ModelLoader::phg)
     }, {&light, &light2});
 
 //
