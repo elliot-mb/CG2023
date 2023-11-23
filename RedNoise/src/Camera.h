@@ -34,6 +34,7 @@ public:
     void setRot(float angleX, float angleY);
 
 private:
+    static int NO_INTERSECTION;
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
