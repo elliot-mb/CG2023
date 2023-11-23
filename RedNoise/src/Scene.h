@@ -33,6 +33,12 @@ public:
     void setModelPosition(int modelIndex, glm::vec3 pos);
 
     std::vector<glm::vec4*> getLights();
+
+    std::vector<glm::vec3> getLightLocs();
+
+    std::vector<float*> getLightStrengths();
+
+    std::vector<float> getInitBrightnesses();
 private:
     //delegates to all models
     void load();
@@ -42,6 +48,9 @@ private:
     std::vector<int> toModel;
     std::vector<int> modelOffset;
     std::vector<glm::vec4*> lights;
+    std::vector<glm::vec3> lightLocs;
+    std::vector<float*> lightStrengths;
+    std::vector<float> initBrightnesses;
 };
 
 
