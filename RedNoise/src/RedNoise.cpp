@@ -67,19 +67,17 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornellLoader = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    cornellLoader->load();
+    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::grd);
+    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::nrm);
+
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
     glm::vec4 light = glm::vec4(0.0, -0.5,  0.45, 0.5); //final is a strength
     glm::vec4 light2 = glm::vec4(0.15, -0.5,  0.45, 0.5); //so good they made a second one
     glm::vec4 light3 = glm::vec4(-0.15, -0.5,  0.45, 0.5); //so good they made a second second one
 
-    Scene* s = new Scene({
-                                 new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm),
-                                 new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::phg),
-                                 new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr)
-                         }, {&light, &light2, &light3});
+    Scene* s = new Scene({ cornell, sphere, tallBox }, {&light, &light2, &light3});
     Camera* camera = new Camera(glm::vec3(0.0, -0.75, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -96,16 +94,16 @@ int main(int argc, char *argv[]) {
 	cout << endl;
 
 
-// comment to stop the render
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//    cm->render(window, *depthBuffer, *s, light, true);
+ //comment to stop the render
+    Cameraman* cm = new Cameraman(camera, "./render/");
+    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
-		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornellLoader);
+		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornell);
         window.clearPixels();
 
-        camera->doOrbit(*cornellLoader);
+        camera->doOrbit(*cornell);
         camera->doRaytracing(window);
         camera->doRasterising(window, *depthBuffer);
 

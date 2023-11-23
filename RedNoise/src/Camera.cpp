@@ -42,8 +42,8 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     //y
     glm::vec3 dPos = this->position - vertexPosition;
     glm::vec3 dRot = this->orientation * dPos;
-
-    if(dRot.z < this->focalLength){
+//
+    if(dRot.z < 0){
         //behind image plane
         return std::tuple<glm::vec3, bool>{glm::vec3(0, 0, 0), false};
     }
@@ -111,19 +111,21 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
-    float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
-    specular(diffV1, shadowRayn, *norms[0], camRay);
+void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
+    float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0; //characteristics for each vertex
+    float specV1 = 0; float specV2 = 0; float specV3 = 0;
+    specular(specV1, shadowRayn, *norms[0], camRay);
     diffuse(diffV1, shadowRayn, *norms[0]);
     proximity(brightness, len, strength);
-    specular(diffV2, shadowRayn, *norms[1], camRay);
+    specular(specV2, shadowRayn, *norms[1], camRay);
     diffuse(diffV2, shadowRayn, *norms[1]);
     proximity(brightness, len, strength);
-    specular(diffV3, shadowRayn, *norms[2], camRay);
+    specular(specV3, shadowRayn, *norms[2], camRay);
     diffuse(diffV3, shadowRayn, *norms[2]);
     proximity(brightness, len, strength);
     //interpolate brightnesses
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
+    spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
@@ -205,7 +207,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 v
     }
     if(shading == ModelLoader::grd){
         for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, castRay, lens[i], *this->scene->getLightStrengths()[i]);
+            gouraud(brightnesses[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, castRay, lens[i], *this->scene->getLightStrengths()[i]);
         }
     }
     if(shading == ModelLoader::nrm) {
@@ -225,7 +227,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 v
     for(float specular : speculars){
         finalSpecular += specular;
     }
-    finalSpecular = finalSpecular / static_cast<float>(this->scene->getNumLights());
+    finalSpecular = finalSpecular / static_cast<float>(this->scene->getNumLights()); //normalise so we're between 0 and 1
     if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
     if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
 
@@ -329,6 +331,12 @@ void Camera::lookAt(glm::vec3 at) {
 
 glm::vec3 Camera::getPos() {
     return this->position;
+}
+
+glm::vec2 Camera::getRot(){ //rot round x, rot round y, careful when y is +-90
+    glm::vec3 lastRow = this->orientation[2];
+    return glm::vec2(glm::atan(lastRow.y, lastRow.z),
+                     glm::atan(-lastRow.y, glm::sqrt((lastRow.y * lastRow.y) + (lastRow.z * lastRow.z))));
 }
 
 //normalised vector
