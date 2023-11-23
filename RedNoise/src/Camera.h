@@ -17,7 +17,7 @@ class Camera {
 public:
     typedef std::pair<bool, pair<int, glm::vec3>> MaybeTriangle;
 
-    Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen);
+    Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* s);
     std::tuple<glm::vec3, bool> getCanvasIntersectionPoint(glm::vec3 vertexPosition); //vertex and whether we should draw it (not off image plane)
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
@@ -29,8 +29,8 @@ public:
     void renderMode();
     void doOrbit(ModelLoader model);
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, Scene& scene, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
-    void doRaytracing(DrawingWindow &window, Scene& scene);
-    void doRasterising(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
+    void doRaytracing(DrawingWindow &window);
+    void doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer);
     void setRot(float angleX, float angleY);
 
 private:
@@ -50,6 +50,7 @@ private:
     std::vector<vector<glm::vec2>> imageCoords; // precomputed and referenced in buildCameraRays
     float ambientUpper;
     float ambientLower;
+    Scene* scene;
 
     bool isOrbiting;
     uint mode;
@@ -59,8 +60,8 @@ private:
     vec3 myRight();
 
     vec3 buildCameraRay(int& x, int& y);
-    void raycast(DrawingWindow &window, Scene &scene);
-    void rasterise(DrawingWindow &window, Scene &scene, DepthBuffer &depthBuffer);
+    void raycast(DrawingWindow &window);
+    void rasterise(DrawingWindow &window, DepthBuffer &depthBuffer);
 
     //lighting effects
     void proximity(float& brightness, float& len, float& strength);
