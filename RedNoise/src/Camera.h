@@ -36,6 +36,8 @@ public:
 private:
     static int NO_INTERSECTION;
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
+    static glm::vec3 LIGHT_COLOUR;
+
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
     // a lot like
@@ -62,7 +64,7 @@ private:
 
     vec3 buildCameraRay(int& x, int& y);
     void raycast(DrawingWindow &window);
-    void hit(glm::vec3& source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, glm::vec3& colour);
+    void hit(int bounces, glm::vec3& source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, glm::vec3& colour);
     void rasterise(DrawingWindow &window, DepthBuffer &depthBuffer);
 
     //lighting effects

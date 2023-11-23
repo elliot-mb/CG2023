@@ -12,6 +12,7 @@
 
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
+glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene) {
     this->position = cameraPosition;
@@ -127,7 +128,13 @@ void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& 
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[castRay/camRay]
-void Camera::hit(glm::vec3 &source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, vec3 &colour) {
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, vec3 &colour) {
+    bounces--; //decrement for each all to hit
+    if(bounces < 0){
+        colour = {0, 0, 0};
+        return;
+    }
+
     std::vector<Triangle*> tris = scene->getTris();
     int modelIndex = scene->getModelFromTri(intersection.first);
     ModelLoader* model = scene->getModel(modelIndex);
@@ -156,70 +163,81 @@ void Camera::hit(glm::vec3 &source, glm::vec3& castRay, glm::vec2 vw, std::pair<
     float w = vw.y;
 
     std::vector<float> brightnesses(this->scene->getInitBrightnesses()); //supposedly a deep copy
+    std::vector<float> speculars(this->scene->getInitSpeculars());
     Colour c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
     if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
-    // c is mutated by some methods below
+
     glm::vec3 norm;
     std::vector<glm::vec3*> norms;
+    int shading = *model->getShading();
+
+    if(shading == ModelLoader::phg || shading == ModelLoader::phg_mrr || shading == ModelLoader::grd){ //vertex normals
+        norms = model->getNormsForTri(modelTriIndex); //works for gouraud and phong
+        norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //just for phong
+    }else{
+        norm = *tri->getNormal();
+    }
+
+    //vars for switch statement
     glm::vec3 castRayNrml;
     std::pair<int, float> incdntRayIntersect;
     glm::vec2 vwBounce;
     glm::vec3 incidentRay;
-    switch(*model->getShading()){
-        case ModelLoader::mrr:
-            norm = *tri->getNormal();//this is the face normal
-            castRayNrml = glm::normalize(castRay);
-            incidentRay = glm::normalize(castRayNrml - (static_cast<float>(2) * norm * glm::dot(castRayNrml, norm)));
-            incdntRayIntersect = getClosestIntersection(intersection.first, intercept, incidentRay, tris, *this->scene, vwBounce);
-            if(incdntRayIntersect.first != NO_INTERSECTION){
-                hit(intercept, incidentRay, vwBounce, incdntRayIntersect, colour);
-                return;
-            }
-            if(incdntRayIntersect.first == NO_INTERSECTION) {
-                colour = {0, 0, 0};
-                return;
-            }
-            break;
-        case ModelLoader::phg:
-            norms = model->getNormsForTri(modelTriIndex);
-            norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-            for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
-                specular(brightnesses[i], shadowRayNrmls[i], norm, castRay);
-                diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
-            }
-            break;
-        case ModelLoader::grd:
-            norms = model->getNormsForTri(modelTriIndex);
-            for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, castRay, lens[i], *this->scene->getLightStrengths()[i]);
-            }
-            break;
-        case ModelLoader::nrm:
-            norm = *tri->getNormal();//this is the face normal
-            for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                specular(brightnesses[i], shadowRayNrmls[i], norm, castRay);
-                diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, *this->scene);
-                proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
-            }
-            break;
+    if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { //having an or stops the switch case being useful
+        castRayNrml = glm::normalize(castRay);
+        incidentRay = glm::normalize(castRayNrml - (static_cast<float>(2) * norm * glm::dot(castRayNrml, norm)));
+        incdntRayIntersect = getClosestIntersection(intersection.first, intercept, incidentRay, tris, *this->scene,
+                                                    vwBounce);
+        if (incdntRayIntersect.first != NO_INTERSECTION) {
+            hit(bounces, intercept, incidentRay, vwBounce, incdntRayIntersect, colour); //only recursive call
+            return;
+        } else {
+            colour = {0, 0, 0};
+            return;
+        }
+    }
+    if(shading == ModelLoader::phg) {
+        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            specular(speculars[i], shadowRayNrmls[i], norm, castRay);
+            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+        }
+    }
+    if(shading == ModelLoader::grd){
+        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, castRay, lens[i], *this->scene->getLightStrengths()[i]);
+        }
+    }
+    if(shading == ModelLoader::nrm) {
+        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            specular(speculars[i], shadowRayNrmls[i], norm, castRay);
+            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, *this->scene);
+            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+        }
     }
 
     float finalBrightness = 0;
     for(float brightness : brightnesses){ //total them up
         finalBrightness += brightness;
     }
+    float finalSpecular = 0;
+    for(float specular : speculars){
+        finalSpecular += specular;
+    }
+    finalSpecular = finalSpecular / static_cast<float>(this->scene->getNumLights());
     if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
     if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
 
-    colour = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
+    colour = finalBrightness * glm::vec3(c.red, c.green, c.blue);
+    colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
 }
 
 void Camera::raycast(DrawingWindow& window){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 2; //how large are our ray pixels (1 is native resolution)
+    int bounces = 3;
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
@@ -229,7 +247,7 @@ void Camera::raycast(DrawingWindow& window){
             std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *scene, vw);
             if(intersection.first != NO_INTERSECTION){ //if its valid...
                 glm::vec3 finalColour;
-                hit(this->position, camRay, vw, intersection, finalColour);
+                hit(bounces, this->position, camRay, vw, intersection, finalColour);
 
                 window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(finalColour.x), static_cast<uint8_t>(finalColour.y), static_cast<uint8_t>(finalColour.z)));
                 if(stride > 1)

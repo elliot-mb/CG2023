@@ -13,15 +13,17 @@ Scene::Scene(std::vector<ModelLoader *> models, std::vector<glm::vec4*> lights) 
     this->modelOffset = {}; //the offset each model's triangles have in the allTris list
     this->lights = std::move(lights);
     load(); //private because we should really only do it once
-    this->initBrightnesses = {};
     this->lightLocs = {};
     this->lightStrengths = {};
     this->initBrightnesses = {};
+    this->initSpeculars = {};
     for(glm::vec4* loc : this->lights){
         lightLocs.push_back(glm::vec3(*loc));
         lightStrengths.push_back(&loc->w); //address of the ws
         initBrightnesses.push_back(1.0);
+        initSpeculars.push_back(0.0);
     }
+    this->numLights = static_cast<int>(this->lights.size());
 }
 
 void Scene::load() {
@@ -76,4 +78,12 @@ std::vector<float *> Scene::getLightStrengths() {
 
 std::vector<float> Scene::getInitBrightnesses() {
     return this->initBrightnesses;
+}
+
+std::vector<float> Scene::getInitSpeculars(){
+    return this->initSpeculars;
+}
+
+int Scene::getNumLights() {
+    return this->numLights;
 }

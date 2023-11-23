@@ -39,6 +39,10 @@ public:
     std::vector<float*> getLightStrengths();
 
     std::vector<float> getInitBrightnesses();
+
+    std::vector<float> getInitSpeculars();
+
+    int getNumLights();
 private:
     //delegates to all models
     void load();
@@ -51,6 +55,10 @@ private:
     std::vector<glm::vec3> lightLocs;
     std::vector<float*> lightStrengths;
     std::vector<float> initBrightnesses;
+    std::vector<float> initSpeculars;
+    int numLights;
+
+
 };
 
 
