@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
                                  new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::phg),
                                  new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr)
                          }, {&light, &light2, &light3});
-    Camera* camera = new Camera(glm::vec3(0.0, -0.75, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), *s);
+    Camera* camera = new Camera(glm::vec3(0.0, -0.75, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -106,8 +106,8 @@ int main(int argc, char *argv[]) {
         window.clearPixels();
 
         camera->doOrbit(*cornellLoader);
-        camera->doRaytracing(window, *s);
-        camera->doRasterising(window, *s, *depthBuffer);
+        camera->doRaytracing(window);
+        camera->doRasterising(window, *depthBuffer);
 
 //        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
 
