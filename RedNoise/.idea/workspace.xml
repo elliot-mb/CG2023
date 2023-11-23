@@ -30,9 +30,10 @@
       <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Scene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Line.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Line.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +151,7 @@
       <workItem from="1700577468441" duration="28000" />
       <workItem from="1700664781619" duration="11967000" />
       <workItem from="1700685991142" duration="5295000" />
-      <workItem from="1700730746944" duration="7938000" />
+      <workItem from="1700730746944" duration="11353000" />
     </task>
     <servers />
   </component>

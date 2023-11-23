@@ -32,7 +32,7 @@ public:
     void doRaytracing(DrawingWindow &window);
     void doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer);
     void setRot(float angleX, float angleY);
-
+    vec2 getRot();
 private:
     static int NO_INTERSECTION;
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
@@ -76,6 +76,7 @@ private:
     void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay);
 
     void
-    gouraud(float &brightness, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
+    gouraud(float &brightness, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
             vec3 &camRay, float& len, float& strength);
+
 };

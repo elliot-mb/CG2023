@@ -28,7 +28,6 @@ private:
                          string& outPath,
                          Scene &scene,
                          DepthBuffer& depthBuffer,
-                         glm::vec4 light,
                          bool withPreview) = 0; // =0 is a pure specifier (weird c++ stuff)
         void drawBackground(DrawingWindow& window);
     protected:
@@ -44,7 +43,6 @@ private:
                  string& outPath,
                  Scene &scene,
                  DepthBuffer& depthBuffer,
-                 glm::vec4 light,
                  bool withPreview) override;
     };
     class Wait: public Action{
@@ -55,7 +53,6 @@ private:
                  string& out,
                  Scene &scene,
                  DepthBuffer& depthBuffer,
-                 glm::vec4 light,
                  bool withPreview) override;
     };
     class LerpRot: public Action{
@@ -66,7 +63,6 @@ private:
                  string& out,
                  Scene &scene,
                  DepthBuffer& depthBuffer,
-                 glm::vec4 light,
                  bool withPreview) override;
     };
     class LerpModel: public Action{
@@ -77,7 +73,16 @@ private:
                  string& out,
                  Scene &scene,
                  DepthBuffer& depthBuffer,
-                 glm::vec4 light,
+                 bool withPreview) override;
+    };
+    class LookAtModel: public Action{
+        using Action::Action;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 uint& frameID,
+                 string& out,
+                 Scene &scene,
+                 DepthBuffer& depthBuffer,
                  bool withPreview) override;
     };
 
@@ -87,6 +92,7 @@ private:
     std::vector<Action*> actions = {
             new Lerp(glm::mat3({0, 2, 4}, {0, -1, 3.5}, {1.5, 0, 0})),
             new Wait(glm::mat3({0, -1, 3.5}, {0, 0, 0}, {0.5, 0, 0})),
+            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
             new LerpModel(glm::mat3({-0.25, -0.90, 0}, {0.7, -0.35, 0}, {1.0, 1.0, 0.0})),
             new Lerp(glm::mat3({0, -1.2, 3.5}, {-0.25, -0.5, 0.0}, {1.5, 0, 0})),
             new LerpRot(glm::mat3({0, 0, 0}, {-M_PI / 6, M_PI / 3, 0}, {1, 0, 0})),

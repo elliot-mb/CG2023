@@ -31,7 +31,6 @@ void Cameraman::Lerp::act(DrawingWindow& window,
                           string& out,
                           Scene &scene,
                           DepthBuffer& depthBuffer,
-                          glm::vec4 light,
                           bool withPreview) {
 
     std::cout << "lerp" << std::endl;
@@ -65,7 +64,6 @@ void Cameraman::Wait::act(DrawingWindow& window,
                           string& out,
                           Scene &scene,
                           DepthBuffer& depthBuffer,
-                          glm::vec4 light,
                           bool withPreview) {
 
     std::cout << "wait" << std::endl;
@@ -96,7 +94,6 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
                              string& out,
                              Scene &scene,
                              DepthBuffer& depthBuffer,
-                             glm::vec4 light,
                              bool withPreview) {
 
     std::cout << "rot" << std::endl;
@@ -132,7 +129,6 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
                                string &out,
                                Scene &scene,
                                DepthBuffer &depthBuffer,
-                               glm::vec4 light,
                                bool withPreview) {
     std::cout << "lerp model" << std::endl;
     glm::vec3 *start = &this->args[0];
@@ -157,6 +153,20 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
     }
 }
 
+// row 1: current angle of cam x axis to world x, current angle of cam y axis to world y, IGNORED
+// row 2:                   IGNORED
+// row 3: timeframe,        model index,          IGNORED
+void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
+                                 DepthBuffer &depthBuffer, bool withPreview) {
+    int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    camera.lookAt(*scene.getModel(modelIndex)->getPos()); //temporarily looks at model to find out rotation
+    glm::vec2 camRot = camera.getRot();
+
+    Action* delegate = new LerpRot(glm::mat3({this->args[0], glm::vec3(camRot, 0), this->args[2]}));
+
+    delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
+}
+
 Cameraman::Cameraman(Camera* cam, string outPath) {
     this->cam = cam;
     this->outPath = outPath;
@@ -172,7 +182,6 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& s
               this->outPath,
               scene,
               depthBuffer,
-              light,
               withPreview);
     }
     std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
