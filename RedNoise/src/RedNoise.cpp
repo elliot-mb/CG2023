@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::grd);
-    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::nrm);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::phg);
+    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr);
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
@@ -95,8 +95,8 @@ int main(int argc, char *argv[]) {
 
 
  //comment to stop the render
-    Cameraman* cm = new Cameraman(camera, "./render/");
-    cm->render(window, *depthBuffer, *s, light, true);
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
