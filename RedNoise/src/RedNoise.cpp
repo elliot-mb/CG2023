@@ -53,7 +53,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
             camera.toggleOrbit();
         }
         else if (event.key.keysym.sym == SDLK_l) {
-            camera.lookAt(*model.getPos());
+            camera.lookAt(model.getCentre());
         }
         else if (event.key.keysym.sym == SDLK_SPACE){
             camera.renderMode();
@@ -95,19 +95,20 @@ int main(int argc, char *argv[]) {
 
 
  //comment to stop the render
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//    cm->render(window, *depthBuffer, *s, light, true);
+    Cameraman* cm = new Cameraman(camera, "./render/");
+    //cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
-		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *cornell);
+		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *sphere);
         window.clearPixels();
 
-        camera->doOrbit(*cornell);
+        camera->doOrbit(*sphere);
         camera->doRaytracing(window);
         camera->doRasterising(window, *depthBuffer);
 
 //        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
+        sphere->setPos(glm::vec3(0, sphere->getPos()->y + 0.01, 0));
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

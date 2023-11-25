@@ -36,6 +36,8 @@ public:
     enum Shading {nrm, grd, phg, mrr, phg_mrr};// normal(s), gouraud, phong, mirror, phong_mirror
     int* getShading();
 
+    glm::vec3 getCentre();
+
 private:
     glm::vec3 position;
     std::vector<std::string> tailTokens(std::vector<std::string> ln, const std::string& tkn);
@@ -48,6 +50,7 @@ private:
     std::map<std::string, TextureMap> textures;
     float scale;
     std::vector<glm::vec3> verts; //just those vertices which are used to build facets
+    glm::vec3 vertCentre; // mean of all vertex locations
     std::vector<glm::vec3> vertNorms; //one to one correspondance to the verts list
     std::vector<std::vector<Triangle*>> vertToTris; //a lookup for which triangles use the ith vert
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
@@ -74,5 +77,7 @@ private:
 
     void makeVertexNorms(); //compute all vertex normals through finding all unique vertices, and seeing which triangles share them
     //void putVertNormsInTris();
+    void averageVertexPos();
+
 };
 

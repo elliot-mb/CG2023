@@ -30,6 +30,7 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int s
     this->bytes = ""; //new string
     this->tris = vector<Triangle*>{};
     this->verts = std::vector<glm::vec3>{};
+
     this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
@@ -170,9 +171,9 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
     int i0 = facetVertsIndices[0] - 1;
     int i1 = facetVertsIndices[1] - 1;
     int i2 = facetVertsIndices[2] - 1; //indices of vertices
-    vec3 v0 = verts[i0] + this->position;
-    vec3 v1 = verts[i1] + this->position;
-    vec3 v2 = verts[i2] + this->position;
+    vec3 v0 = verts[i0] - this->vertCentre;
+    vec3 v1 = verts[i1] - this->vertCentre;
+    vec3 v2 = verts[i2] - this->vertCentre;
     Triangle* tri;
     if(currentTexture.second){ //do we have a valid texture mapping
         TextureMap texture = currentTexture.first;
@@ -205,17 +206,20 @@ void ModelLoader::load() {
     MaybeTexture currentTexture = pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
     std::vector<vec2> textureVerts = {};
 
+    //average the vertex positions first
+    for(string& lnBlock: lines) {
+        std::vector<string> ln = toTokens(lnBlock);
+        if(!isLineType(ln, TKN_COMMNT) && isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
+    }
+    this->averageVertexPos();
+
     for(string& lnBlock: lines){
         std::vector<string> ln = toTokens(lnBlock);
-        for(const string& tkn : ln){
-            cout << "_" << tkn << "";
-        }
-        cout << endl;
         if(!isLineType(ln, TKN_COMMNT)){
             if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
             if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
-            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
+            //if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts); // we already load in the vertices
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
             if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
@@ -238,6 +242,23 @@ void ModelLoader::makeVertexNorms() {
         this->vertNorms.push_back(normSum);
     }
 }
+
+void ModelLoader::averageVertexPos(){
+    glm::vec3 vertSum = {0, 0, 0};
+    for(glm::vec3 v : this->verts){
+        vertSum += v;
+    }
+    this->vertCentre = vertSum / static_cast<float>(this->verts.size()); // the relative centre of the vertices
+//    for(int i = 0; i < this->verts.size(); i++){
+//        this->verts[i] = this->verts[i] - this->vertCentre;
+//
+//    }
+}
+
+glm::vec3 ModelLoader::getCentre(){
+    return this->position;
+}
+
 //
 //void ModelLoader::putVertNormsInTris(){
 //    for(size_t i = 0; i < this->tris.size(); i++){
