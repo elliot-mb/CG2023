@@ -23,6 +23,8 @@ const string ModelLoader::TKN_NEWMTL = "newmtl";
 const string ModelLoader::TKN_KD     = "Kd";
 const string ModelLoader::TKN_COMMNT = "#";
 const string ModelLoader::TKN_TXTURE = "map_Kd";
+const float ModelLoader::LARGE = 10000;
+const float ModelLoader::SMALL = -10000;
 
 ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
     this->scale = scale; //scaling factor
@@ -211,7 +213,7 @@ void ModelLoader::load() {
         std::vector<string> ln = toTokens(lnBlock);
         if(!isLineType(ln, TKN_COMMNT) && isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
     }
-    this->averageVertexPos();
+    this->boundVertices(); //how much we offset the model by
 
     for(string& lnBlock: lines){
         std::vector<string> ln = toTokens(lnBlock);
@@ -243,20 +245,25 @@ void ModelLoader::makeVertexNorms() {
     }
 }
 
-void ModelLoader::averageVertexPos(){
+void ModelLoader::boundVertices(){
     glm::vec3 vertSum = {0, 0, 0};
+    glm::vec3 boundsMin = {LARGE, LARGE, LARGE};
+    glm::vec3 boundsMax = {SMALL, SMALL, SMALL};
     for(glm::vec3 v : this->verts){
-        vertSum += v;
+        boundsMin.x = glm::min(v.x, boundsMin.x);
+        boundsMin.y = glm::min(v.y, boundsMin.y);
+        boundsMin.z = glm::min(v.z, boundsMin.z);
+        boundsMax.x = glm::max(v.x, boundsMax.x);
+        boundsMax.y = glm::max(v.y, boundsMax.y);
+        boundsMax.z = glm::max(v.z, boundsMax.z);
     }
-    this->vertCentre = vertSum / static_cast<float>(this->verts.size()); // the relative centre of the vertices
+    glm::vec3 boundsCentre = (boundsMin + boundsMax) / static_cast<float>(2);
+    //the centre of this bounding box is independent of the detail concentration on the model
+    this->vertCentre = boundsCentre; // the relative centre of the vertices
 //    for(int i = 0; i < this->verts.size(); i++){
 //        this->verts[i] = this->verts[i] - this->vertCentre;
 //
 //    }
-}
-
-glm::vec3 ModelLoader::getCentre(){
-    return this->position;
 }
 
 //

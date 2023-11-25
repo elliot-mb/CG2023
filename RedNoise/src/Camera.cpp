@@ -304,10 +304,12 @@ void Camera::setPos(glm::vec3 pos) {
     this->position = pos;
 }
 
-void Camera::rot(float angleX, float angleY) {
-    this->orientation = Utils::pitch(angleX) * this->orientation; //does correct pitch rotation
+//angleZ is the angle from the xz plane zHat takes,
+//angleX is the angle from the xy plane xHat takes
+void Camera::rot(float angleZ, float angleX) {
+    this->orientation = Utils::pitch(angleZ) * this->orientation; //does correct pitch rotation
     //rotate each camera axis around the world y respectively
-    glm::mat3 yaw = Utils::yaw(angleY); //rotation matrix
+    glm::mat3 yaw = Utils::yaw(angleX); //rotation matrix
     glm::vec3 camX = yaw * glm::vec3(this->orientation[0].x, this->orientation[1].x, this->orientation[2].x);
     glm::vec3 camY = yaw * glm::vec3(this->orientation[0].y, this->orientation[1].y, this->orientation[2].y);
     glm::vec3 camZ = yaw * glm::vec3(this->orientation[0].z, this->orientation[1].z, this->orientation[2].z);
@@ -334,9 +336,27 @@ glm::vec3 Camera::getPos() {
 }
 
 glm::vec2 Camera::getRot(){ //rot round x, rot round y, careful when y is +-90
-    glm::vec3 lastRow = this->orientation[2];
-    return glm::vec2(glm::atan(lastRow.y, lastRow.z),
-                     glm::atan(-lastRow.y, glm::sqrt((lastRow.y * lastRow.y) + (lastRow.z * lastRow.z))));
+//    glm::vec3 lastRow = this->orientation[2];
+//    return glm::vec2(glm::atan(lastRow.y, lastRow.z),
+//                     glm::atan(-lastRow.y, glm::sqrt((lastRow.y * lastRow.y) + (lastRow.z * lastRow.z))));
+    glm::vec3 xHat = this->myRight();
+    glm::vec3 zHat = this->myFwd();
+    float xSign = 1;
+    float zSign = 1;
+    if(xHat.z != 0) xSign = xHat.z / glm::abs(xHat.z);//sign on whether its behind or in front of the camera
+    if(zHat.y != 0) zSign = zHat.y / glm::abs(zHat.y); //sign on whether its
+    // projection vectors
+    glm::vec3 xHat0z = this->myRight(); xHat0z.z = 0;
+    glm::vec3 zHat0y = this->myFwd(); zHat0y.y = 0;
+    // angles
+    xHat = glm::normalize(xHat);
+    zHat = glm::normalize(zHat);
+    xHat0z = glm::normalize(xHat0z);
+    zHat0y = glm::normalize(zHat0y);
+    float tX = (glm::acos(glm::dot(xHat, xHat0z))) * xSign; //signed angle from xhat to world x
+    float tZ = (glm::acos(glm::dot(zHat, zHat0y))) * zSign; //signed angle form zhat to world z
+
+    return glm::vec2(-tZ, tX);
 }
 
 //normalised vector
@@ -361,7 +381,7 @@ void Camera::toggleOrbit() {
 
 void Camera::doOrbit(ModelLoader model) {
     if(isOrbiting){
-        glm::vec3 modelCentre = model.getCentre();
+        glm::vec3 modelCentre = *model.getPos();
         glm::vec3 toModel = this->position - modelCentre;
         this->position = modelCentre + (Utils::yaw(0.01) * toModel); //rotate then translate
         this->lookAt(modelCentre);

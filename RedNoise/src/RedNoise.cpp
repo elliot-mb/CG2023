@@ -53,7 +53,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
             camera.toggleOrbit();
         }
         else if (event.key.keysym.sym == SDLK_l) {
-            camera.lookAt(model.getCentre());
+            camera.lookAt(*model.getPos());
         }
         else if (event.key.keysym.sym == SDLK_SPACE){
             camera.renderMode();
@@ -68,17 +68,17 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-0.25, -0.90, 0), ModelLoader::phg);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-2, -0.90, -1), ModelLoader::phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr);
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
-    glm::vec4 light = glm::vec4(0.0, -0.5,  0.45, 0.5); //final is a strength
-    glm::vec4 light2 = glm::vec4(0.15, -0.5,  0.45, 0.5); //so good they made a second one
-    glm::vec4 light3 = glm::vec4(-0.15, -0.5,  0.45, 0.5); //so good they made a second second one
+    glm::vec4 light = glm::vec4(0.0, 0.25,  0.45, 0.5); //final is a strength
+    glm::vec4 light2 = glm::vec4(0.15, 0.25,  0.45, 0.5); //so good they made a second one
+    glm::vec4 light3 = glm::vec4(-0.15, 0.25,  0.45, 0.5); //so good they made a second second one
 
     Scene* s = new Scene({ cornell, sphere, tallBox }, {&light, &light2, &light3});
-    Camera* camera = new Camera(glm::vec3(0.0, -0.75, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s);
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
@@ -96,19 +96,19 @@ int main(int argc, char *argv[]) {
 
  //comment to stop the render
     Cameraman* cm = new Cameraman(camera, "./render/");
-    //cm->render(window, *depthBuffer, *s, light, true);
+    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
 		if (window.pollForInputEvents(event)) handleEvent(event, window, *camera, *sphere);
         window.clearPixels();
 
-        camera->doOrbit(*sphere);
+        camera->doOrbit(*tallBox);
         camera->doRaytracing(window);
         camera->doRasterising(window, *depthBuffer);
 
 //        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
-        sphere->setPos(glm::vec3(0, sphere->getPos()->y + 0.01, 0));
+//        sphere->setPos(glm::vec3(0, sphere->getPos()->y + 0.01, 0));
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

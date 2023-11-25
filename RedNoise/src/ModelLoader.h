@@ -35,9 +35,6 @@ public:
     //shading mode
     enum Shading {nrm, grd, phg, mrr, phg_mrr};// normal(s), gouraud, phong, mirror, phong_mirror
     int* getShading();
-
-    glm::vec3 getCentre();
-
 private:
     glm::vec3 position;
     std::vector<std::string> tailTokens(std::vector<std::string> ln, const std::string& tkn);
@@ -68,6 +65,7 @@ private:
     static const std::string TKN_KD;
     static const std::string TKN_COMMNT;
     static const std::string TKN_TXTURE;
+    static const float LARGE;
 
     std::vector<std::string> toTokens(std::string &lnBlock, char splitOn);
 
@@ -77,7 +75,8 @@ private:
 
     void makeVertexNorms(); //compute all vertex normals through finding all unique vertices, and seeing which triangles share them
     //void putVertNormsInTris();
-    void averageVertexPos();
+    void boundVertices();
 
+    static const float SMALL;
 };
 
