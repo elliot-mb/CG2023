@@ -159,9 +159,10 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
 void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                                  DepthBuffer &depthBuffer, bool withPreview) {
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    std::cout << modelIndex << std::endl;
     camera.lookAt(*scene.getModel(modelIndex)->getPos()); //temporarily looks at model to find out rotation
     glm::vec2 camRot = camera.getRot();
-
+    std::cout << camRot.x << "," << camRot.y << std::endl;
     Action* delegate = new LerpRot(glm::mat3({this->args[0], glm::vec3(camRot, 0), this->args[2]}));
 
     delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
