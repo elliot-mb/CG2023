@@ -153,17 +153,18 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
     }
 }
 
-// row 1: current angle of cam x axis to world x, current angle of cam y axis to world y, IGNORED
+// row 1: start angle of cam x axis to world x, start angle of cam y axis to world y, IGNORED
 // row 2:                   IGNORED
-// row 3: timeframe,        model index,          IGNORED
+// row 3: timeframe,        model index,        == 1 ? from start angle : from current angle
 void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                                  DepthBuffer &depthBuffer, bool withPreview) {
+    bool fromCurrent = this->args[2].z == 0;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
-    std::cout << modelIndex << std::endl;
+    glm::vec3 camRot = this->args[0];
+    if(fromCurrent) camRot = glm::vec3(camera.getRot(), 0);
     camera.lookAt(*scene.getModel(modelIndex)->getPos()); //temporarily looks at model to find out rotation
-    glm::vec2 camRot = camera.getRot();
-    std::cout << camRot.x << "," << camRot.y << std::endl;
-    Action* delegate = new LerpRot(glm::mat3({this->args[0], glm::vec3(camRot, 0), this->args[2]}));
+    glm::vec3 camRotTo = glm::vec3(camera.getRot(), 0);
+    Action* delegate = new LerpRot(glm::mat3({camRot, camRotTo, this->args[2]}));
 
     delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
 }
