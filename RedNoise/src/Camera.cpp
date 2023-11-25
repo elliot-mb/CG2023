@@ -131,11 +131,11 @@ void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, floa
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[castRay/camRay]
 void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, vec3 &colour) {
-    bounces--; //decrement for each all to hit
     if(bounces < 0){
         colour = {0, 0, 0};
         return;
     }
+    bounces--; //decrement for each all to hit
 
     std::vector<Triangle*> tris = scene->getTris();
     int modelIndex = scene->getModelFromTri(intersection.first);
@@ -238,8 +238,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 v
 void Camera::raycast(DrawingWindow& window){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 2; //how large are our ray pixels (1 is native resolution)
-    int bounces = 3;
+    int stride = 4; //how large are our ray pixels (1 is native resolution)
+    int bounces = 1;
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
@@ -361,9 +361,10 @@ void Camera::toggleOrbit() {
 
 void Camera::doOrbit(ModelLoader model) {
     if(isOrbiting){
-        glm::vec3 toModel = this->position - *model.getPos();
-        this->position = *model.getPos() + (Utils::yaw(0.01) * toModel); //rotate then translate
-        this->lookAt(*model.getPos());
+        glm::vec3 modelCentre = model.getCentre();
+        glm::vec3 toModel = this->position - modelCentre;
+        this->position = modelCentre + (Utils::yaw(0.01) * toModel); //rotate then translate
+        this->lookAt(modelCentre);
     }
 }
 
