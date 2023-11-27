@@ -11,8 +11,10 @@
 #include <tuple>
 
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
+int Camera::NO_INTERSECTION = -1;
+glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
 
-Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
+Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene) {
     this->position = cameraPosition;
     this->focalLength = focalLength;
     this->screen = screen;
@@ -31,6 +33,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen) {
          //populate
     this->ambientUpper = 0.95;
     this->ambientLower = 0.2;
+    this->scene = scene;
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -39,8 +42,8 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     //y
     glm::vec3 dPos = this->position - vertexPosition;
     glm::vec3 dRot = this->orientation * dPos;
-
-    if(dRot.z < this->focalLength){
+//
+    if(dRot.z < 0){
         //behind image plane
         return std::tuple<glm::vec3, bool>{glm::vec3(0, 0, 0), false};
     }
@@ -76,7 +79,7 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
             }
         }
     }
-    return {closestTri, closestValid}; //simply returns the
+    return {closestTri, closestValid}; //simply returns the index and distance along the ray
 }
 //
 glm::vec3 Camera::buildCameraRay(int& x, int& y){
@@ -108,136 +111,151 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
-    float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0;
-    specular(diffV1, shadowRayn, *norms[0], camRay);
+void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
+    float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0; //characteristics for each vertex
+    float specV1 = 0; float specV2 = 0; float specV3 = 0;
+    specular(specV1, shadowRayn, *norms[0], camRay);
     diffuse(diffV1, shadowRayn, *norms[0]);
     proximity(brightness, len, strength);
-    specular(diffV2, shadowRayn, *norms[1], camRay);
+    specular(specV2, shadowRayn, *norms[1], camRay);
     diffuse(diffV2, shadowRayn, *norms[1]);
     proximity(brightness, len, strength);
-    specular(diffV3, shadowRayn, *norms[2], camRay);
+    specular(specV3, shadowRayn, *norms[2], camRay);
     diffuse(diffV3, shadowRayn, *norms[2]);
     proximity(brightness, len, strength);
     //interpolate brightnesses
     brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
+    spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::raycast(DrawingWindow& window, Scene& scene){
-    std::vector<Triangle*> tris = scene.getTris();
-    int NONE = -1; //common none value for return of get closest intersection and forbidden index
-    std::vector<glm::vec4*> lightSources = scene.getLights();
-    //glm::vec3 lightLoc = glm::vec3(*lightSources[0]);
-    std::vector<glm::vec3> lightLocs = {}; //unpack the light sources into useful lists
-    std::vector<float*> lightStrengths = {};
-    std::vector<float> initBrightness = {}; //COPY each time
-    glm::vec3 camRay;
-    glm::vec2 vw;
-    std::pair<int, float> intersection;
-    int modelIndex;
-    ModelLoader* model;
-    int modelTriIndex;
-    Triangle* tri;
-    glm::vec3 intercept;
-    std::vector<glm::vec3> shadowRays;
-    std::vector<float> lens;
-    std::vector<glm::vec3> shadowRayNrmls;
-    float u;
-    float v;
-    float w;
-    glm::vec3 norm;
-    int shading;
-    std::vector<glm::vec3 *> norms;
-    Colour c;
-    float finalBrightness;
-    glm::vec3 cVec;
+//recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
+// old_body[castRay/camRay]
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 vw, std::pair<int, float> intersection, vec3 &colour) {
+    if(bounces < 0){
+        colour = {0, 0, 0};
+        return;
+    }
+    bounces--; //decrement for each all to hit
 
-    for(glm::vec4* loc : lightSources){
-        lightLocs.push_back(glm::vec3(*loc));
-        lightStrengths.push_back(&loc->w); //address of the ws
-        initBrightness.push_back(1.0);
+    std::vector<Triangle*> tris = scene->getTris();
+    int modelIndex = scene->getModelFromTri(intersection.first);
+    ModelLoader* model = scene->getModel(modelIndex);
+    int modelTriIndex = intersection.first - scene->getModelOffset(modelIndex);
+    Triangle* tri = tris[intersection.first];
+    //...cast from the intersection to the light if one is given
+    glm::vec3 intercept = source + (intersection.second * castRay);
+    //glm::vec3 shadowRay = lightLoc - intercept;
+    std::vector<glm::vec3> shadowRays = {};
+    for(glm::vec3 loc : this->scene->getLightLocs()){
+        shadowRays.push_back(loc - intercept);
+    }
+    //float len = glm::length(shadowRay);
+    std::vector<float> lens = {};
+    for(glm::vec3 shdR : shadowRays){
+        lens.push_back(glm::length(shdR));
+    }
+//                glm::vec3 shadowRayn = glm::normalize(shadowRay);
+    std::vector<glm::vec3> shadowRayNrmls = {};
+    for(glm::vec3 shdR : shadowRays){
+        shadowRayNrmls.push_back(glm::normalize(shdR));
+    }
+    //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
+    float u = 1 - vw.x - vw.y;
+    float v = vw.x;
+    float w = vw.y;
+
+    std::vector<float> brightnesses(this->scene->getInitBrightnesses()); //supposedly a deep copy
+    std::vector<float> speculars(this->scene->getInitSpeculars());
+    Colour c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
+    if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+
+    glm::vec3 norm;
+    std::vector<glm::vec3*> norms;
+    int shading = *model->getShading();
+
+    if(shading == ModelLoader::phg || shading == ModelLoader::phg_mrr || shading == ModelLoader::grd){ //vertex normals
+        norms = model->getNormsForTri(modelTriIndex); //works for gouraud and phong
+        norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //just for phong
+    }else{
+        norm = *tri->getNormal();
     }
 
-    int stride = 2; //how large are our ray pixels (1 is native resolution)
+    //vars for switch statement
+    glm::vec3 castRayNrml;
+    std::pair<int, float> incdntRayIntersect;
+    glm::vec2 vwBounce;
+    glm::vec3 incidentRay;
+    if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { //having an or stops the switch case being useful
+        castRayNrml = glm::normalize(castRay);
+        incidentRay = glm::normalize(castRayNrml - (static_cast<float>(2) * norm * glm::dot(castRayNrml, norm)));
+        incdntRayIntersect = getClosestIntersection(intersection.first, intercept, incidentRay, tris, *this->scene,
+                                                    vwBounce);
+        if (incdntRayIntersect.first != NO_INTERSECTION) {
+            hit(bounces, intercept, incidentRay, vwBounce, incdntRayIntersect, colour); //only recursive call
+            return;
+        } else {
+            colour = {0, 0, 0};
+            return;
+        }
+    }
+    if(shading == ModelLoader::phg) {
+        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            specular(speculars[i], shadowRayNrmls[i], norm, castRay);
+            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+        }
+    }
+    if(shading == ModelLoader::grd){
+        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            gouraud(brightnesses[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, castRay, lens[i], *this->scene->getLightStrengths()[i]);
+        }
+    }
+    if(shading == ModelLoader::nrm) {
+        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            specular(speculars[i], shadowRayNrmls[i], norm, castRay);
+            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, *this->scene);
+            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+        }
+    }
+
+    float finalBrightness = 0;
+    for(float brightness : brightnesses){ //total them up
+        finalBrightness += brightness;
+    }
+    float finalSpecular = 0;
+    for(float specular : speculars){
+        finalSpecular += specular;
+    }
+    finalSpecular = finalSpecular / static_cast<float>(this->scene->getNumLights()); //normalise so we're between 0 and 1
+    if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
+    if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
+
+    colour = finalBrightness * glm::vec3(c.red, c.green, c.blue);
+    colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
+}
+
+void Camera::raycast(DrawingWindow& window){
+    std::vector<Triangle*> tris = scene->getTris();
+
+    int stride = 4; //how large are our ray pixels (1 is native resolution)
+    int bounces = 1;
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
-            camRay = buildCameraRay(x, y);
+            glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
-            vw = {0.0, 0.0};
-            intersection = getClosestIntersection(NONE, this->position, camRay, tris, scene, vw);
-            if(intersection.first != NONE){ //if its valid...
-                modelIndex = scene.getModelFromTri(intersection.first);
-                model = scene.getModel(modelIndex);
-                modelTriIndex = intersection.first - scene.getModelOffset(modelIndex);
-                tri = tris[intersection.first];
-                //...cast from the intersection to the light if one is given
-                intercept = this->position + (intersection.second * camRay); //tried with camRay, lets also try with a tri
-                //glm::vec3 shadowRay = lightLoc - intercept;
-                shadowRays = {};
-                for(glm::vec3 loc : lightLocs){
-                    shadowRays.push_back(loc - intercept);
-                }
-                //float len = glm::length(shadowRay);
-                lens = {};
-                for(glm::vec3 shdR : shadowRays){
-                    lens.push_back(glm::length(shdR));
-                }
-//                glm::vec3 shadowRayn = glm::normalize(shadowRay);
-                shadowRayNrmls = {};
-                for(glm::vec3 shdR : shadowRays){
-                    shadowRayNrmls.push_back(glm::normalize(shdR));
-                }
-                //u v w in barycentric coordinates (wrt v0 being A, v1 being B, and v2 being C)
-                u = 1 - vw.x - vw.y;
-                v = vw.x;
-                w = vw.y;
+            glm::vec2 vw = {0.0, 0.0};
+            std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *scene, vw);
+            if(intersection.first != NO_INTERSECTION){ //if its valid...
+                glm::vec3 finalColour;
+                hit(bounces, this->position, camRay, vw, intersection, finalColour);
 
-                std::vector<float> brightnesses(initBrightness); //supposedly a deep copy
-
-                shading = *model->getShading();
-                if(shading == ModelLoader::phg) {
-                     //linear combination of vertex normals
-                    norms = model->getNormsForTri(modelTriIndex);
-                    norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w);
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++){
-                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
-                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
-                    }
-                }
-                if(shading == ModelLoader::grd){
-                    norms = model->getNormsForTri(modelTriIndex);
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                        gouraud(brightnesses[i], shadowRayNrmls[i], u, v, w, norms, camRay, lens[i], *lightStrengths[i]);
-                    }
-                }
-                if(shading == ModelLoader::nrm){
-                    norm = *tri->getNormal();//this is the face normal
-                    for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-                        specular(brightnesses[i], shadowRayNrmls[i], norm, camRay);
-                        diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-                        shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, scene);
-                        proximity(brightnesses[i], lens[i], *lightStrengths[i]);
-                    }
-                }
-//
-                c = tri->getColour(); //find out what colour we draw it
-                if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
-                finalBrightness = 0;
-                for(float brightness : brightnesses){ //total them up
-                    finalBrightness += brightness;
-                }
-                if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
-                if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
-
-                cVec = glm::floor(finalBrightness * glm::vec3(c.red, c.green, c.blue));
-
-                window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
+                window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(finalColour.x), static_cast<uint8_t>(finalColour.y), static_cast<uint8_t>(finalColour.z)));
                 if(stride > 1)
                     for(int i = 0; i < stride; i++){
                         for(int j = 0; j < stride; j++){
-                            window.setPixelColour(x + i, y + j, Utils::pack(255, static_cast<uint8_t>(cVec.x), static_cast<uint8_t>(cVec.y), static_cast<uint8_t>(cVec.z)));
+                            window.setPixelColour(x + i, y + j, Utils::pack(255, static_cast<uint8_t>(finalColour.x), static_cast<uint8_t>(finalColour.y), static_cast<uint8_t>(finalColour.z)));
                         }
                     }
             }
@@ -245,14 +263,15 @@ void Camera::raycast(DrawingWindow& window, Scene& scene){
     }
 }
 
-void Camera::rasterise(DrawingWindow& window, Scene &scene, DepthBuffer& depthBuffer){
+void Camera::rasterise(DrawingWindow& window, DepthBuffer& depthBuffer){
     depthBuffer.reset();
-    vector<Triangle*> tris = scene.getTris();
+    vector<Triangle*> tris = scene->getTris();
     for(size_t i = 0; i < tris.size(); i++){
-        Triangle thisTri = *tris[tris.size() - i - 1]; //tested to see if rendering them in reverse order has any effect
-        auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0()); //project to flat (z becomes the distance to the camera)
-        auto [pt1, valid1] = getCanvasIntersectionPoint(thisTri.v1());
-        auto [pt2, valid2] = getCanvasIntersectionPoint(thisTri.v2());
+        Triangle thisTri = *tris[i];
+        ModelLoader* currentModel = scene->getModel(scene->getModelFromTri(static_cast<int>(i)));
+        auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0() + *currentModel->getPos()); //project to flat (z becomes the distance to the camera)
+        auto [pt1, valid1] = getCanvasIntersectionPoint(thisTri.v1() + *currentModel->getPos());
+        auto [pt2, valid2] = getCanvasIntersectionPoint(thisTri.v2() + *currentModel->getPos());
         if(valid0 && valid1 && valid2){
             Colour thisColour = thisTri.getColour();
             thisTri.setV0(pt0);
@@ -285,10 +304,12 @@ void Camera::setPos(glm::vec3 pos) {
     this->position = pos;
 }
 
-void Camera::rot(float angleX, float angleY) {
-    this->orientation = Utils::pitch(angleX) * this->orientation; //does correct pitch rotation
+//angleZ is the angle from the xz plane zHat takes,
+//angleX is the angle from the xy plane xHat takes
+void Camera::rot(float angleZ, float angleX) {
+    this->orientation = Utils::pitch(angleZ) * this->orientation; //does correct pitch rotation
     //rotate each camera axis around the world y respectively
-    glm::mat3 yaw = Utils::yaw(angleY); //rotation matrix
+    glm::mat3 yaw = Utils::yaw(angleX); //rotation matrix
     glm::vec3 camX = yaw * glm::vec3(this->orientation[0].x, this->orientation[1].x, this->orientation[2].x);
     glm::vec3 camY = yaw * glm::vec3(this->orientation[0].y, this->orientation[1].y, this->orientation[2].y);
     glm::vec3 camZ = yaw * glm::vec3(this->orientation[0].z, this->orientation[1].z, this->orientation[2].z);
@@ -314,6 +335,30 @@ glm::vec3 Camera::getPos() {
     return this->position;
 }
 
+glm::vec2 Camera::getRot(){ //rot round x, rot round y, careful when y is +-90
+//    glm::vec3 lastRow = this->orientation[2];
+//    return glm::vec2(glm::atan(lastRow.y, lastRow.z),
+//                     glm::atan(-lastRow.y, glm::sqrt((lastRow.y * lastRow.y) + (lastRow.z * lastRow.z))));
+    glm::vec3 xHat = this->myRight();
+    glm::vec3 zHat = this->myFwd();
+    float xSign = 1;
+    float zSign = 1;
+    if(xHat.z != 0) xSign = xHat.z / glm::abs(xHat.z);//sign on whether its behind or in front of the camera
+    if(zHat.y != 0) zSign = zHat.y / glm::abs(zHat.y); //sign on whether its
+    // projection vectors
+    glm::vec3 xHat0z = this->myRight(); xHat0z.z = 0;
+    glm::vec3 zHat0y = this->myFwd(); zHat0y.y = 0;
+    // angles
+    xHat = glm::normalize(xHat);
+    zHat = glm::normalize(zHat);
+    xHat0z = glm::normalize(xHat0z);
+    zHat0y = glm::normalize(zHat0y);
+    float tX = (glm::acos(glm::dot(xHat, xHat0z))) * xSign; //signed angle from xhat to world x
+    float tZ = (glm::acos(glm::dot(zHat, zHat0y))) * zSign; //signed angle form zhat to world z
+
+    return glm::vec2(-tZ, tX);
+}
+
 //normalised vector
 glm::vec3 Camera::myUp() {
     return glm::normalize(glm::vec3(this->orientation[0].y,
@@ -336,9 +381,10 @@ void Camera::toggleOrbit() {
 
 void Camera::doOrbit(ModelLoader model) {
     if(isOrbiting){
-        glm::vec3 toModel = this->position - *model.getPos();
-        this->position = *model.getPos() + (Utils::yaw(0.01) * toModel); //rotate then translate
-        this->lookAt(*model.getPos());
+        glm::vec3 modelCentre = *model.getPos();
+        glm::vec3 toModel = this->position - modelCentre;
+        this->position = modelCentre + (Utils::yaw(0.01) * toModel); //rotate then translate
+        this->lookAt(modelCentre);
     }
 }
 
@@ -346,14 +392,15 @@ void Camera::renderMode() {
     this->mode = (this->mode + 1) % 3;
 }
 
-void Camera::doRaytracing(DrawingWindow& window, Scene& scene) {
+void Camera::doRaytracing(DrawingWindow& window) {
     if(this->mode == ray){
-        raycast(window, scene);
+        raycast(window);
     }
 }
 
-void Camera::doRasterising(DrawingWindow &window, Scene& scene, DepthBuffer &depthBuffer){
+void Camera::doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer){
     if(this->mode == rst || this->mode == msh){
-        rasterise(window, scene, depthBuffer);
+        rasterise(window,  depthBuffer);
     }
 }
+
