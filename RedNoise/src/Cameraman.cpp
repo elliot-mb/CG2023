@@ -158,6 +158,7 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
 // row 3: timeframe,        model index,        == 1 ? from start angle : from current angle
 void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                                  DepthBuffer &depthBuffer, bool withPreview) {
+    std::cout << "lookat" << std::endl;
     bool fromCurrent = this->args[2].z == 0;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
     glm::vec3 camRot = this->args[0];
@@ -177,35 +178,64 @@ Cameraman::Cameraman(Camera* cam, string outPath) {
 void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview) {
     uint frameID = 0;
 
-    for(Action* a : this->actions){
+    for (Action *a: this->actions) {
         a->act(window,
-              *this->cam,
-              frameID,
-              this->outPath,
-              scene,
-              depthBuffer,
-              withPreview);
+               *this->cam,
+               frameID,
+               this->outPath,
+               scene,
+               depthBuffer,
+               withPreview);
     }
     std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
+}
 
     /**
      * run the following to compile the frames into a video at 25fps:
      *
      * ffmpeg -framerate 25 -i frame_%d.ppm -c:v libx264 -movflags +faststart output.mp4
      *
-     *         for(glm::vec3 pos : positionBuffer){
-            if (window.pollForInputEvents(event)){} //mandatory
-            window.clearPixels();
-            drawBackground(window);
+     *  **/
 
-            this->cam->setPos(pos);
-            this->cam->doRaytracing(window, model, light);
-            this->cam->doRasterising(window, model, depthBuffer);
-            if(withPreview){ window.renderFrame(); }
-            window.savePPM(this->outPath + "frame_" + std::to_string(frameID) + ".ppm");
-            frameID++;
-        }
-     */
+//lerps camera position and has the camera look towards a model (the lookat is instant, so write a LookAtModel instruction beforehand)
+// row 1: currnt position x, currnt position y, currnt position z
+// row 2: target position x, target position y, target position z
+// row 3: timeframe x,       model index,         IGNORED z
+void Cameraman::LerpLookat::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
+                                DepthBuffer &depthBuffer, bool withPreview) {
+    std::cout << "lerp" << std::endl;
+    int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    glm::vec3* current = &this->args[0];
+    glm::vec3* target = &this->args[1];
+    float timeframe = this->args[2].x;
+    if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
+    int steps = static_cast<int>(glm::floor(Cameraman::FRAMERATE * timeframe));
+    std::vector<glm::vec3> frames =  Utils::interpolateThreeElementValues(*current, *target, steps);
+    for(glm::vec3 pos : frames){
+        if (window.pollForInputEvents(event)){} //mandatory
+        window.clearPixels();
+        drawBackground(window);
 
+        camera.setPos(pos);
+        camera.doRaytracing(window);
+        camera.doRasterising(window, depthBuffer);
+        camera.lookAt(*scene.getModel(modelIndex)->getPos());
+        if(withPreview){ window.renderFrame(); }
+        window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
+        frameID++;
+    }
 }
 
+
+//instant action
+// row 1:                 IGNORED
+// row 2:                 IGNORED
+// row 3: IGNORED x, Render mode enum y, IGNORED z
+void Cameraman::SetMode::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
+                             DepthBuffer &depthBuffer, bool withPreview) {
+    int mode = static_cast<int>(glm::floor(this->args[2].y));
+    if(mode > Camera::ray || mode < Camera::msh){
+        throw runtime_error("Cameraman::SetMode::act: action set up with an invalid render mode");
+    }
+    camera.setRenderMode(mode);
+}
