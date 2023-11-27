@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-uint Utils::MAX_RAND = static_cast<uint>(glm::floor(glm::pow(2, 31) - 1));
+uint MAX_RAND = static_cast<uint>(glm::floor(glm::pow(2, 31) - 1));
 
 float Utils::max(float a, float b){
 	if (a >= b) return a;

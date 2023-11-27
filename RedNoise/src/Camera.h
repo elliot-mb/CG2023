@@ -39,6 +39,7 @@ private:
     static int NO_INTERSECTION;
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
     static glm::vec3 LIGHT_COLOUR;
+    static glm::vec3 BACKGROUND_COLOUR;
 
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
@@ -55,6 +56,7 @@ private:
     std::vector<vector<glm::vec2>> imageCoords; // precomputed and referenced in buildCameraRays
     float ambientUpper;
     float ambientLower;
+    glm::vec3* currentFuzz;
     Scene* scene;
 
     bool isOrbiting;
@@ -81,6 +83,6 @@ private:
     gouraud(float &brightness, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
             vec3 &camRay, float& len, float& strength);
 
-    void reflect(int bounces, glm::vec3& attenuation, float& fuzz, vec3 &incidentRay, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
+    void reflect(int bounces, glm::vec3& attenuation, vec3 &incidentRay, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
                  vector<Triangle *>& tris, vec3 &colour);
 };

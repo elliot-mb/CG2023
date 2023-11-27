@@ -26,6 +26,8 @@ const string ModelLoader::TKN_TXTURE = "map_Kd";
 const float ModelLoader::LARGE = 10000;
 const float ModelLoader::SMALL = -10000;
 
+glm::vec3 ModelLoader::NO_FUZZ = {0, 0, 0};
+
 ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
@@ -72,6 +74,35 @@ void ModelLoader::makeFuzzMap(DrawingWindow& window){
             this->fuzzMap[y].push_back(this->fuzz * Utils::getRandomUnitVector());
         }
     }
+}
+
+void ModelLoader::blurFuzzMap(){ //can be called many times for further blurring
+    size_t width = this->fuzzMap[0].size();
+    size_t height = this->fuzzMap.size();
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            glm::vec3 sum = {0,0,0};
+            //first row
+            sum += this->fuzzMap[(height+y-1) % height][(width+x-1) % width];
+            sum += this->fuzzMap[(height+y-1) % height][(width+x) % width];
+            sum += this->fuzzMap[(height+y-1) % height][(width+x+1) % width];
+            //second row
+            sum += this->fuzzMap[(height+y) % height][(width+x-1) % width];
+            sum += this->fuzzMap[(height+y) % height][(width+x) % width];
+            sum += this->fuzzMap[(height+y) % height][(width+x+1) % width];
+            //third row
+            sum += this->fuzzMap[(height+y+1) % height][(width+x-1) % width];
+            sum += this->fuzzMap[(height+y+1) % height][(width+x) % width];
+            sum += this->fuzzMap[(height+y+1) % height][(width+x+1) % width];
+            sum = sum / static_cast<float>(9.0);
+            this->fuzzMap[y][x] = sum; //mean of itself and neighbours
+        }
+    }
+}
+
+glm::vec3* ModelLoader::lookupFuzz(int& x, int& y){
+    if(this->fuzz != 0 && this->fuzzMap.empty()) throw runtime_error("ModelLoader::lookupFuzz: no fuzz values in table (missed a call to makeFuzzMap?)");
+    return &this->fuzzMap[y][x];
 }
 
 float* ModelLoader::getAttenuation() {

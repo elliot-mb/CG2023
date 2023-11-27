@@ -13,6 +13,7 @@
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
+glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({0, 0, 0});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene) {
     this->position = cameraPosition;
@@ -128,20 +129,20 @@ void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, floa
     spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::reflect(int bounces, glm::vec3& attenuation, float& fuzz, glm::vec3& incidentRay, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour){
+void Camera::reflect(int bounces, glm::vec3& attenuation, glm::vec3& incidentRay, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour){
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
     glm::vec3 reflectedRay = glm::normalize(incidentRayNrml - (static_cast<float>(2) * norm * glm::dot(incidentRayNrml, norm)));
-    reflectedRay = reflectedRay + getFuzzOffset(fuzz);
+    reflectedRay = reflectedRay + *this->currentFuzz; //add some random offset if present
     reflectionIntersect = getClosestIntersection(intersection.first, intercept, reflectedRay, tris, *this->scene,
                                                  vwBounce);
     if (reflectionIntersect.first != NO_INTERSECTION) {
         hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour); //only recursive call
-        colour = colour * attenuation; //darkens it on the way back up the call stack in reverse hit order
+        colour = (colour * static_cast<float>(0.5)) + (attenuation * static_cast<float>(0.5)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
-        colour = {0, 0, 0};
+        colour = BACKGROUND_COLOUR * attenuation;
         return;
     }
 }
@@ -150,7 +151,7 @@ void Camera::reflect(int bounces, glm::vec3& attenuation, float& fuzz, glm::vec3
 // old_body[incidentRay/camRay]
 void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour) {
     if(bounces < 0){
-        colour = {0, 0, 0};
+        colour = BACKGROUND_COLOUR;
         return;
     }
     bounces--; //decrement for each all to hit
@@ -198,23 +199,31 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
 
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
-        glm::vec3 tintedAttenuation =  *model->getAttenuation() * glm::normalize(Utils::asVec3(c) + glm::vec3(128));
-        reflect(bounces, tintedAttenuation, *model->getFuzz(), incidentRay, intersection, intercept, norm, tris, colour);
-//        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-//            specular(speculars[i], shadowRayNrmls[i], norm, incidentRay, 16);
+        glm::vec3 tintedAttenuation =  *model->getAttenuation() * Utils::asVec3(c);
+        reflect(bounces, tintedAttenuation, incidentRay, intersection, intercept, norm, tris, colour);
+        glm::vec3 fuzzNorm = norm + *this->currentFuzz;
+        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
+            specular(speculars[i], shadowRayNrmls[i], fuzzNorm, incidentRay, 16);
+            //diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+        }
+//        float finalBrightness = 0;
+//        for(float brightness : brightnesses){ //total them up
+//            finalBrightness += brightness;
 //        }
-//        float finalSpecular = 0;
-//        for(float specular : speculars){
-//            finalSpecular += specular;
-//        }
-//        if(finalSpecular > 1.0) finalSpecular = 1.0;
-//        colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
-//        return;
+        float finalSpecular = 0;
+        for(float specular : speculars){
+            finalSpecular += specular;
+        }
+//        if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
+//        if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
+//        colour = finalBrightness * colour;
+        if(finalSpecular > 1.0) finalSpecular = 1.0;
+        colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
         return;
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
         glm::vec3 attenuation = *model->getAttenuation() * glm::vec3(1,1,1);
-        reflect(bounces, attenuation, *model->getFuzz(), incidentRay, intersection, intercept, norm, tris, colour);
+        reflect(bounces, attenuation, incidentRay, intersection, intercept, norm, tris, colour);
         return;
     }
     if(shading == ModelLoader::phg) {
@@ -258,7 +267,8 @@ void Camera::raycast(DrawingWindow& window){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 1; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 1;
+    int bounces = 2;
+
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
         for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
@@ -268,13 +278,38 @@ void Camera::raycast(DrawingWindow& window){
             std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *scene, vw);
             if(intersection.first != NO_INTERSECTION){ //if its valid...
                 glm::vec3 finalColour;
+                ModelLoader* model = scene->getModel(scene->getModelFromTri(intersection.first));
+                if(*model->getFuzz() != 0)
+                    this->currentFuzz = model->lookupFuzz(x, y);
+                else this->currentFuzz = &ModelLoader::NO_FUZZ;
+
                 hit(bounces, this->position, camRay, vw, intersection, tris, finalColour);
 
-                window.setPixelColour(x, y, Utils::pack(255, static_cast<uint8_t>(finalColour.x), static_cast<uint8_t>(finalColour.y), static_cast<uint8_t>(finalColour.z)));
+                window.setPixelColour(x, y, Utils::pack(255,
+                                                        static_cast<uint8_t>(finalColour.x),
+                                                        static_cast<uint8_t>(finalColour.y),
+                                                        static_cast<uint8_t>(finalColour.z)));
                 if(stride > 1)
                     for(int i = 0; i < stride; i++){
                         for(int j = 0; j < stride; j++){
-                            window.setPixelColour(x + i, y + j, Utils::pack(255, static_cast<uint8_t>(finalColour.x), static_cast<uint8_t>(finalColour.y), static_cast<uint8_t>(finalColour.z)));
+                            window.setPixelColour(x + i, y + j, Utils::pack(255,
+                                                                            static_cast<uint8_t>(finalColour.x),
+                                                                            static_cast<uint8_t>(finalColour.y),
+                                                                            static_cast<uint8_t>(finalColour.z)));
+                        }
+                    }
+            }else{
+                window.setPixelColour(x, y, Utils::pack(255,
+                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.x),
+                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.y),
+                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.z)));
+                if(stride > 1)
+                    for(int i = 0; i < stride; i++){
+                        for(int j = 0; j < stride; j++){
+                            window.setPixelColour(x + i, y + j, Utils::pack(255,
+                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.x),
+                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.y),
+                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.z)));
                         }
                     }
             }

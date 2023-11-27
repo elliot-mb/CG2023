@@ -38,6 +38,11 @@ public:
     int* getShading();
     float *getAttenuation();
     float* getFuzz();
+    glm::vec3 *lookupFuzz(int &x, int &y);
+    void makeFuzzMap(DrawingWindow &window);
+    static glm::vec3 NO_FUZZ;
+    void blurFuzzMap();
+
 private:
     glm::vec3 position;
     std::vector<std::string> tailTokens(std::vector<std::string> ln, const std::string& tkn);
@@ -85,6 +90,5 @@ private:
 
     static const float SMALL;
 
-    void makeFuzzMap(DrawingWindow &window);
 };
 
