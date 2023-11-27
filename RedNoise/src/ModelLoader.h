@@ -53,7 +53,7 @@ private:
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
 
     static const std::string TKN_MTLLIB;
-    void asMaterial(std::vector<std::string> ln);
+    void asMaterial(std::vector<std::string> ln, std::string& location);
     static const std::string TKN_SUBOBJ;
     static const std::string TKN_USEMTL;
     void asUseMaterial(std::vector<std::string> ln, Colour &currentColour, MaybeTexture &currentTexture);

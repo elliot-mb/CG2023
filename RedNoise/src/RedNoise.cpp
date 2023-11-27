@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(-2, -0.90, -1), ModelLoader::phg);
+    ModelLoader* sphere = new ModelLoader("./hackspace-logo/logo.obj", 0.35, glm::vec3(-2, -0.90, -1), ModelLoader::phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.35, glm::vec3(0.35, -0.5, -0.15), ModelLoader::mrr);
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
