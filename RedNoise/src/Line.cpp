@@ -13,7 +13,7 @@ void Line::draw(DrawingWindow& window, glm::vec2 posA, glm::vec2 posB, Colour &c
     for(glm::vec2 & pixel : pixels){
         int x = static_cast<int>(round(pixel.x));
         int y = static_cast<int>(round(pixel.y));
-        if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)) {
+        if(x > 0 && y > 0 && x < static_cast<int>(window.width) && y < static_cast<int>(window.height)) {
             window.setPixelColour(x, y,Utils::pack(255, colour.red, colour.green, colour.blue));
         }
     }
@@ -27,9 +27,10 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec
     float texturePoint = 0; //start at 0th texture pixel
     int i = 0;
     for(glm::vec3 & pixel : pixels){
-        int x = static_cast<int>(round(pixel.x));
-        int y = static_cast<int>(round(pixel.y));
-        if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)){
+        if(pixel.x > 0 && pixel.y > 0 && pixel.x < static_cast<float>(window.width) && pixel.y < static_cast<float>(window.height)){
+            int x = static_cast<int>(round(pixel.x));
+            int y = static_cast<int>(round(pixel.y));
+
             float z = depths[i];
             uint32_t pt = texture.pixel(static_cast<int>(pixelsT[floor(texturePoint)].x) % texture.width, static_cast<int>(pixelsT[floor(texturePoint)].y) % texture.width);
             if(db.putPixel(glm::vec3(x, y, pixel.z))){
@@ -46,11 +47,10 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec
 void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec3 posB, Colour &colour, float weight){
     std::vector<glm::vec3> pixels = Line::pixels(posA, posB);
     for(glm::vec3& pixel : pixels){
-        int x = static_cast<int>(round(pixel.x));
-        int y = static_cast<int>(round(pixel.y));
-
-        if(db.putPixel(glm::vec3(x, y, pixel.z))){
-            if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)){
+        if(pixel.x > 0 && pixel.y > 0 && pixel.x < static_cast<float>(window.width) && pixel.y < static_cast<float>(window.height)){
+            int x = static_cast<int>(round(pixel.x));
+            int y = static_cast<int>(round(pixel.y));
+            if(db.putPixel(glm::vec3(x, y, pixel.z))){
                 window.setPixelColour(static_cast<ulong>(x), static_cast<ulong>(y), Utils::pack(255, colour.red, colour.green, colour.blue));
             }
         }
@@ -63,8 +63,9 @@ std::vector<glm::vec2> Line::pixels(glm::vec2 posA, glm::vec2 posB){
     if(steps == 0) steps = 1;
     glm::vec2 stepSize = delta / steps;
     std::vector<glm::vec2> pixels = {};
+    glm::vec2 now;
     for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
-        glm::vec2 now = posA + (stepSize * static_cast<float>(i));
+        now = posA + (stepSize * static_cast<float>(i));
         pixels.push_back(glm::vec2(round(now.x), round(now.y)));
     }
     pixels.push_back(glm::vec2(round(posB.x), round(posB.y)));
@@ -79,8 +80,10 @@ std::vector<glm::vec3> Line::pixels(glm::vec3 posA, glm::vec3 posB){
     if(steps == 0) steps = 1;
     glm::vec3 stepSize = delta / steps;
     std::vector<glm::vec3> pixels = {};
+    glm::vec3 now;
+
     for(int i = 0; i <= static_cast<int>(floor(steps)); i++){
-        glm::vec3 now = posA + (stepSize * static_cast<float>(i));
+        now = posA + (stepSize * static_cast<float>(i));
         pixels.push_back(glm::vec3(glm::round(now.x), glm::round(now.y), now.z));
     }
     pixels.push_back(round(posB));

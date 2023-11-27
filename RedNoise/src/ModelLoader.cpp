@@ -76,7 +76,7 @@ void ModelLoader::asMaterial(std::vector<string> ln, std::string& location){
     string materialBytes = Utils::fileAsString(filename);
     vector<string> materialLines = Utils::split(materialBytes, '\n');
     std::string lastName = NO_TEXTURE;
-    for(size_t i = 0; i < materialLines.size() - 1; i++){
+    for(size_t i = 0; i < materialLines.size(); i++){
         std::vector<string> mtlLn = toTokens(materialLines[i]);
         if(isLineType(mtlLn, TKN_NEWMTL)){
             string name = tailTokens(mtlLn, TKN_NEWMTL).back();

@@ -43,7 +43,7 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     glm::vec3 dPos = this->position - vertexPosition;
     glm::vec3 dRot = this->orientation * dPos;
 //
-    if(dRot.z < 0){
+    if(dRot.z < this->focalLength){
         //behind image plane
         return std::tuple<glm::vec3, bool>{glm::vec3(0, 0, 0), false};
     }
@@ -238,7 +238,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& castRay, glm::vec2 v
 void Camera::raycast(DrawingWindow& window){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 4; //how large are our ray pixels (1 is native resolution)
+    int stride = 1; //how large are our ray texturePts (1 is native resolution)
     int bounces = 1;
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
