@@ -17,6 +17,7 @@
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" GENERATION_DIR="." CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug-event-trace" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="--profiling-format=google-trace --profiling-output=CMakeFiles/clion-event-trace.json" />
     </configurations>
   </component>
   <component name="ChangeListManager">
@@ -26,8 +27,7 @@
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Cameraman.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
@@ -146,7 +146,12 @@
       <workItem from="1700571134716" duration="1082000" />
       <workItem from="1700577468441" duration="28000" />
       <workItem from="1700664781619" duration="11967000" />
-      <workItem from="1700685991142" duration="1101000" />
+      <workItem from="1700685991142" duration="5295000" />
+      <workItem from="1700730746944" duration="11353000" />
+      <workItem from="1700871960208" duration="252000" />
+      <workItem from="1700910228317" duration="8553000" />
+      <workItem from="1700930854680" duration="4885000" />
+      <workItem from="1701094414789" duration="2000" />
     </task>
     <servers />
   </component>

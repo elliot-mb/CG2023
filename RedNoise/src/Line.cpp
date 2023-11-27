@@ -11,7 +11,11 @@
 void Line::draw(DrawingWindow& window, glm::vec2 posA, glm::vec2 posB, Colour &colour, float weight){
     std::vector<glm::vec2> pixels = Line::pixels(posA, posB);
     for(glm::vec2 & pixel : pixels){
-        window.setPixelColour(static_cast<ulong>(round(pixel.x)), static_cast<ulong>(round(pixel.y)), Utils::pack(255, colour.red, colour.green, colour.blue));
+        int x = static_cast<int>(round(pixel.x));
+        int y = static_cast<int>(round(pixel.y));
+        if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)) {
+            window.setPixelColour(x, y,Utils::pack(255, colour.red, colour.green, colour.blue));
+        }
     }
 }
 
@@ -25,12 +29,14 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec
     for(glm::vec3 & pixel : pixels){
         int x = static_cast<int>(round(pixel.x));
         int y = static_cast<int>(round(pixel.y));
-        float z = depths[i];
-        uint32_t pt = texture.pixel(static_cast<int>(pixelsT[floor(texturePoint)].x) % texture.width, static_cast<int>(pixelsT[floor(texturePoint)].y) % texture.width);
-        if(db.putPixel(glm::vec3(x, y, pixel.z))){
-            window.setPixelColour(static_cast<ulong>(pixel.x), static_cast<ulong>(pixel.y), pt);
+        if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)){
+            float z = depths[i];
+            uint32_t pt = texture.pixel(static_cast<int>(pixelsT[floor(texturePoint)].x) % texture.width, static_cast<int>(pixelsT[floor(texturePoint)].y) % texture.width);
+            if(db.putPixel(glm::vec3(x, y, pixel.z))){
+                window.setPixelColour(static_cast<ulong>(pixel.x), static_cast<ulong>(pixel.y), pt);
+            }
+            texturePoint += textureStep;
         }
-        texturePoint += textureStep;
         i++;
     }
 
@@ -42,8 +48,11 @@ void Line::draw(DrawingWindow& window, DepthBuffer& db, glm::vec3 posA, glm::vec
     for(glm::vec3& pixel : pixels){
         int x = static_cast<int>(round(pixel.x));
         int y = static_cast<int>(round(pixel.y));
+
         if(db.putPixel(glm::vec3(x, y, pixel.z))){
-            window.setPixelColour(static_cast<ulong>(x), static_cast<ulong>(y), Utils::pack(255, colour.red, colour.green, colour.blue));
+            if(x > 0 || y > 0 || x < static_cast<int>(window.width) || y < static_cast<int>(window.height)){
+                window.setPixelColour(static_cast<ulong>(x), static_cast<ulong>(y), Utils::pack(255, colour.red, colour.green, colour.blue));
+            }
         }
     }
 }

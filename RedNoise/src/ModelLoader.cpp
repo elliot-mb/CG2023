@@ -23,6 +23,8 @@ const string ModelLoader::TKN_NEWMTL = "newmtl";
 const string ModelLoader::TKN_KD     = "Kd";
 const string ModelLoader::TKN_COMMNT = "#";
 const string ModelLoader::TKN_TXTURE = "map_Kd";
+const float ModelLoader::LARGE = 10000;
+const float ModelLoader::SMALL = -10000;
 
 ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
     this->scale = scale; //scaling factor
@@ -30,6 +32,7 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int s
     this->bytes = ""; //new string
     this->tris = vector<Triangle*>{};
     this->verts = std::vector<glm::vec3>{};
+
     this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
@@ -66,32 +69,33 @@ std::vector<string> ModelLoader::tailTokens(std::vector<string> ln, const string
 //void ModelLoader::colourOnMaterial
 
 //makes the necessary changes assuming line is of type mtllib
-void ModelLoader::asMaterial(std::vector<string> ln){
+void ModelLoader::asMaterial(std::vector<string> ln, std::string& location){
     std::vector<string> tkns = tailTokens(ln, TKN_MTLLIB);
     const string NO_TEXTURE = "none";
-    string filename = tkns.back();
+    string filename = location + tkns.back();
     string materialBytes = Utils::fileAsString(filename);
     vector<string> materialLines = Utils::split(materialBytes, '\n');
     std::string lastName = NO_TEXTURE;
     for(size_t i = 0; i < materialLines.size() - 1; i++){
         std::vector<string> mtlLn = toTokens(materialLines[i]);
         if(isLineType(mtlLn, TKN_NEWMTL)){
-            std::vector<string> lnKd = toTokens(materialLines[i + 1]);
-            string name = tailTokens(mtlLn, TKN_NEWMTL).back(); //.back used to get last token for a nameline
-            vector<string> channels =  tailTokens(lnKd, TKN_KD);
+            string name = tailTokens(mtlLn, TKN_NEWMTL).back();
+            lastName = name;
+        }
+        if(isLineType(mtlLn, TKN_KD) && lastName != NO_TEXTURE){
+            vector<string> channels =  tailTokens(mtlLn, TKN_KD);
             vector<int> chVals = {};
             for(string& ch: channels){
                 float chVal = stof(ch) * 255;
                 chVals.push_back(static_cast<int>(floor(chVal)));
             }
-            if(chVals.size() != 3) throw runtime_error("ModelLoader::load(): TKN_MTLLIB colour does not have three channels");
-            std::cout << "colour added '" << name << "'" << std::endl;
-            this->materials.insert(pair<string, Colour>(name, Colour(name, chVals[0], chVals[1], chVals[2])));
-            lastName = name;
+            if(chVals.size() != 3) throw runtime_error("ModelLoader::load(): TKN_KD colour does not have three channels");
+            std::cout << "colour added '" << lastName << "'" << std::endl;
+            this->materials.insert(pair<string, Colour>(lastName, Colour(lastName, chVals[0], chVals[1], chVals[2])));
         }
-        if(isLineType(mtlLn, TKN_TXTURE) && lastName != NO_TEXTURE){
-            string fName = tailTokens(mtlLn, TKN_NEWMTL).back();
-            std::cout << "loading texture '" << lastName << "' in file '" << fName << "'";
+        if(isLineType(mtlLn, "map_Kd") && lastName != NO_TEXTURE){
+            string fName = tailTokens(mtlLn, "map_Kd").back();
+            std::cout << "registered texture '" << lastName << "' in file '" << fName << "'" << std::endl;
             this->textures.insert(pair<string, TextureMap>(lastName, TextureMap(fName)));
         }
     }
@@ -102,8 +106,6 @@ void ModelLoader::asUseMaterial(std::vector<string> ln, Colour& currentColour, M
     string name = tailTokens(ln, TKN_USEMTL).back(); //.back used to get last token for a usemtl line
     if(this->materials.count(name) > 0){
         currentColour = this->materials[name];
-    }else{
-        throw runtime_error("ModelLoader::asUseMaterial: invalid colour name '" + name + "'");
     }
     if(this->textures.count(name) > 0){
         currentTexture = pair<TextureMap, bool>(this->textures[name], true);
@@ -170,9 +172,9 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
     int i0 = facetVertsIndices[0] - 1;
     int i1 = facetVertsIndices[1] - 1;
     int i2 = facetVertsIndices[2] - 1; //indices of vertices
-    vec3 v0 = verts[i0] + this->position;
-    vec3 v1 = verts[i1] + this->position;
-    vec3 v2 = verts[i2] + this->position;
+    vec3 v0 = verts[i0] - this->vertCentre;
+    vec3 v1 = verts[i1] - this->vertCentre;
+    vec3 v2 = verts[i2] - this->vertCentre;
     Triangle* tri;
     if(currentTexture.second){ //do we have a valid texture mapping
         TextureMap texture = currentTexture.first;
@@ -197,25 +199,35 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
 
 // main object loading function
 void ModelLoader::load() {
+    std::vector<std::string> path = Utils::split(this->fileName, '/');
+    path.pop_back();
+    std::cout << "loading " << this->fileName << std::endl;
+    std::string location = "";
+    for(const std::string& folder : path){
+        location += folder + "/";
+    }
     this->bytes = Utils::fileAsString(this->fileName);
-    std::vector<string> lines = Utils::split(this->bytes, '\n');
+    std::vector<std::string> lines = Utils::split(this->bytes, '\n');
     //tokens
 
     Colour currentColour = Colour(255, 0, 0);
     MaybeTexture currentTexture = pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
     std::vector<vec2> textureVerts = {};
 
+    //average the vertex positions first
+    for(string& lnBlock: lines) {
+        std::vector<string> ln = toTokens(lnBlock);
+        if(!isLineType(ln, TKN_COMMNT) && isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
+    }
+    this->boundVertices(); //how much we offset the model by
+
     for(string& lnBlock: lines){
         std::vector<string> ln = toTokens(lnBlock);
-        for(const string& tkn : ln){
-            cout << "_" << tkn << "";
-        }
-        cout << endl;
         if(!isLineType(ln, TKN_COMMNT)){
-            if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
+            if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln, location); //location is needed for loading the mtl from the same dir as the obj
             if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
-            if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts);
+            //if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts); // we already load in the vertices
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
             if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
         }
@@ -238,6 +250,28 @@ void ModelLoader::makeVertexNorms() {
         this->vertNorms.push_back(normSum);
     }
 }
+
+void ModelLoader::boundVertices(){
+    glm::vec3 vertSum = {0, 0, 0};
+    glm::vec3 boundsMin = {LARGE, LARGE, LARGE};
+    glm::vec3 boundsMax = {SMALL, SMALL, SMALL};
+    for(glm::vec3 v : this->verts){
+        boundsMin.x = glm::min(v.x, boundsMin.x);
+        boundsMin.y = glm::min(v.y, boundsMin.y);
+        boundsMin.z = glm::min(v.z, boundsMin.z);
+        boundsMax.x = glm::max(v.x, boundsMax.x);
+        boundsMax.y = glm::max(v.y, boundsMax.y);
+        boundsMax.z = glm::max(v.z, boundsMax.z);
+    }
+    glm::vec3 boundsCentre = (boundsMin + boundsMax) / static_cast<float>(2);
+    //the centre of this bounding box is independent of the detail concentration on the model
+    this->vertCentre = boundsCentre; // the relative centre of the vertices
+//    for(int i = 0; i < this->verts.size(); i++){
+//        this->verts[i] = this->verts[i] - this->vertCentre;
+//
+//    }
+}
+
 //
 //void ModelLoader::putVertNormsInTris(){
 //    for(size_t i = 0; i < this->tris.size(); i++){
