@@ -69,32 +69,33 @@ std::vector<string> ModelLoader::tailTokens(std::vector<string> ln, const string
 //void ModelLoader::colourOnMaterial
 
 //makes the necessary changes assuming line is of type mtllib
-void ModelLoader::asMaterial(std::vector<string> ln){
+void ModelLoader::asMaterial(std::vector<string> ln, std::string& location){
     std::vector<string> tkns = tailTokens(ln, TKN_MTLLIB);
     const string NO_TEXTURE = "none";
-    string filename = tkns.back();
+    string filename = location + tkns.back();
     string materialBytes = Utils::fileAsString(filename);
     vector<string> materialLines = Utils::split(materialBytes, '\n');
     std::string lastName = NO_TEXTURE;
     for(size_t i = 0; i < materialLines.size() - 1; i++){
         std::vector<string> mtlLn = toTokens(materialLines[i]);
         if(isLineType(mtlLn, TKN_NEWMTL)){
-            std::vector<string> lnKd = toTokens(materialLines[i + 1]);
-            string name = tailTokens(mtlLn, TKN_NEWMTL).back(); //.back used to get last token for a nameline
-            vector<string> channels =  tailTokens(lnKd, TKN_KD);
+            string name = tailTokens(mtlLn, TKN_NEWMTL).back();
+            lastName = name;
+        }
+        if(isLineType(mtlLn, TKN_KD) && lastName != NO_TEXTURE){
+            vector<string> channels =  tailTokens(mtlLn, TKN_KD);
             vector<int> chVals = {};
             for(string& ch: channels){
                 float chVal = stof(ch) * 255;
                 chVals.push_back(static_cast<int>(floor(chVal)));
             }
-            if(chVals.size() != 3) throw runtime_error("ModelLoader::load(): TKN_MTLLIB colour does not have three channels");
-            std::cout << "colour added '" << name << "'" << std::endl;
-            this->materials.insert(pair<string, Colour>(name, Colour(name, chVals[0], chVals[1], chVals[2])));
-            lastName = name;
+            if(chVals.size() != 3) throw runtime_error("ModelLoader::load(): TKN_KD colour does not have three channels");
+            std::cout << "colour added '" << lastName << "'" << std::endl;
+            this->materials.insert(pair<string, Colour>(lastName, Colour(lastName, chVals[0], chVals[1], chVals[2])));
         }
-        if(isLineType(mtlLn, TKN_TXTURE) && lastName != NO_TEXTURE){
-            string fName = tailTokens(mtlLn, TKN_NEWMTL).back();
-            std::cout << "loading texture '" << lastName << "' in file '" << fName << "'";
+        if(isLineType(mtlLn, "map_Kd") && lastName != NO_TEXTURE){
+            string fName = tailTokens(mtlLn, "map_Kd").back();
+            std::cout << "registered texture '" << lastName << "' in file '" << fName << "'" << std::endl;
             this->textures.insert(pair<string, TextureMap>(lastName, TextureMap(fName)));
         }
     }
@@ -105,8 +106,6 @@ void ModelLoader::asUseMaterial(std::vector<string> ln, Colour& currentColour, M
     string name = tailTokens(ln, TKN_USEMTL).back(); //.back used to get last token for a usemtl line
     if(this->materials.count(name) > 0){
         currentColour = this->materials[name];
-    }else{
-        throw runtime_error("ModelLoader::asUseMaterial: invalid colour name '" + name + "'");
     }
     if(this->textures.count(name) > 0){
         currentTexture = pair<TextureMap, bool>(this->textures[name], true);
@@ -200,8 +199,15 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
 
 // main object loading function
 void ModelLoader::load() {
+    std::vector<std::string> path = Utils::split(this->fileName, '/');
+    path.pop_back();
+    std::cout << "loading " << this->fileName << std::endl;
+    std::string location = "";
+    for(const std::string& folder : path){
+        location += folder + "/";
+    }
     this->bytes = Utils::fileAsString(this->fileName);
-    std::vector<string> lines = Utils::split(this->bytes, '\n');
+    std::vector<std::string> lines = Utils::split(this->bytes, '\n');
     //tokens
 
     Colour currentColour = Colour(255, 0, 0);
@@ -218,7 +224,7 @@ void ModelLoader::load() {
     for(string& lnBlock: lines){
         std::vector<string> ln = toTokens(lnBlock);
         if(!isLineType(ln, TKN_COMMNT)){
-            if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln);
+            if(isLineType(ln, TKN_MTLLIB)) asMaterial(ln, location); //location is needed for loading the mtl from the same dir as the obj
             if(isLineType(ln, TKN_SUBOBJ)){} //add sub object names if needed
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture);
             //if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts); // we already load in the vertices
