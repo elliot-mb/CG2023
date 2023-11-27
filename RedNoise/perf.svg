@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" width="1200" height="358" onload="init(evt)" viewBox="0 0 1200 358" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" width="1200" height="502" onload="init(evt)" viewBox="0 0 1200 502" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
 <!-- NOTES:  -->
 <defs>
@@ -421,545 +421,1333 @@
 	}
 ]]>
 </script>
-<rect x="0.0" y="0" width="1200.0" height="358.0" fill="url(#background)"  />
+<rect x="0.0" y="0" width="1200.0" height="502.0" fill="url(#background)"  />
 <text id="title" x="600.00" y="24" >Flame Graph</text>
-<text id="details" x="10.00" y="341" > </text>
+<text id="details" x="10.00" y="485" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
 <text id="ignorecase" x="1174.00" y="24" >ic</text>
-<text id="matched" x="1090.00" y="341" > </text>
+<text id="matched" x="1090.00" y="485" > </text>
 <g id="frames">
 <g >
-<title>do_fault (4,599,743 samples, 0.01%)</title><rect x="1189.2" y="149" width="0.1" height="15.0" fill="rgb(248,200,47)" rx="2" ry="2" />
-<text  x="1192.19" y="159.5" ></text>
+<title>handle_mm_fault (70,288,229 samples, 0.03%)</title><rect x="35.3" y="341" width="0.4" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="38.31" y="351.5" ></text>
 </g>
 <g >
-<title>__do_softirq (3,863,400 samples, 0.01%)</title><rect x="1104.8" y="149" width="0.1" height="15.0" fill="rgb(246,191,45)" rx="2" ry="2" />
-<text  x="1107.76" y="159.5" ></text>
+<title>vma_expand (25,308,782 samples, 0.01%)</title><rect x="1179.6" y="293" width="0.1" height="15.0" fill="rgb(222,80,19)" rx="2" ry="2" />
+<text  x="1182.58" y="303.5" ></text>
 </g>
 <g >
-<title>__x64_sys_recvfrom (3,618,017 samples, 0.01%)</title><rect x="1180.0" y="213" width="0.1" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
-<text  x="1182.97" y="223.5" ></text>
+<title>tick_sched_handle (43,207,805 samples, 0.02%)</title><rect x="862.9" y="245" width="0.2" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
+<text  x="865.89" y="255.5" ></text>
 </g>
 <g >
-<title>__GI___writev (13,802,785 samples, 0.04%)</title><rect x="1179.5" y="261" width="0.5" height="15.0" fill="rgb(217,56,13)" rx="2" ry="2" />
-<text  x="1182.54" y="271.5" ></text>
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (136,694,802 samples, 0.06%)</title><rect x="972.8" y="357" width="0.7" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="975.78" y="367.5" ></text>
 </g>
 <g >
-<title>__memmove_avx_unaligned_erms (33,817,222 samples, 0.09%)</title><rect x="1180.1" y="261" width="1.1" height="15.0" fill="rgb(205,0,0)" rx="2" ry="2" />
-<text  x="1183.14" y="271.5" ></text>
+<title>Triangle::Triangle (142,084,426 samples, 0.06%)</title><rect x="1081.5" y="325" width="0.7" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
+<text  x="1084.46" y="335.5" ></text>
 </g>
 <g >
-<title>update_process_times (10,643,813 samples, 0.03%)</title><rect x="1104.3" y="101" width="0.4" height="15.0" fill="rgb(250,209,50)" rx="2" ry="2" />
-<text  x="1107.33" y="111.5" ></text>
+<title>dm_crtc_high_irq (46,922,931 samples, 0.02%)</title><rect x="862.1" y="181" width="0.2" height="15.0" fill="rgb(225,94,22)" rx="2" ry="2" />
+<text  x="865.07" y="191.5" ></text>
 </g>
 <g >
-<title>handle_mm_fault (6,168,790 samples, 0.02%)</title><rect x="1189.1" y="197" width="0.2" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
-<text  x="1192.14" y="207.5" ></text>
+<title>__sanitizer::internal_mmap (157,141,571 samples, 0.07%)</title><rect x="1178.9" y="421" width="0.8" height="15.0" fill="rgb(239,160,38)" rx="2" ry="2" />
+<text  x="1181.92" y="431.5" ></text>
 </g>
 <g >
-<title>_dl_map_object (9,894,696 samples, 0.03%)</title><rect x="1188.5" y="277" width="0.3" height="15.0" fill="rgb(248,199,47)" rx="2" ry="2" />
-<text  x="1191.47" y="287.5" ></text>
+<title>__memset_avx2_unaligned (560,511,733 samples, 0.24%)</title><rect x="1084.3" y="421" width="2.9" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
+<text  x="1087.32" y="431.5" ></text>
 </g>
 <g >
-<title>asm_common_interrupt (4,875,599 samples, 0.01%)</title><rect x="1103.9" y="213" width="0.2" height="15.0" fill="rgb(227,105,25)" rx="2" ry="2" />
-<text  x="1106.92" y="223.5" ></text>
+<title>__interceptor_memmove (95,481,427 samples, 0.04%)</title><rect x="972.2" y="357" width="0.5" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="975.24" y="367.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (7,134,705 samples, 0.02%)</title><rect x="1182.1" y="245" width="0.2" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1185.07" y="255.5" ></text>
+<title>update_process_times (43,207,805 samples, 0.02%)</title><rect x="862.9" y="229" width="0.2" height="15.0" fill="rgb(250,209,50)" rx="2" ry="2" />
+<text  x="865.89" y="239.5" ></text>
 </g>
 <g >
-<title>__alloc_skb (6,662,539 samples, 0.02%)</title><rect x="1179.7" y="53" width="0.2" height="15.0" fill="rgb(226,100,23)" rx="2" ry="2" />
-<text  x="1182.67" y="63.5" ></text>
+<title>std::vector&lt;glm::tvec3&lt;float,  (143,934,301 samples, 0.06%)</title><rect x="915.1" y="341" width="0.7" height="15.0" fill="rgb(253,223,53)" rx="2" ry="2" />
+<text  x="918.05" y="351.5" ></text>
 </g>
 <g >
-<title>_XlcDefaultMapModifiers (3,360,665 samples, 0.01%)</title><rect x="1179.3" y="261" width="0.1" height="15.0" fill="rgb(208,17,4)" rx="2" ry="2" />
-<text  x="1182.33" y="271.5" ></text>
+<title>Triangle::v0 (1,418,267,113 samples, 0.62%)</title><rect x="422.8" y="357" width="7.3" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="425.77" y="367.5" ></text>
 </g>
 <g >
-<title>sock_recvmsg (3,618,017 samples, 0.01%)</title><rect x="1180.0" y="181" width="0.1" height="15.0" fill="rgb(206,5,1)" rx="2" ry="2" />
-<text  x="1182.97" y="191.5" ></text>
+<title>Scene::getLightStrengths (595,890,216 samples, 0.26%)</title><rect x="927.6" y="357" width="3.1" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="930.61" y="367.5" ></text>
 </g>
 <g >
-<title>task_tick_fair (4,203,561 samples, 0.01%)</title><rect x="1104.5" y="69" width="0.1" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
-<text  x="1107.46" y="79.5" ></text>
+<title>__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;::MaybeReleaseToOS (22,180,452 samples, 0.01%)</title><rect x="91.2" y="405" width="0.1" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
+<text  x="94.22" y="415.5" ></text>
 </g>
 <g >
-<title>DrawingWindow::setPixelColour (14,735,111 samples, 0.04%)</title><rect x="76.7" y="245" width="0.5" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
-<text  x="79.74" y="255.5" ></text>
+<title>Triangle::getTextureColour (28,733,014 samples, 0.01%)</title><rect x="962.2" y="357" width="0.1" height="15.0" fill="rgb(215,50,11)" rx="2" ry="2" />
+<text  x="965.20" y="367.5" ></text>
 </g>
 <g >
-<title>Camera::buildCameraRay (17,618,818 samples, 0.05%)</title><rect x="1182.3" y="261" width="0.5" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
-<text  x="1185.29" y="271.5" ></text>
+<title>Scene::Scene (539,083,433 samples, 0.23%)</title><rect x="1081.5" y="389" width="2.7" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="1084.46" y="399.5" ></text>
 </g>
 <g >
-<title>[libGLX_mesa.so.0.0.0] (18,353,306 samples, 0.05%)</title><rect x="15.1" y="261" width="0.5" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
-<text  x="18.07" y="271.5" ></text>
+<title>__sanitizer::StackDepotPut (287,375,266 samples, 0.13%)</title><rect x="93.3" y="405" width="1.5" height="15.0" fill="rgb(227,103,24)" rx="2" ry="2" />
+<text  x="96.27" y="415.5" ></text>
 </g>
 <g >
-<title>dl_open_worker_begin (14,368,317 samples, 0.04%)</title><rect x="1188.9" y="277" width="0.5" height="15.0" fill="rgb(233,129,31)" rx="2" ry="2" />
-<text  x="1191.95" y="287.5" ></text>
+<title>Camera::getClosestIntersection (81,639,484,193 samples, 35.59%)</title><rect x="443.3" y="357" width="420.0" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
+<text  x="446.34" y="367.5" >Camera::getClosestIntersection</text>
 </g>
 <g >
-<title>__memset_avx2_unaligned_erms (7,937,235 samples, 0.02%)</title><rect x="1187.8" y="261" width="0.2" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
-<text  x="1190.78" y="271.5" ></text>
+<title>__folio_alloc (42,957,941 samples, 0.02%)</title><rect x="35.4" y="245" width="0.3" height="15.0" fill="rgb(224,91,21)" rx="2" ry="2" />
+<text  x="38.44" y="255.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (4,124,481 samples, 0.01%)</title><rect x="1181.3" y="229" width="0.1" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1184.30" y="239.5" ></text>
+<title>Scene::getInitSpeculars (298,395,237 samples, 0.13%)</title><rect x="924.9" y="357" width="1.5" height="15.0" fill="rgb(235,138,33)" rx="2" ry="2" />
+<text  x="927.89" y="367.5" ></text>
 </g>
 <g >
-<title>___sys_recvmsg (7,134,705 samples, 0.02%)</title><rect x="1182.1" y="197" width="0.2" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
-<text  x="1185.07" y="207.5" ></text>
+<title>pthread_getspecific@@GLIBC_2.34 (1,663,115,728 samples, 0.72%)</title><rect x="97.1" y="405" width="8.5" height="15.0" fill="rgb(206,8,1)" rx="2" ry="2" />
+<text  x="100.05" y="415.5" ></text>
 </g>
 <g >
-<title>irq_exit_rcu (6,080,579 samples, 0.02%)</title><rect x="1104.7" y="181" width="0.2" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
-<text  x="1107.71" y="191.5" ></text>
+<title>Scene::getInitSpeculars (37,713,736 samples, 0.02%)</title><rect x="904.4" y="341" width="0.2" height="15.0" fill="rgb(235,138,33)" rx="2" ry="2" />
+<text  x="907.38" y="351.5" ></text>
 </g>
 <g >
-<title>all (38,646,877,877 samples, 100%)</title><rect x="10.0" y="309" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
-<text  x="13.00" y="319.5" ></text>
+<title>operator new (46,725,340 samples, 0.02%)</title><rect x="961.3" y="341" width="0.3" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="964.32" y="351.5" ></text>
 </g>
 <g >
-<title>sock_recvmsg (4,295,304 samples, 0.01%)</title><rect x="1182.1" y="165" width="0.1" height="15.0" fill="rgb(206,5,1)" rx="2" ry="2" />
-<text  x="1185.12" y="175.5" ></text>
+<title>handle_edge_irq (92,513,235 samples, 0.04%)</title><rect x="430.1" y="309" width="0.5" height="15.0" fill="rgb(220,69,16)" rx="2" ry="2" />
+<text  x="433.08" y="319.5" ></text>
 </g>
 <g >
-<title>Camera::raycast (65,558,476 samples, 0.17%)</title><rect x="11.7" y="277" width="2.0" height="15.0" fill="rgb(232,124,29)" rx="2" ry="2" />
-<text  x="14.66" y="287.5" ></text>
+<title>do_mas_align_munmap (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="325" width="0.2" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1182.73" y="335.5" ></text>
 </g>
 <g >
-<title>timekeeping_advance (3,450,566 samples, 0.01%)</title><rect x="1104.2" y="69" width="0.1" height="15.0" fill="rgb(227,104,25)" rx="2" ry="2" />
-<text  x="1107.22" y="79.5" ></text>
+<title>__sanitizer::internal_memmove (12,531,606,813 samples, 5.46%)</title><rect x="974.1" y="357" width="64.4" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="977.05" y="367.5" >__sanit..</text>
 </g>
 <g >
-<title>__libc_recv (3,970,194 samples, 0.01%)</title><rect x="1180.0" y="261" width="0.1" height="15.0" fill="rgb(233,129,31)" rx="2" ry="2" />
-<text  x="1182.96" y="271.5" ></text>
+<title>sysvec_apic_timer_interrupt (114,980,458 samples, 0.05%)</title><rect x="862.7" y="325" width="0.6" height="15.0" fill="rgb(220,69,16)" rx="2" ry="2" />
+<text  x="865.67" y="335.5" ></text>
 </g>
 <g >
-<title>[libexpat.so.1.8.7] (5,092,722 samples, 0.01%)</title><rect x="18.9" y="245" width="0.2" height="15.0" fill="rgb(206,7,1)" rx="2" ry="2" />
-<text  x="21.93" y="255.5" ></text>
+<title>__asan::GetMallocContextSize (31,186,417 samples, 0.01%)</title><rect x="967.6" y="357" width="0.1" height="15.0" fill="rgb(251,216,51)" rx="2" ry="2" />
+<text  x="970.56" y="367.5" ></text>
 </g>
 <g >
-<title>[libSDL2-2.0.so.0.18.2] (5,459,608 samples, 0.01%)</title><rect x="18.0" y="245" width="0.2" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
-<text  x="21.00" y="255.5" ></text>
+<title>std::vector&lt;glm::tvec3&lt;float,  (26,091,904 samples, 0.01%)</title><rect x="1081.3" y="373" width="0.1" height="15.0" fill="rgb(253,223,53)" rx="2" ry="2" />
+<text  x="1084.27" y="383.5" ></text>
 </g>
 <g >
-<title>_int_malloc (4,230,946 samples, 0.01%)</title><rect x="1188.8" y="277" width="0.1" height="15.0" fill="rgb(215,47,11)" rx="2" ry="2" />
-<text  x="1191.79" y="287.5" ></text>
+<title>__asan::asan_delete (104,723,197 samples, 0.05%)</title><rect x="1054.5" y="341" width="0.5" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="1057.51" y="351.5" ></text>
 </g>
 <g >
-<title>__poll (4,632,804 samples, 0.01%)</title><rect x="1181.3" y="261" width="0.1" height="15.0" fill="rgb(250,208,49)" rx="2" ry="2" />
-<text  x="1184.28" y="271.5" ></text>
+<title>__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;::GetFromAllocator (426,488,653 samples, 0.19%)</title><rect x="89.0" y="405" width="2.2" height="15.0" fill="rgb(250,207,49)" rx="2" ry="2" />
+<text  x="92.02" y="415.5" ></text>
 </g>
 <g >
-<title>do_user_addr_fault (7,134,338 samples, 0.02%)</title><rect x="1189.1" y="213" width="0.2" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
-<text  x="1192.12" y="223.5" ></text>
+<title>Scene::getTris (51,382,465 samples, 0.02%)</title><rect x="907.0" y="341" width="0.3" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
+<text  x="910.04" y="351.5" ></text>
 </g>
 <g >
-<title>Camera::getClosestIntersection (8,920,906 samples, 0.02%)</title><rect x="1182.8" y="261" width="0.3" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="1185.82" y="271.5" ></text>
+<title>__asan::CanPoisonMemory (78,732,146 samples, 0.03%)</title><rect x="47.8" y="405" width="0.4" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
+<text  x="50.77" y="415.5" ></text>
 </g>
 <g >
-<title>exc_page_fault (7,787,682 samples, 0.02%)</title><rect x="1189.1" y="229" width="0.3" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
-<text  x="1192.11" y="239.5" ></text>
+<title>dm_vblank_get_counter (21,922,460 samples, 0.01%)</title><rect x="862.2" y="69" width="0.1" height="15.0" fill="rgb(222,80,19)" rx="2" ry="2" />
+<text  x="865.15" y="79.5" ></text>
 </g>
 <g >
-<title>Triangle::getColour (7,510,191 samples, 0.02%)</title><rect x="14.1" y="277" width="0.2" height="15.0" fill="rgb(230,115,27)" rx="2" ry="2" />
-<text  x="17.08" y="287.5" ></text>
+<title>__sanitizer::Quarantine&lt;__asan::QuarantineCallback, __asan::AsanChunk&gt;::Recycle (21,292,292 samples, 0.01%)</title><rect x="1141.6" y="421" width="0.1" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
+<text  x="1144.64" y="431.5" ></text>
 </g>
 <g >
-<title>tick_sched_do_timer (6,029,805 samples, 0.02%)</title><rect x="1104.1" y="117" width="0.2" height="15.0" fill="rgb(227,104,25)" rx="2" ry="2" />
-<text  x="1107.14" y="127.5" ></text>
+<title>__interceptor_memmove (80,303,173 samples, 0.04%)</title><rect x="959.7" y="341" width="0.4" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="962.69" y="351.5" ></text>
 </g>
 <g >
-<title>asm_exc_page_fault (3,565,348 samples, 0.01%)</title><rect x="1188.8" y="261" width="0.1" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
-<text  x="1191.81" y="271.5" ></text>
+<title>Scene::getModelFromTri (1,438,915,917 samples, 0.63%)</title><rect x="1071.3" y="373" width="7.4" height="15.0" fill="rgb(228,106,25)" rx="2" ry="2" />
+<text  x="1074.33" y="383.5" ></text>
 </g>
 <g >
-<title>DrawingWindow::setPixelColour (13,394,124 samples, 0.03%)</title><rect x="13.7" y="277" width="0.4" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
-<text  x="16.67" y="287.5" ></text>
+<title>Scene::getModelFromTri (203,550,160 samples, 0.09%)</title><rect x="906.0" y="341" width="1.0" height="15.0" fill="rgb(228,106,25)" rx="2" ry="2" />
+<text  x="909.00" y="351.5" ></text>
 </g>
 <g >
-<title>Triangle::v0 (1,122,134,190 samples, 2.90%)</title><rect x="1069.7" y="213" width="34.2" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
-<text  x="1072.66" y="223.5" >Tr..</text>
+<title>__alloc_pages (42,106,466 samples, 0.02%)</title><rect x="1083.9" y="181" width="0.2" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
+<text  x="1086.91" y="191.5" ></text>
 </g>
 <g >
-<title>[unknown] (3,360,665 samples, 0.01%)</title><rect x="1179.3" y="245" width="0.1" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
-<text  x="1182.33" y="255.5" ></text>
+<title>exc_page_fault (27,065,291 samples, 0.01%)</title><rect x="45.0" y="373" width="0.1" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="47.97" y="383.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (3,970,194 samples, 0.01%)</title><rect x="1180.0" y="245" width="0.1" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1182.96" y="255.5" ></text>
+<title>do_wp_page (57,770,652 samples, 0.03%)</title><rect x="35.4" y="293" width="0.3" height="15.0" fill="rgb(212,36,8)" rx="2" ry="2" />
+<text  x="38.36" y="303.5" ></text>
 </g>
 <g >
-<title>do_mas_munmap (3,598,005 samples, 0.01%)</title><rect x="1188.6" y="133" width="0.1" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
-<text  x="1191.60" y="143.5" ></text>
+<title>__asan::QuickCheckForUnpoisonedRegion (64,730,230 samples, 0.03%)</title><rect x="925.2" y="341" width="0.4" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="928.24" y="351.5" ></text>
 </g>
 <g >
-<title>do_mas_align_munmap (3,598,005 samples, 0.01%)</title><rect x="1188.6" y="117" width="0.1" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
-<text  x="1191.60" y="127.5" ></text>
+<title>mas_store_prealloc (20,630,190 samples, 0.01%)</title><rect x="1179.1" y="213" width="0.1" height="15.0" fill="rgb(223,85,20)" rx="2" ry="2" />
+<text  x="1182.09" y="223.5" ></text>
 </g>
 <g >
-<title>[libSDL2-2.0.so.0.18.2] (10,561,146 samples, 0.03%)</title><rect x="14.5" y="277" width="0.3" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
-<text  x="17.46" y="287.5" ></text>
+<title>dm_crtc_high_irq (23,259,939 samples, 0.01%)</title><rect x="430.1" y="197" width="0.2" height="15.0" fill="rgb(225,94,22)" rx="2" ry="2" />
+<text  x="433.14" y="207.5" ></text>
 </g>
 <g >
-<title>Camera::buildCameraRay (127,964,657 samples, 0.33%)</title><rect x="1183.7" y="245" width="3.9" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
-<text  x="1186.72" y="255.5" ></text>
+<title>__sanitizer::RunMallocHooks (258,415,800 samples, 0.11%)</title><rect x="1141.7" y="421" width="1.4" height="15.0" fill="rgb(218,62,14)" rx="2" ry="2" />
+<text  x="1144.75" y="431.5" ></text>
 </g>
 <g >
-<title>_dl_relocate_object (13,621,124 samples, 0.04%)</title><rect x="1188.9" y="261" width="0.5" height="15.0" fill="rgb(231,120,28)" rx="2" ry="2" />
-<text  x="1191.95" y="271.5" ></text>
+<title>Camera::getClosestIntersection (7,580,058,785 samples, 3.30%)</title><rect x="864.5" y="341" width="39.0" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
+<text  x="867.53" y="351.5" >Cam..</text>
 </g>
 <g >
-<title>Camera::getClosestIntersection (31,588,363 samples, 0.08%)</title><rect x="22.7" y="245" width="0.9" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="25.68" y="255.5" ></text>
+<title>drm_crtc_accurate_vblank_count (20,213,774 samples, 0.01%)</title><rect x="430.3" y="181" width="0.1" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
+<text  x="433.29" y="191.5" ></text>
 </g>
 <g >
-<title>common_interrupt (4,875,599 samples, 0.01%)</title><rect x="1103.9" y="197" width="0.2" height="15.0" fill="rgb(215,46,11)" rx="2" ry="2" />
-<text  x="1106.92" y="207.5" ></text>
+<title>__asan::Allocator::QuarantineChunk (22,332,772 samples, 0.01%)</title><rect x="907.8" y="341" width="0.1" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="910.76" y="351.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="245" width="0.1" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1191.59" y="255.5" ></text>
+<title>sysvec_apic_timer_interrupt (50,031,095 samples, 0.02%)</title><rect x="430.6" y="341" width="0.2" height="15.0" fill="rgb(220,69,16)" rx="2" ry="2" />
+<text  x="433.56" y="351.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (7,134,705 samples, 0.02%)</title><rect x="1182.1" y="261" width="0.2" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1185.07" y="271.5" ></text>
+<title>asm_exc_page_fault (28,079,719 samples, 0.01%)</title><rect x="45.0" y="389" width="0.1" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="47.96" y="399.5" ></text>
 </g>
 <g >
-<title>__sys_recvmsg (7,134,705 samples, 0.02%)</title><rect x="1182.1" y="213" width="0.2" height="15.0" fill="rgb(252,216,51)" rx="2" ry="2" />
-<text  x="1185.07" y="223.5" ></text>
+<title>handle_mm_fault (25,593,728 samples, 0.01%)</title><rect x="1087.8" y="357" width="0.1" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="1090.78" y="367.5" ></text>
 </g>
 <g >
-<title>tick_sched_handle (10,643,813 samples, 0.03%)</title><rect x="1104.3" y="117" width="0.4" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
-<text  x="1107.33" y="127.5" ></text>
+<title>ModelLoader::asMaterial (22,999,865 samples, 0.01%)</title><rect x="1082.3" y="341" width="0.1" height="15.0" fill="rgb(249,206,49)" rx="2" ry="2" />
+<text  x="1085.27" y="351.5" ></text>
 </g>
 <g >
-<title>unix_stream_read_generic (4,080,240 samples, 0.01%)</title><rect x="1182.1" y="133" width="0.1" height="15.0" fill="rgb(244,180,43)" rx="2" ry="2" />
-<text  x="1185.12" y="143.5" ></text>
+<title>__alloc_pages (42,957,941 samples, 0.02%)</title><rect x="35.4" y="229" width="0.3" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
+<text  x="38.44" y="239.5" ></text>
 </g>
 <g >
-<title>Camera::getClosestIntersection (33,618,713,029 samples, 86.99%)</title><rect x="78.5" y="229" width="1026.5" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="81.52" y="239.5" >Camera::getClosestIntersection</text>
+<title>__handle_mm_fault (63,839,670 samples, 0.03%)</title><rect x="35.3" y="325" width="0.4" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="38.33" y="335.5" ></text>
 </g>
 <g >
-<title>__poll (5,284,325 samples, 0.01%)</title><rect x="1188.1" y="277" width="0.2" height="15.0" fill="rgb(250,208,49)" rx="2" ry="2" />
-<text  x="1191.14" y="287.5" ></text>
+<title>Scene::getLightLocs (30,008,838 samples, 0.01%)</title><rect x="904.6" y="341" width="0.1" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="907.58" y="351.5" ></text>
 </g>
 <g >
-<title>RedNoise (38,644,536,457 samples, 99.99%)</title><rect x="10.1" y="293" width="1179.9" height="15.0" fill="rgb(240,164,39)" rx="2" ry="2" />
-<text  x="13.07" y="303.5" >RedNoise</text>
+<title>amdgpu_ih_process (131,569,452 samples, 0.06%)</title><rect x="862.0" y="229" width="0.6" height="15.0" fill="rgb(209,22,5)" rx="2" ry="2" />
+<text  x="864.96" y="239.5" ></text>
 </g>
 <g >
-<title>schedule_hrtimeout_range (3,951,241 samples, 0.01%)</title><rect x="1188.2" y="181" width="0.1" height="15.0" fill="rgb(221,75,18)" rx="2" ry="2" />
-<text  x="1191.15" y="191.5" ></text>
+<title>__folio_alloc (43,076,256 samples, 0.02%)</title><rect x="1081.8" y="165" width="0.3" height="15.0" fill="rgb(224,91,21)" rx="2" ry="2" />
+<text  x="1084.83" y="175.5" ></text>
 </g>
 <g >
-<title>ksys_mmap_pgoff (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="197" width="0.1" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
-<text  x="1191.59" y="207.5" ></text>
+<title>__asan::asan_delete (58,672,203 samples, 0.03%)</title><rect x="1046.7" y="341" width="0.3" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="1049.74" y="351.5" ></text>
 </g>
 <g >
-<title>unix_stream_recvmsg (3,618,017 samples, 0.01%)</title><rect x="1180.0" y="165" width="0.1" height="15.0" fill="rgb(251,213,51)" rx="2" ry="2" />
-<text  x="1182.97" y="175.5" ></text>
+<title>__sanitizer::BlockingMutex::Unlock (46,197,398 samples, 0.02%)</title><rect x="76.2" y="405" width="0.3" height="15.0" fill="rgb(213,37,8)" rx="2" ry="2" />
+<text  x="79.24" y="415.5" ></text>
 </g>
 <g >
-<title>__irq_exit_rcu (6,080,579 samples, 0.02%)</title><rect x="1104.7" y="165" width="0.2" height="15.0" fill="rgb(227,101,24)" rx="2" ry="2" />
-<text  x="1107.71" y="175.5" ></text>
+<title>common_interrupt (95,533,065 samples, 0.04%)</title><rect x="430.1" y="341" width="0.5" height="15.0" fill="rgb(215,46,11)" rx="2" ry="2" />
+<text  x="433.07" y="351.5" ></text>
 </g>
 <g >
-<title>__handle_mm_fault (6,168,790 samples, 0.02%)</title><rect x="1189.1" y="181" width="0.2" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
-<text  x="1192.14" y="191.5" ></text>
+<title>amdgpu_dm_irq_handler (75,291,029 samples, 0.03%)</title><rect x="430.1" y="213" width="0.4" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
+<text  x="433.09" y="223.5" ></text>
 </g>
 <g >
-<title>asm_sysvec_apic_timer_interrupt (27,412,630 samples, 0.07%)</title><rect x="1104.1" y="213" width="0.8" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
-<text  x="1107.07" y="223.5" ></text>
+<title>drm_handle_vblank (23,259,939 samples, 0.01%)</title><rect x="430.1" y="149" width="0.2" height="15.0" fill="rgb(223,83,19)" rx="2" ry="2" />
+<text  x="433.14" y="159.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (4,400,268 samples, 0.01%)</title><rect x="1181.3" y="245" width="0.1" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1184.29" y="255.5" ></text>
+<title>vma_mas_store (20,630,190 samples, 0.01%)</title><rect x="1179.1" y="229" width="0.1" height="15.0" fill="rgb(221,75,18)" rx="2" ry="2" />
+<text  x="1182.09" y="239.5" ></text>
 </g>
 <g >
-<title>Utils::pack (33,343,867 samples, 0.09%)</title><rect x="77.3" y="245" width="1.0" height="15.0" fill="rgb(216,50,12)" rx="2" ry="2" />
-<text  x="80.27" y="255.5" ></text>
+<title>wp_page_copy (56,738,034 samples, 0.02%)</title><rect x="35.4" y="277" width="0.3" height="15.0" fill="rgb(214,42,10)" rx="2" ry="2" />
+<text  x="38.37" y="287.5" ></text>
 </g>
 <g >
-<title>__libc_start_call_main (189,681,638 samples, 0.49%)</title><rect x="1182.3" y="277" width="5.8" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="1185.29" y="287.5" ></text>
+<title>__asan::Allocator::Deallocate (108,485,774 samples, 0.05%)</title><rect x="10.9" y="389" width="0.6" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="13.93" y="399.5" ></text>
 </g>
 <g >
-<title>sysvec_apic_timer_interrupt (26,945,109 samples, 0.07%)</title><rect x="1104.1" y="197" width="0.8" height="15.0" fill="rgb(220,69,16)" rx="2" ry="2" />
-<text  x="1107.09" y="207.5" ></text>
+<title>vma_alloc_folio (43,985,563 samples, 0.02%)</title><rect x="35.4" y="261" width="0.3" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
+<text  x="38.43" y="271.5" ></text>
 </g>
 <g >
-<title>[unknown] (34,779,975,183 samples, 89.99%)</title><rect x="78.5" y="245" width="1062.0" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
-<text  x="81.52" y="255.5" >[unknown]</text>
+<title>__memset_avx2_unaligned_erms (2,010,684,842 samples, 0.88%)</title><rect x="65.7" y="405" width="10.4" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
+<text  x="68.71" y="415.5" ></text>
 </g>
 <g >
-<title>Camera::buildCameraRay (601,097,909 samples, 1.56%)</title><rect x="58.3" y="229" width="18.4" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
-<text  x="61.31" y="239.5" ></text>
+<title>do_syscall_64 (155,747,541 samples, 0.07%)</title><rect x="1178.9" y="389" width="0.8" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="1181.92" y="399.5" ></text>
 </g>
 <g >
-<title>Camera::raycast (148,293,511 samples, 0.38%)</title><rect x="1183.1" y="261" width="4.5" height="15.0" fill="rgb(232,124,29)" rx="2" ry="2" />
-<text  x="1186.10" y="271.5" ></text>
+<title>operator new (66,741,998 samples, 0.03%)</title><rect x="926.1" y="341" width="0.3" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="929.08" y="351.5" ></text>
 </g>
 <g >
-<title>sock_sendmsg (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="117" width="0.4" height="15.0" fill="rgb(244,183,43)" rx="2" ry="2" />
-<text  x="1182.55" y="127.5" ></text>
+<title>exc_page_fault (87,486,190 samples, 0.04%)</title><rect x="1083.7" y="309" width="0.5" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="1086.74" y="319.5" ></text>
 </g>
 <g >
-<title>do_iter_readv_writev (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="149" width="0.4" height="15.0" fill="rgb(221,76,18)" rx="2" ry="2" />
-<text  x="1182.55" y="159.5" ></text>
+<title>Scene::getModel (3,048,406,201 samples, 1.33%)</title><rect x="930.7" y="357" width="15.7" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<text  x="933.67" y="367.5" ></text>
 </g>
 <g >
-<title>sock_write_iter (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="133" width="0.4" height="15.0" fill="rgb(243,178,42)" rx="2" ry="2" />
-<text  x="1182.55" y="143.5" ></text>
+<title>Triangle::v0 (524,495,921 samples, 0.23%)</title><rect x="962.3" y="357" width="2.7" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="965.35" y="367.5" ></text>
 </g>
 <g >
-<title>[unknown] (37,958,250,334 samples, 98.22%)</title><rect x="19.5" y="261" width="1159.0" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
-<text  x="22.54" y="271.5" >[unknown]</text>
+<title>Scene::getModelOffset (86,601,082 samples, 0.04%)</title><rect x="1078.7" y="373" width="0.5" height="15.0" fill="rgb(222,80,19)" rx="2" ry="2" />
+<text  x="1081.73" y="383.5" ></text>
 </g>
 <g >
-<title>handle_pte_fault (6,168,790 samples, 0.02%)</title><rect x="1189.1" y="165" width="0.2" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
-<text  x="1192.14" y="175.5" ></text>
+<title>__sanitizer::BufferedStackTrace::UnwindFast (4,631,310,920 samples, 2.02%)</title><rect x="1089.5" y="421" width="23.9" height="15.0" fill="rgb(212,33,8)" rx="2" ry="2" />
+<text  x="1092.55" y="431.5" >_..</text>
 </g>
 <g >
-<title>[libX11.so.6.4.0] (12,376,288 samples, 0.03%)</title><rect x="18.2" y="261" width="0.3" height="15.0" fill="rgb(220,73,17)" rx="2" ry="2" />
-<text  x="21.17" y="271.5" ></text>
+<title>find_vma (21,515,768 samples, 0.01%)</title><rect x="75.9" y="325" width="0.1" height="15.0" fill="rgb(213,37,8)" rx="2" ry="2" />
+<text  x="78.85" y="335.5" ></text>
 </g>
 <g >
-<title>__x64_sys_poll (4,124,481 samples, 0.01%)</title><rect x="1181.3" y="213" width="0.1" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
-<text  x="1184.30" y="223.5" ></text>
+<title>handle_mm_fault (70,559,616 samples, 0.03%)</title><rect x="1081.7" y="245" width="0.4" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="1084.70" y="255.5" ></text>
 </g>
 <g >
-<title>__x64_sys_mmap (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="213" width="0.1" height="15.0" fill="rgb(223,83,19)" rx="2" ry="2" />
-<text  x="1191.59" y="223.5" ></text>
+<title>handle_pte_fault (20,495,034 samples, 0.01%)</title><rect x="1087.8" y="325" width="0.1" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="1090.80" y="335.5" ></text>
 </g>
 <g >
-<title>__common_interrupt (4,875,599 samples, 0.01%)</title><rect x="1103.9" y="181" width="0.2" height="15.0" fill="rgb(237,150,36)" rx="2" ry="2" />
-<text  x="1106.92" y="191.5" ></text>
+<title>do_user_addr_fault (26,066,337 samples, 0.01%)</title><rect x="45.0" y="357" width="0.1" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="47.97" y="367.5" ></text>
 </g>
 <g >
-<title>__libc_recvmsg (8,612,797 samples, 0.02%)</title><rect x="1182.0" y="277" width="0.3" height="15.0" fill="rgb(220,72,17)" rx="2" ry="2" />
-<text  x="1185.02" y="287.5" ></text>
+<title>ModelLoader::getPos (681,383,662 samples, 0.30%)</title><rect x="1060.7" y="373" width="3.5" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="1063.73" y="383.5" ></text>
 </g>
 <g >
-<title>__sysvec_apic_timer_interrupt (20,246,854 samples, 0.05%)</title><rect x="1104.1" y="181" width="0.6" height="15.0" fill="rgb(242,173,41)" rx="2" ry="2" />
-<text  x="1107.09" y="191.5" ></text>
+<title>exc_page_fault (81,537,302 samples, 0.04%)</title><rect x="1081.7" y="277" width="0.4" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="1084.69" y="287.5" ></text>
 </g>
 <g >
-<title>pow@@GLIBC_2.29 (121,198,244 samples, 0.31%)</title><rect x="1174.8" y="245" width="3.7" height="15.0" fill="rgb(222,78,18)" rx="2" ry="2" />
-<text  x="1177.78" y="255.5" ></text>
+<title>dm_crtc_handle_vblank (23,259,939 samples, 0.01%)</title><rect x="430.1" y="181" width="0.2" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="433.14" y="191.5" ></text>
 </g>
 <g >
-<title>do_mmap (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="165" width="0.1" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
-<text  x="1191.59" y="175.5" ></text>
+<title>Scene::getLightStrengths (72,148,527 samples, 0.03%)</title><rect x="904.7" y="341" width="0.4" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="907.73" y="351.5" ></text>
 </g>
 <g >
-<title>do_sys_poll (4,246,654 samples, 0.01%)</title><rect x="1188.1" y="213" width="0.2" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
-<text  x="1191.14" y="223.5" ></text>
+<title>do_mas_munmap (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="341" width="0.2" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
+<text  x="1182.73" y="351.5" ></text>
 </g>
 <g >
-<title>__memmove_avx_unaligned_erms (9,290,189 samples, 0.02%)</title><rect x="1174.3" y="245" width="0.3" height="15.0" fill="rgb(205,0,0)" rx="2" ry="2" />
-<text  x="1177.31" y="255.5" ></text>
+<title>amdgpu_get_vblank_counter_kms (23,852,437 samples, 0.01%)</title><rect x="862.4" y="117" width="0.1" height="15.0" fill="rgb(249,204,48)" rx="2" ry="2" />
+<text  x="865.36" y="127.5" ></text>
 </g>
 <g >
-<title>schedule_hrtimeout_range_clock (3,951,241 samples, 0.01%)</title><rect x="1188.2" y="165" width="0.1" height="15.0" fill="rgb(222,81,19)" rx="2" ry="2" />
-<text  x="1191.15" y="175.5" ></text>
+<title>__asan::Allocator::QuarantineChunk (277,777,480 samples, 0.12%)</title><rect x="966.1" y="357" width="1.5" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="969.14" y="367.5" ></text>
 </g>
 <g >
-<title>do_lookup_x (14,333,522 samples, 0.04%)</title><rect x="1189.4" y="277" width="0.4" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
-<text  x="1192.39" y="287.5" ></text>
+<title>__asan::AsanTSDGet (299,209,394 samples, 0.13%)</title><rect x="125.6" y="421" width="1.6" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="128.63" y="431.5" ></text>
 </g>
 <g >
-<title>____sys_recvmsg (5,897,920 samples, 0.02%)</title><rect x="1182.1" y="181" width="0.1" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
-<text  x="1185.07" y="191.5" ></text>
+<title>do_anonymous_page (162,405,049 samples, 0.07%)</title><rect x="74.9" y="293" width="0.9" height="15.0" fill="rgb(238,155,37)" rx="2" ry="2" />
+<text  x="77.94" y="303.5" ></text>
 </g>
 <g >
-<title>kmem_cache_alloc_node (4,854,020 samples, 0.01%)</title><rect x="1179.7" y="37" width="0.2" height="15.0" fill="rgb(236,142,34)" rx="2" ry="2" />
-<text  x="1182.73" y="47.5" ></text>
+<title>Camera::getClosestIntersection (53,789,795,352 samples, 23.45%)</title><rect x="154.2" y="373" width="276.6" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
+<text  x="157.16" y="383.5" >Camera::getClosestIntersection</text>
 </g>
 <g >
-<title>__x64_sys_writev (13,524,380 samples, 0.03%)</title><rect x="1179.5" y="213" width="0.5" height="15.0" fill="rgb(233,133,31)" rx="2" ry="2" />
-<text  x="1182.55" y="223.5" ></text>
+<title>hrtimer_interrupt (36,996,059 samples, 0.02%)</title><rect x="430.6" y="309" width="0.2" height="15.0" fill="rgb(228,109,26)" rx="2" ry="2" />
+<text  x="433.57" y="319.5" ></text>
 </g>
 <g >
-<title>unix_stream_sendmsg (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="101" width="0.4" height="15.0" fill="rgb(240,161,38)" rx="2" ry="2" />
-<text  x="1182.55" y="111.5" ></text>
+<title>operator delete (180,895,973 samples, 0.08%)</title><rect x="1048.9" y="341" width="0.9" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1051.91" y="351.5" ></text>
 </g>
 <g >
-<title>mmap_region (4,475,854 samples, 0.01%)</title><rect x="1188.6" y="149" width="0.1" height="15.0" fill="rgb(231,121,28)" rx="2" ry="2" />
-<text  x="1191.60" y="159.5" ></text>
+<title>__memmove_sse2_unaligned_erms (129,831,037 samples, 0.06%)</title><rect x="1081.5" y="309" width="0.6" height="15.0" fill="rgb(208,14,3)" rx="2" ry="2" />
+<text  x="1084.46" y="319.5" ></text>
 </g>
 <g >
-<title>unix_stream_recvmsg (4,295,304 samples, 0.01%)</title><rect x="1182.1" y="149" width="0.1" height="15.0" fill="rgb(251,213,51)" rx="2" ry="2" />
-<text  x="1185.12" y="159.5" ></text>
+<title>asm_exc_page_fault (253,462,243 samples, 0.11%)</title><rect x="74.7" y="389" width="1.3" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="77.71" y="399.5" ></text>
 </g>
 <g >
-<title>do_writev (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="197" width="0.4" height="15.0" fill="rgb(239,157,37)" rx="2" ry="2" />
-<text  x="1182.55" y="207.5" ></text>
+<title>__sanitizer::internal_memmove (353,740,335 samples, 0.15%)</title><rect x="1082.4" y="341" width="1.8" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="1085.40" y="351.5" ></text>
 </g>
 <g >
-<title>[libdbus-1.so.3.19.13] (5,427,244 samples, 0.01%)</title><rect x="18.6" y="261" width="0.1" height="15.0" fill="rgb(222,79,18)" rx="2" ry="2" />
-<text  x="21.57" y="271.5" ></text>
+<title>__asan::Allocator::Deallocate (24,864,916 samples, 0.01%)</title><rect x="1045.3" y="341" width="0.1" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="1048.31" y="351.5" ></text>
 </g>
 <g >
-<title>__hrtimer_run_queues (18,469,172 samples, 0.05%)</title><rect x="1104.1" y="149" width="0.6" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
-<text  x="1107.09" y="159.5" ></text>
+<title>ModelLoader::getPos (830,746,797 samples, 0.36%)</title><rect x="918.9" y="357" width="4.3" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="921.94" y="367.5" ></text>
 </g>
 <g >
-<title>[radeonsi_dri.so] (3,422,396 samples, 0.01%)</title><rect x="15.0" y="277" width="0.1" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
-<text  x="17.95" y="287.5" ></text>
+<title>__asan::GetCurrentThread (992,984,171 samples, 0.43%)</title><rect x="135.5" y="421" width="5.2" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
+<text  x="138.55" y="431.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (3,618,017 samples, 0.01%)</title><rect x="1180.0" y="229" width="0.1" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1182.97" y="239.5" ></text>
+<title>handle_irq_event (136,403,814 samples, 0.06%)</title><rect x="862.0" y="277" width="0.7" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
+<text  x="864.95" y="287.5" ></text>
 </g>
 <g >
-<title>tick_sched_timer (16,673,618 samples, 0.04%)</title><rect x="1104.1" y="133" width="0.6" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
-<text  x="1107.14" y="143.5" ></text>
+<title>asm_common_interrupt (139,369,801 samples, 0.06%)</title><rect x="861.9" y="341" width="0.8" height="15.0" fill="rgb(227,105,25)" rx="2" ry="2" />
+<text  x="864.95" y="351.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="229" width="0.1" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1191.59" y="239.5" ></text>
+<title>__sanitizer::RunFreeHooks (433,960,527 samples, 0.19%)</title><rect x="84.6" y="405" width="2.3" height="15.0" fill="rgb(250,211,50)" rx="2" ry="2" />
+<text  x="87.64" y="415.5" ></text>
 </g>
 <g >
-<title>hrtimer_interrupt (20,246,854 samples, 0.05%)</title><rect x="1104.1" y="165" width="0.6" height="15.0" fill="rgb(228,109,26)" rx="2" ry="2" />
-<text  x="1107.09" y="175.5" ></text>
+<title>__asan::QuickCheckForUnpoisonedRegion (163,360,692 samples, 0.07%)</title><rect x="1042.6" y="341" width="0.8" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1045.59" y="351.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (5,284,325 samples, 0.01%)</title><rect x="1188.1" y="261" width="0.2" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1191.14" y="271.5" ></text>
+<title>Scene::getModel (173,930,454 samples, 0.08%)</title><rect x="905.1" y="341" width="0.9" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<text  x="908.10" y="351.5" ></text>
 </g>
 <g >
-<title>__strcmp_avx2 (4,052,730 samples, 0.01%)</title><rect x="1188.3" y="277" width="0.2" height="15.0" fill="rgb(239,159,38)" rx="2" ry="2" />
-<text  x="1191.33" y="287.5" ></text>
+<title>__sanitizer::RunFreeHooks (138,473,334 samples, 0.06%)</title><rect x="11.5" y="389" width="0.7" height="15.0" fill="rgb(250,211,50)" rx="2" ry="2" />
+<text  x="14.50" y="399.5" ></text>
 </g>
 <g >
-<title>[unknown] (38,215,234,542 samples, 98.88%)</title><rect x="15.1" y="277" width="1166.8" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
-<text  x="18.06" y="287.5" >[unknown]</text>
+<title>__asan::AsanThread::stack_bottom (881,392,244 samples, 0.38%)</title><rect x="127.2" y="421" width="4.5" height="15.0" fill="rgb(221,76,18)" rx="2" ry="2" />
+<text  x="130.17" y="431.5" ></text>
 </g>
 <g >
-<title>__sys_recvfrom (3,618,017 samples, 0.01%)</title><rect x="1180.0" y="197" width="0.1" height="15.0" fill="rgb(247,197,47)" rx="2" ry="2" />
-<text  x="1182.97" y="207.5" ></text>
+<title>__sanitizer::StackTrace::GetCurrentPc (116,857,548 samples, 0.05%)</title><rect x="1056.7" y="341" width="0.6" height="15.0" fill="rgb(243,176,42)" rx="2" ry="2" />
+<text  x="1059.71" y="351.5" ></text>
 </g>
 <g >
-<title>[libSDL2-2.0.so.0.18.2] (76,563,371 samples, 0.20%)</title><rect x="15.8" y="261" width="2.4" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
-<text  x="18.83" y="271.5" ></text>
+<title>__asan::asan_delete (19,830,728 samples, 0.01%)</title><rect x="907.9" y="341" width="0.1" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="910.89" y="351.5" ></text>
 </g>
 <g >
-<title>[libLLVM-15.so.1] (6,609,575 samples, 0.02%)</title><rect x="15.6" y="261" width="0.2" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="18.63" y="271.5" ></text>
+<title>__get_vblank_counter (23,852,437 samples, 0.01%)</title><rect x="862.4" y="133" width="0.1" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
+<text  x="865.36" y="143.5" ></text>
 </g>
 <g >
-<title>_dl_lookup_symbol_x (4,106,840 samples, 0.01%)</title><rect x="15.7" y="245" width="0.1" height="15.0" fill="rgb(211,28,6)" rx="2" ry="2" />
-<text  x="18.69" y="255.5" ></text>
+<title>__asan::QuickCheckForUnpoisonedRegion (151,700,495 samples, 0.07%)</title><rect x="1046.0" y="341" width="0.7" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1048.96" y="351.5" ></text>
 </g>
 <g >
-<title>Camera::buildCameraRay (102,885,493 samples, 0.27%)</title><rect x="19.5" y="245" width="3.2" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
-<text  x="22.54" y="255.5" ></text>
+<title>__asan::asan_memalign (144,732,812 samples, 0.06%)</title><rect x="146.1" y="421" width="0.7" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="149.07" y="431.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (5,284,325 samples, 0.01%)</title><rect x="1188.1" y="245" width="0.2" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1191.14" y="255.5" ></text>
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (22,047,233 samples, 0.01%)</title><rect x="924.4" y="341" width="0.1" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="927.40" y="351.5" ></text>
 </g>
 <g >
-<title>tick_do_update_jiffies64 (6,029,805 samples, 0.02%)</title><rect x="1104.1" y="101" width="0.2" height="15.0" fill="rgb(208,14,3)" rx="2" ry="2" />
-<text  x="1107.14" y="111.5" ></text>
+<title>clear_page_rep (31,911,348 samples, 0.01%)</title><rect x="1081.8" y="117" width="0.2" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="1084.84" y="127.5" ></text>
 </g>
 <g >
-<title>_IO_getc (23,413,077 samples, 0.06%)</title><rect x="1178.5" y="261" width="0.7" height="15.0" fill="rgb(247,195,46)" rx="2" ry="2" />
-<text  x="1181.53" y="271.5" ></text>
+<title>__sanitizer::StackDepotBase&lt;__sanitizer::StackDepotNode, 1, 20&gt;::find (1,860,083,082 samples, 0.81%)</title><rect x="1169.3" y="421" width="9.5" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="1172.26" y="431.5" ></text>
 </g>
 <g >
-<title>Camera::getClosestIntersection (51,993,239 samples, 0.13%)</title><rect x="10.1" y="277" width="1.6" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="13.07" y="287.5" ></text>
+<title>do_user_addr_fault (86,069,929 samples, 0.04%)</title><rect x="1083.7" y="293" width="0.5" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="1086.74" y="303.5" ></text>
 </g>
 <g >
-<title>alloc_skb_with_frags (6,662,539 samples, 0.02%)</title><rect x="1179.7" y="69" width="0.2" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
-<text  x="1182.67" y="79.5" ></text>
+<title>__common_interrupt (95,533,065 samples, 0.04%)</title><rect x="430.1" y="325" width="0.5" height="15.0" fill="rgb(237,150,36)" rx="2" ry="2" />
+<text  x="433.07" y="335.5" ></text>
 </g>
 <g >
-<title>entry_SYSCALL_64_after_hwframe (13,524,380 samples, 0.03%)</title><rect x="1179.5" y="245" width="0.5" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
-<text  x="1182.55" y="255.5" ></text>
+<title>vma_alloc_folio (126,884,420 samples, 0.06%)</title><rect x="75.1" y="277" width="0.7" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
+<text  x="78.13" y="287.5" ></text>
 </g>
 <g >
-<title>Triangle::v0 (1,157,573,626 samples, 3.00%)</title><rect x="1105.0" y="229" width="35.3" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
-<text  x="1108.00" y="239.5" >Tr..</text>
+<title>operator new (60,952,405 samples, 0.03%)</title><rect x="924.6" y="341" width="0.3" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="927.58" y="351.5" ></text>
 </g>
 <g >
-<title>[libexpat.so.1.8.7] (11,423,717 samples, 0.03%)</title><rect x="18.7" y="261" width="0.4" height="15.0" fill="rgb(206,7,1)" rx="2" ry="2" />
-<text  x="21.74" y="271.5" ></text>
+<title>__x64_sys_munmap (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="373" width="0.2" height="15.0" fill="rgb(206,7,1)" rx="2" ry="2" />
+<text  x="1182.73" y="383.5" ></text>
 </g>
 <g >
-<title>[radeonsi_dri.so] (13,086,227 samples, 0.03%)</title><rect x="19.1" y="261" width="0.4" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
-<text  x="22.14" y="271.5" ></text>
+<title>__hrtimer_run_queues (33,018,638 samples, 0.01%)</title><rect x="430.6" y="293" width="0.1" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
+<text  x="433.57" y="303.5" ></text>
 </g>
 <g >
-<title>do_iter_write (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="165" width="0.4" height="15.0" fill="rgb(221,75,18)" rx="2" ry="2" />
-<text  x="1182.55" y="175.5" ></text>
+<title>ModelLoader::getPos (73,786,079 samples, 0.03%)</title><rect x="903.9" y="341" width="0.4" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="906.87" y="351.5" ></text>
 </g>
 <g >
-<title>update_wall_time (6,029,805 samples, 0.02%)</title><rect x="1104.1" y="85" width="0.2" height="15.0" fill="rgb(207,11,2)" rx="2" ry="2" />
-<text  x="1107.14" y="95.5" ></text>
+<title>__sysvec_apic_timer_interrupt (90,178,554 samples, 0.04%)</title><rect x="862.7" y="309" width="0.4" height="15.0" fill="rgb(242,173,41)" rx="2" ry="2" />
+<text  x="865.68" y="319.5" ></text>
 </g>
 <g >
-<title>schedule (3,951,241 samples, 0.01%)</title><rect x="1188.2" y="149" width="0.1" height="15.0" fill="rgb(254,229,54)" rx="2" ry="2" />
-<text  x="1191.15" y="159.5" ></text>
+<title>handle_mm_fault (190,018,446 samples, 0.08%)</title><rect x="74.9" y="341" width="1.0" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="77.87" y="351.5" ></text>
 </g>
 <g >
-<title>__x64_sys_poll (4,246,654 samples, 0.01%)</title><rect x="1188.1" y="229" width="0.2" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
-<text  x="1191.14" y="239.5" ></text>
+<title>Scene::getInitBrightnesses (326,596,760 samples, 0.14%)</title><rect x="923.2" y="357" width="1.7" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
+<text  x="926.21" y="367.5" ></text>
 </g>
 <g >
-<title>vfs_writev (13,099,235 samples, 0.03%)</title><rect x="1179.5" y="181" width="0.4" height="15.0" fill="rgb(238,153,36)" rx="2" ry="2" />
-<text  x="1182.55" y="191.5" ></text>
+<title>Scene::getInitBrightnesses (24,902,445 samples, 0.01%)</title><rect x="904.3" y="341" width="0.1" height="15.0" fill="rgb(224,88,21)" rx="2" ry="2" />
+<text  x="907.25" y="351.5" ></text>
 </g>
 <g >
-<title>__ieee754_pow_fma (1,104,819,187 samples, 2.86%)</title><rect x="1140.5" y="245" width="33.7" height="15.0" fill="rgb(240,163,39)" rx="2" ry="2" />
-<text  x="1143.45" y="255.5" >__..</text>
+<title>handle_pte_fault (62,589,246 samples, 0.03%)</title><rect x="1081.7" y="213" width="0.4" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="1084.73" y="223.5" ></text>
 </g>
 <g >
-<title>Camera::raycast (1,739,050,179 samples, 4.50%)</title><rect x="23.6" y="245" width="53.1" height="15.0" fill="rgb(232,124,29)" rx="2" ry="2" />
-<text  x="26.64" y="255.5" >Camer..</text>
+<title>std::vector&lt;float, std::allocator&lt;float&gt; &gt;::_M_realloc_insert&lt;float&gt; (1,350,383,453 samples, 0.59%)</title><rect x="1043.6" y="357" width="6.9" height="15.0" fill="rgb(237,149,35)" rx="2" ry="2" />
+<text  x="1046.59" y="367.5" ></text>
 </g>
 <g >
-<title>do_syscall_64 (13,524,380 samples, 0.03%)</title><rect x="1179.5" y="229" width="0.5" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
-<text  x="1182.55" y="239.5" ></text>
+<title>do_user_addr_fault (75,881,568 samples, 0.03%)</title><rect x="35.3" y="357" width="0.4" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="38.30" y="367.5" ></text>
 </g>
 <g >
-<title>scheduler_tick (9,064,746 samples, 0.02%)</title><rect x="1104.4" y="85" width="0.3" height="15.0" fill="rgb(246,190,45)" rx="2" ry="2" />
-<text  x="1107.38" y="95.5" ></text>
+<title>asm_exc_page_fault (94,810,887 samples, 0.04%)</title><rect x="1083.7" y="325" width="0.5" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="1086.70" y="335.5" ></text>
 </g>
 <g >
-<title>do_sys_poll (3,845,835 samples, 0.01%)</title><rect x="1181.3" y="197" width="0.1" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
-<text  x="1184.30" y="207.5" ></text>
+<title>wp_page_copy (25,808,594 samples, 0.01%)</title><rect x="125.4" y="293" width="0.2" height="15.0" fill="rgb(214,42,10)" rx="2" ry="2" />
+<text  x="128.43" y="303.5" ></text>
 </g>
 <g >
-<title>do_poll.constprop.0 (4,202,737 samples, 0.01%)</title><rect x="1188.1" y="197" width="0.2" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
-<text  x="1191.14" y="207.5" ></text>
+<title>[RedNoise] (75,893,921 samples, 0.03%)</title><rect x="965.0" y="357" width="0.4" height="15.0" fill="rgb(252,217,51)" rx="2" ry="2" />
+<text  x="968.05" y="367.5" ></text>
 </g>
 <g >
-<title>mmap64 (5,116,616 samples, 0.01%)</title><rect x="1188.6" y="261" width="0.1" height="15.0" fill="rgb(220,70,16)" rx="2" ry="2" />
-<text  x="1191.59" y="271.5" ></text>
+<title>Camera::specular (69,533,013 samples, 0.03%)</title><rect x="903.5" y="341" width="0.4" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
+<text  x="906.52" y="351.5" ></text>
 </g>
 <g >
-<title>__x64_sys_recvmsg (7,134,705 samples, 0.02%)</title><rect x="1182.1" y="229" width="0.2" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
-<text  x="1185.07" y="239.5" ></text>
+<title>all (229,404,770,678 samples, 100%)</title><rect x="10.0" y="453" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<text  x="13.00" y="463.5" ></text>
 </g>
 <g >
-<title>vm_mmap_pgoff (4,790,618 samples, 0.01%)</title><rect x="1188.6" y="181" width="0.1" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
-<text  x="1191.59" y="191.5" ></text>
+<title>__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;::ReturnToAllocator (136,400,767 samples, 0.06%)</title><rect x="91.4" y="405" width="0.7" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
+<text  x="94.36" y="415.5" ></text>
 </g>
 <g >
-<title>sock_alloc_send_pskb (6,662,539 samples, 0.02%)</title><rect x="1179.7" y="85" width="0.2" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="1182.67" y="95.5" ></text>
+<title>get_page_from_freelist (42,106,466 samples, 0.02%)</title><rect x="1083.9" y="165" width="0.2" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
+<text  x="1086.91" y="175.5" ></text>
 </g>
 <g >
-<title>asm_exc_page_fault (8,993,230 samples, 0.02%)</title><rect x="1189.1" y="245" width="0.3" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
-<text  x="1192.08" y="255.5" ></text>
+<title>handle_pte_fault (173,743,731 samples, 0.08%)</title><rect x="74.9" y="309" width="0.9" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="77.92" y="319.5" ></text>
+</g>
+<g >
+<title>__sanitizer::StackDepotBase&lt;__sanitizer::StackDepotNode, 1, 20&gt;::Put (228,197,800 samples, 0.10%)</title><rect x="92.1" y="405" width="1.2" height="15.0" fill="rgb(226,99,23)" rx="2" ry="2" />
+<text  x="95.09" y="415.5" ></text>
+</g>
+<g >
+<title>drm_crtc_accurate_vblank_count (29,948,013 samples, 0.01%)</title><rect x="862.4" y="165" width="0.1" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
+<text  x="865.35" y="175.5" ></text>
+</g>
+<g >
+<title>handle_irq_event (91,484,337 samples, 0.04%)</title><rect x="430.1" y="293" width="0.5" height="15.0" fill="rgb(209,19,4)" rx="2" ry="2" />
+<text  x="433.08" y="303.5" ></text>
+</g>
+<g >
+<title>asm_exc_page_fault (47,489,260 samples, 0.02%)</title><rect x="125.4" y="405" width="0.2" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="128.38" y="415.5" ></text>
+</g>
+<g >
+<title>clear_page_rep (34,279,635 samples, 0.01%)</title><rect x="1083.9" y="149" width="0.2" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="1086.92" y="159.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::Deallocate (67,226,120 samples, 0.03%)</title><rect x="1053.4" y="341" width="0.4" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="1056.44" y="351.5" ></text>
+</g>
+<g >
+<title>do_anonymous_page (19,477,052 samples, 0.01%)</title><rect x="1087.8" y="309" width="0.1" height="15.0" fill="rgb(238,155,37)" rx="2" ry="2" />
+<text  x="1090.81" y="319.5" ></text>
+</g>
+<g >
+<title>__x64_sys_mmap (153,749,722 samples, 0.07%)</title><rect x="1178.9" y="373" width="0.8" height="15.0" fill="rgb(223,83,19)" rx="2" ry="2" />
+<text  x="1181.93" y="383.5" ></text>
+</g>
+<g >
+<title>tick_sched_timer (28,118,798 samples, 0.01%)</title><rect x="430.6" y="277" width="0.1" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
+<text  x="433.60" y="287.5" ></text>
+</g>
+<g >
+<title>Scene::getModel (1,361,162,744 samples, 0.59%)</title><rect x="1064.3" y="373" width="7.0" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<text  x="1067.33" y="383.5" ></text>
+</g>
+<g >
+<title>__memset_avx2_unaligned (651,490,395 samples, 0.28%)</title><rect x="62.4" y="405" width="3.3" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
+<text  x="65.36" y="415.5" ></text>
+</g>
+<g >
+<title>amdgpu_irq_dispatch (82,387,634 samples, 0.04%)</title><rect x="430.1" y="229" width="0.4" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
+<text  x="433.09" y="239.5" ></text>
+</g>
+<g >
+<title>std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;::_M_construct&lt;char*&gt; (21,770,222 samples, 0.01%)</title><rect x="914.4" y="341" width="0.1" height="15.0" fill="rgb(230,118,28)" rx="2" ry="2" />
+<text  x="917.41" y="351.5" ></text>
+</g>
+<g >
+<title>operator new (84,952,458 samples, 0.04%)</title><rect x="930.2" y="341" width="0.5" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="933.24" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::Quarantine&lt;__asan::QuarantineCallback, __asan::AsanChunk&gt;::DoRecycle (4,030,012,331 samples, 1.76%)</title><rect x="1120.9" y="421" width="20.7" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="1123.91" y="431.5" ></text>
+</g>
+<g >
+<title>operator new (65,117,591 samples, 0.03%)</title><rect x="1041.9" y="357" width="0.3" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="1044.89" y="367.5" ></text>
+</g>
+<g >
+<title>__sanitizer::CombinedAllocator&lt;__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;, __sanitizer::LargeMmapAllocatorPtrArrayDynamic&gt;::Allocate (1,106,842,272 samples, 0.48%)</title><rect x="76.5" y="405" width="5.7" height="15.0" fill="rgb(228,110,26)" rx="2" ry="2" />
+<text  x="79.48" y="415.5" ></text>
+</g>
+<g >
+<title>do_user_addr_fault (77,036,755 samples, 0.03%)</title><rect x="1081.7" y="261" width="0.4" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="1084.69" y="271.5" ></text>
+</g>
+<g >
+<title>operator new (57,764,727 samples, 0.03%)</title><rect x="927.3" y="341" width="0.3" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="930.31" y="351.5" ></text>
+</g>
+<g >
+<title>Scene::getLightLocs (229,638,253 samples, 0.10%)</title><rect x="926.4" y="357" width="1.2" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="929.43" y="367.5" ></text>
+</g>
+<g >
+<title>ModelLoader::load (538,292,873 samples, 0.23%)</title><rect x="1081.5" y="357" width="2.7" height="15.0" fill="rgb(246,192,46)" rx="2" ry="2" />
+<text  x="1084.46" y="367.5" ></text>
+</g>
+<g >
+<title>__asan::asan_delete (203,697,406 samples, 0.09%)</title><rect x="967.7" y="357" width="1.1" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="970.72" y="367.5" ></text>
+</g>
+<g >
+<title>__asan::AsanThread::stack_top (747,222,754 samples, 0.33%)</title><rect x="131.7" y="421" width="3.8" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="134.70" y="431.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (31,955,873 samples, 0.01%)</title><rect x="930.0" y="341" width="0.2" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="933.00" y="351.5" ></text>
+</g>
+<g >
+<title>drm_update_vblank_count (39,023,575 samples, 0.02%)</title><rect x="862.1" y="117" width="0.2" height="15.0" fill="rgb(238,154,36)" rx="2" ry="2" />
+<text  x="865.10" y="127.5" ></text>
+</g>
+<g >
+<title>asm_sysvec_apic_timer_interrupt (114,980,458 samples, 0.05%)</title><rect x="862.7" y="341" width="0.6" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
+<text  x="865.67" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::PoisonShadow (378,782,923 samples, 0.17%)</title><rect x="94.8" y="389" width="1.9" height="15.0" fill="rgb(231,120,28)" rx="2" ry="2" />
+<text  x="97.79" y="399.5" ></text>
+</g>
+<g >
+<title>operator delete (636,641,184 samples, 0.28%)</title><rect x="1038.6" y="357" width="3.3" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1041.62" y="367.5" ></text>
+</g>
+<g >
+<title>operator delete (40,066,873 samples, 0.02%)</title><rect x="914.1" y="341" width="0.2" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="917.14" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::mem_is_zero (222,395,763 samples, 0.10%)</title><rect x="960.2" y="341" width="1.1" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="963.17" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::QuickCheckForUnpoisonedRegion (97,387,229 samples, 0.04%)</title><rect x="923.5" y="341" width="0.5" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="926.51" y="351.5" ></text>
+</g>
+<g >
+<title>drm_update_vblank_count (28,915,278 samples, 0.01%)</title><rect x="862.4" y="149" width="0.1" height="15.0" fill="rgb(238,154,36)" rx="2" ry="2" />
+<text  x="865.36" y="159.5" ></text>
+</g>
+<g >
+<title>Camera::hit (10,210,203,717 samples, 4.45%)</title><rect x="863.3" y="357" width="52.5" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="866.27" y="367.5" >Camer..</text>
+</g>
+<g >
+<title>__asan::QuickCheckForUnpoisonedRegion (150,323,623 samples, 0.07%)</title><rect x="928.5" y="341" width="0.7" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="931.47" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::GetCurrentThreadStats (335,719,524 samples, 0.15%)</title><rect x="53.3" y="405" width="1.7" height="15.0" fill="rgb(215,48,11)" rx="2" ry="2" />
+<text  x="56.31" y="415.5" ></text>
+</g>
+<g >
+<title>handle_pte_fault (29,698,144 samples, 0.01%)</title><rect x="125.4" y="325" width="0.2" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="128.41" y="335.5" ></text>
+</g>
+<g >
+<title>drm_crtc_handle_vblank (42,964,174 samples, 0.02%)</title><rect x="862.1" y="149" width="0.2" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
+<text  x="865.08" y="159.5" ></text>
+</g>
+<g >
+<title>operator new (135,840,895 samples, 0.06%)</title><rect x="1049.8" y="341" width="0.7" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="1052.84" y="351.5" ></text>
+</g>
+<g >
+<title>scheduler_tick (33,296,249 samples, 0.01%)</title><rect x="862.9" y="213" width="0.2" height="15.0" fill="rgb(246,190,45)" rx="2" ry="2" />
+<text  x="865.94" y="223.5" ></text>
+</g>
+<g >
+<title>__sysvec_apic_timer_interrupt (38,022,332 samples, 0.02%)</title><rect x="430.6" y="325" width="0.2" height="15.0" fill="rgb(242,173,41)" rx="2" ry="2" />
+<text  x="433.56" y="335.5" ></text>
+</g>
+<g >
+<title>__asan::GetMallocContextSize (26,739,923 samples, 0.01%)</title><rect x="1045.8" y="341" width="0.2" height="15.0" fill="rgb(251,216,51)" rx="2" ry="2" />
+<text  x="1048.82" y="351.5" ></text>
+</g>
+<g >
+<title>__handle_mm_fault (30,674,098 samples, 0.01%)</title><rect x="125.4" y="341" width="0.2" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="128.41" y="351.5" ></text>
+</g>
+<g >
+<title>__handle_irq_event_percpu (90,520,590 samples, 0.04%)</title><rect x="430.1" y="277" width="0.4" height="15.0" fill="rgb(236,147,35)" rx="2" ry="2" />
+<text  x="433.08" y="287.5" ></text>
+</g>
+<g >
+<title>do_user_addr_fault (43,571,927 samples, 0.02%)</title><rect x="125.4" y="373" width="0.2" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="128.40" y="383.5" ></text>
+</g>
+<g >
+<title>handle_mm_fault (74,307,564 samples, 0.03%)</title><rect x="1083.8" y="277" width="0.3" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="1086.77" y="287.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::Deallocate (132,605,186 samples, 0.06%)</title><rect x="965.5" y="357" width="0.6" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="968.45" y="367.5" ></text>
+</g>
+<g >
+<title>__hrtimer_run_queues (81,268,175 samples, 0.04%)</title><rect x="862.7" y="277" width="0.4" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
+<text  x="865.69" y="287.5" ></text>
+</g>
+<g >
+<title>Triangle::v0 (2,284,731,235 samples, 1.00%)</title><rect x="850.2" y="341" width="11.7" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="853.20" y="351.5" ></text>
+</g>
+<g >
+<title>asm_common_interrupt (95,533,065 samples, 0.04%)</title><rect x="430.1" y="357" width="0.5" height="15.0" fill="rgb(227,105,25)" rx="2" ry="2" />
+<text  x="433.07" y="367.5" ></text>
+</g>
+<g >
+<title>asm_sysvec_apic_timer_interrupt (50,031,095 samples, 0.02%)</title><rect x="430.6" y="357" width="0.2" height="15.0" fill="rgb(232,127,30)" rx="2" ry="2" />
+<text  x="433.56" y="367.5" ></text>
+</g>
+<g >
+<title>Camera::hit (122,358,186,113 samples, 53.34%)</title><rect x="430.8" y="373" width="629.4" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="433.84" y="383.5" >Camera::hit</text>
+</g>
+<g >
+<title>handle_pte_fault (60,827,635 samples, 0.03%)</title><rect x="1083.8" y="245" width="0.3" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="1086.82" y="255.5" ></text>
+</g>
+<g >
+<title>__asan::AsanTSDGet (514,194,896 samples, 0.22%)</title><rect x="45.1" y="405" width="2.7" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="48.12" y="415.5" ></text>
+</g>
+<g >
+<title>do_anonymous_page (58,826,359 samples, 0.03%)</title><rect x="1083.8" y="229" width="0.3" height="15.0" fill="rgb(238,155,37)" rx="2" ry="2" />
+<text  x="1086.82" y="239.5" ></text>
+</g>
+<g >
+<title>pthread_getspecific@@GLIBC_2.34 (1,886,290,950 samples, 0.82%)</title><rect x="1180.2" y="421" width="9.7" height="15.0" fill="rgb(206,8,1)" rx="2" ry="2" />
+<text  x="1183.17" y="431.5" ></text>
+</g>
+<g >
+<title>[unknown] (18,581,288,184 samples, 8.10%)</title><rect x="10.2" y="421" width="95.6" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
+<text  x="13.22" y="431.5" >[unknown]</text>
+</g>
+<g >
+<title>__memset_avx2_unaligned_erms (140,527,815 samples, 0.06%)</title><rect x="1087.2" y="421" width="0.7" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
+<text  x="1090.20" y="431.5" ></text>
+</g>
+<g >
+<title>asm_exc_page_fault (91,759,397 samples, 0.04%)</title><rect x="1081.6" y="293" width="0.5" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="1084.64" y="303.5" ></text>
+</g>
+<g >
+<title>std::vector&lt;glm::tvec3&lt;float,  (1,879,865,025 samples, 0.82%)</title><rect x="1050.5" y="357" width="9.7" height="15.0" fill="rgb(253,223,53)" rx="2" ry="2" />
+<text  x="1053.54" y="367.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::QuarantineChunk (75,178,427 samples, 0.03%)</title><rect x="1045.4" y="341" width="0.4" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="1048.43" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::PoisonShadow (858,065,208 samples, 0.37%)</title><rect x="55.0" y="405" width="4.5" height="15.0" fill="rgb(231,120,28)" rx="2" ry="2" />
+<text  x="58.04" y="415.5" ></text>
+</g>
+<g >
+<title>do_mas_munmap (112,704,648 samples, 0.05%)</title><rect x="1179.0" y="293" width="0.6" height="15.0" fill="rgb(224,90,21)" rx="2" ry="2" />
+<text  x="1181.97" y="303.5" ></text>
+</g>
+<g >
+<title>do_user_addr_fault (28,038,372 samples, 0.01%)</title><rect x="1087.8" y="373" width="0.1" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="1090.78" y="383.5" ></text>
+</g>
+<g >
+<title>Scene::getTris (745,012,490 samples, 0.32%)</title><rect x="957.7" y="357" width="3.9" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
+<text  x="960.73" y="367.5" ></text>
+</g>
+<g >
+<title>__libc_start_call_main (182,257,912,360 samples, 79.45%)</title><rect x="146.8" y="421" width="937.5" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="149.83" y="431.5" >__libc_start_call_main</text>
+</g>
+<g >
+<title>operator new (270,728,866 samples, 0.12%)</title><rect x="1058.8" y="341" width="1.4" height="15.0" fill="rgb(216,51,12)" rx="2" ry="2" />
+<text  x="1061.81" y="351.5" ></text>
+</g>
+<g >
+<title>common_interrupt (139,369,801 samples, 0.06%)</title><rect x="861.9" y="325" width="0.8" height="15.0" fill="rgb(215,46,11)" rx="2" ry="2" />
+<text  x="864.95" y="335.5" ></text>
+</g>
+<g >
+<title>[unknown] (286,787,154 samples, 0.13%)</title><rect x="10.8" y="405" width="1.5" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
+<text  x="13.78" y="415.5" ></text>
+</g>
+<g >
+<title>get_page_from_freelist (42,043,292 samples, 0.02%)</title><rect x="1081.8" y="133" width="0.3" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
+<text  x="1084.83" y="143.5" ></text>
+</g>
+<g >
+<title>amdgpu_irq_dispatch (128,554,784 samples, 0.06%)</title><rect x="862.0" y="213" width="0.6" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
+<text  x="864.97" y="223.5" ></text>
+</g>
+<g >
+<title>std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;::_M_construct&lt;char*&gt; (231,873,355 samples, 0.10%)</title><rect x="1042.4" y="357" width="1.2" height="15.0" fill="rgb(230,118,28)" rx="2" ry="2" />
+<text  x="1045.40" y="367.5" ></text>
+</g>
+<g >
+<title>do_user_addr_fault (216,934,622 samples, 0.09%)</title><rect x="74.9" y="357" width="1.1" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="77.86" y="367.5" ></text>
+</g>
+<g >
+<title>__get_vblank_counter (31,946,960 samples, 0.01%)</title><rect x="862.1" y="101" width="0.2" height="15.0" fill="rgb(209,18,4)" rx="2" ry="2" />
+<text  x="865.10" y="111.5" ></text>
+</g>
+<g >
+<title>__handle_irq_event_percpu (134,488,404 samples, 0.06%)</title><rect x="862.0" y="261" width="0.6" height="15.0" fill="rgb(236,147,35)" rx="2" ry="2" />
+<text  x="864.95" y="271.5" ></text>
+</g>
+<g >
+<title>exc_page_fault (29,374,706 samples, 0.01%)</title><rect x="1087.8" y="389" width="0.1" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="1090.78" y="399.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::Unwind (315,221,499 samples, 0.14%)</title><rect x="1087.9" y="421" width="1.6" height="15.0" fill="rgb(233,130,31)" rx="2" ry="2" />
+<text  x="1090.93" y="431.5" ></text>
+</g>
+<g >
+<title>__split_vma (47,539,572 samples, 0.02%)</title><rect x="1179.0" y="261" width="0.2" height="15.0" fill="rgb(237,150,36)" rx="2" ry="2" />
+<text  x="1181.98" y="271.5" ></text>
+</g>
+<g >
+<title>get_page_from_freelist (40,919,179 samples, 0.02%)</title><rect x="35.4" y="213" width="0.3" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
+<text  x="38.45" y="223.5" ></text>
+</g>
+<g >
+<title>__handle_mm_fault (67,109,510 samples, 0.03%)</title><rect x="1081.7" y="229" width="0.4" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="1084.72" y="239.5" ></text>
+</g>
+<g >
+<title>get_page_from_freelist (112,353,262 samples, 0.05%)</title><rect x="75.2" y="229" width="0.6" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
+<text  x="78.18" y="239.5" ></text>
+</g>
+<g >
+<title>__strpbrk_sse42 (379,971,984 samples, 0.17%)</title><rect x="94.8" y="405" width="1.9" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
+<text  x="97.79" y="415.5" ></text>
+</g>
+<g >
+<title>__handle_mm_fault (21,523,712 samples, 0.01%)</title><rect x="1087.8" y="341" width="0.1" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="1090.80" y="351.5" ></text>
+</g>
+<g >
+<title>main (182,249,865,610 samples, 79.44%)</title><rect x="146.9" y="405" width="937.4" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="149.87" y="415.5" >main</text>
+</g>
+<g >
+<title>optc1_get_vblank_counter (19,957,642 samples, 0.01%)</title><rect x="862.2" y="37" width="0.1" height="15.0" fill="rgb(226,100,23)" rx="2" ry="2" />
+<text  x="865.16" y="47.5" ></text>
+</g>
+<g >
+<title>Scene::load (539,083,433 samples, 0.23%)</title><rect x="1081.5" y="373" width="2.7" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="1084.46" y="383.5" ></text>
+</g>
+<g >
+<title>__folio_alloc (42,106,466 samples, 0.02%)</title><rect x="1083.9" y="197" width="0.2" height="15.0" fill="rgb(224,91,21)" rx="2" ry="2" />
+<text  x="1086.91" y="207.5" ></text>
+</g>
+<g >
+<title>mmap_region (145,636,171 samples, 0.06%)</title><rect x="1179.0" y="309" width="0.7" height="15.0" fill="rgb(231,121,28)" rx="2" ry="2" />
+<text  x="1181.96" y="319.5" ></text>
+</g>
+<g >
+<title>__handle_mm_fault (67,715,064 samples, 0.03%)</title><rect x="1083.8" y="261" width="0.3" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="1086.78" y="271.5" ></text>
+</g>
+<g >
+<title>unmap_region (22,498,939 samples, 0.01%)</title><rect x="1179.8" y="309" width="0.1" height="15.0" fill="rgb(219,64,15)" rx="2" ry="2" />
+<text  x="1182.76" y="319.5" ></text>
+</g>
+<g >
+<title>clock_gettime@@GLIBC_2.17 (43,068,327 samples, 0.02%)</title><rect x="96.8" y="405" width="0.2" height="15.0" fill="rgb(250,209,50)" rx="2" ry="2" />
+<text  x="99.80" y="415.5" ></text>
+</g>
+<g >
+<title>entry_SYSCALL_64_after_hwframe (155,747,541 samples, 0.07%)</title><rect x="1178.9" y="405" width="0.8" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
+<text  x="1181.92" y="415.5" ></text>
+</g>
+<g >
+<title>clear_page_rep (30,922,513 samples, 0.01%)</title><rect x="35.5" y="197" width="0.1" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="38.46" y="207.5" ></text>
+</g>
+<g >
+<title>__folio_alloc (122,168,965 samples, 0.05%)</title><rect x="75.1" y="261" width="0.7" height="15.0" fill="rgb(224,91,21)" rx="2" ry="2" />
+<text  x="78.14" y="271.5" ></text>
+</g>
+<g >
+<title>entry_SYSCALL_64_after_hwframe (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="405" width="0.2" height="15.0" fill="rgb(218,63,15)" rx="2" ry="2" />
+<text  x="1182.73" y="415.5" ></text>
+</g>
+<g >
+<title>__sanitizer::StackTrace::GetCurrentPc (110,684,078 samples, 0.05%)</title><rect x="973.5" y="357" width="0.6" height="15.0" fill="rgb(243,176,42)" rx="2" ry="2" />
+<text  x="976.49" y="367.5" ></text>
+</g>
+<g >
+<title>vma_alloc_folio (42,106,466 samples, 0.02%)</title><rect x="1083.9" y="213" width="0.2" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
+<text  x="1086.91" y="223.5" ></text>
+</g>
+<g >
+<title>dm_pflip_high_irq (42,095,819 samples, 0.02%)</title><rect x="430.3" y="197" width="0.2" height="15.0" fill="rgb(208,16,3)" rx="2" ry="2" />
+<text  x="433.26" y="207.5" ></text>
+</g>
+<g >
+<title>do_mas_align_munmap (109,328,483 samples, 0.05%)</title><rect x="1179.0" y="277" width="0.5" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1181.97" y="287.5" ></text>
+</g>
+<g >
+<title>Triangle::v0 (63,614,994 samples, 0.03%)</title><rect x="907.4" y="341" width="0.3" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="910.36" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::asan_memalign (103,085,938 samples, 0.04%)</title><rect x="1047.0" y="341" width="0.6" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="1050.04" y="351.5" ></text>
+</g>
+<g >
+<title>__alloc_pages (43,076,256 samples, 0.02%)</title><rect x="1081.8" y="149" width="0.3" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
+<text  x="1084.83" y="159.5" ></text>
+</g>
+<g >
+<title>__asan_region_is_poisoned (184,808,399 samples, 0.08%)</title><rect x="958.7" y="341" width="1.0" height="15.0" fill="rgb(219,65,15)" rx="2" ry="2" />
+<text  x="961.71" y="351.5" ></text>
+</g>
+<g >
+<title>std::vector&lt;float, std::allocator&lt;float&gt; &gt;::_M_realloc_insert&lt;float&gt; (103,709,936 samples, 0.05%)</title><rect x="914.5" y="341" width="0.6" height="15.0" fill="rgb(237,149,35)" rx="2" ry="2" />
+<text  x="917.52" y="351.5" ></text>
+</g>
+<g >
+<title>tick_sched_do_timer (27,088,345 samples, 0.01%)</title><rect x="862.7" y="245" width="0.2" height="15.0" fill="rgb(227,104,25)" rx="2" ry="2" />
+<text  x="865.75" y="255.5" ></text>
+</g>
+<g >
+<title>__asan::GetMallocContextSize (34,640,640 samples, 0.02%)</title><rect x="1054.3" y="341" width="0.2" height="15.0" fill="rgb(251,216,51)" rx="2" ry="2" />
+<text  x="1057.33" y="351.5" ></text>
+</g>
+<g >
+<title>tick_sched_timer (73,281,441 samples, 0.03%)</title><rect x="862.7" y="261" width="0.4" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
+<text  x="865.73" y="271.5" ></text>
+</g>
+<g >
+<title>drm_update_vblank_count (21,226,311 samples, 0.01%)</title><rect x="430.2" y="133" width="0.1" height="15.0" fill="rgb(238,154,36)" rx="2" ry="2" />
+<text  x="433.15" y="143.5" ></text>
+</g>
+<g >
+<title>asm_exc_page_fault (32,475,737 samples, 0.01%)</title><rect x="1087.8" y="405" width="0.1" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="1090.76" y="415.5" ></text>
+</g>
+<g >
+<title>unmap_region (29,772,560 samples, 0.01%)</title><rect x="1179.4" y="261" width="0.1" height="15.0" fill="rgb(219,64,15)" rx="2" ry="2" />
+<text  x="1182.36" y="271.5" ></text>
+</g>
+<g >
+<title>__sanitizer::StackDepotBase&lt;__sanitizer::StackDepotNode, 1, 20&gt;::Put (5,068,120,819 samples, 2.21%)</title><rect x="1143.2" y="421" width="26.1" height="15.0" fill="rgb(226,99,23)" rx="2" ry="2" />
+<text  x="1146.19" y="431.5" >_..</text>
+</g>
+<g >
+<title>lock_mm_and_find_vma (21,515,768 samples, 0.01%)</title><rect x="75.9" y="341" width="0.1" height="15.0" fill="rgb(235,138,33)" rx="2" ry="2" />
+<text  x="78.85" y="351.5" ></text>
+</g>
+<g >
+<title>exc_page_fault (230,590,154 samples, 0.10%)</title><rect x="74.8" y="373" width="1.2" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="77.83" y="383.5" ></text>
+</g>
+<g >
+<title>DrawingWindow::setPixelColour (98,794,029 samples, 0.04%)</title><rect x="1060.2" y="373" width="0.5" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="1063.23" y="383.5" ></text>
+</g>
+<g >
+<title>exc_page_fault (46,521,829 samples, 0.02%)</title><rect x="125.4" y="389" width="0.2" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="128.38" y="399.5" ></text>
+</g>
+<g >
+<title>__asan::PoisonShadow (246,065,805 samples, 0.11%)</title><rect x="141.0" y="421" width="1.3" height="15.0" fill="rgb(231,120,28)" rx="2" ry="2" />
+<text  x="144.05" y="431.5" ></text>
+</g>
+<g >
+<title>operator delete (291,034,119 samples, 0.13%)</title><rect x="1057.3" y="341" width="1.5" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1060.32" y="351.5" ></text>
+</g>
+<g >
+<title>handle_edge_irq (138,370,686 samples, 0.06%)</title><rect x="862.0" y="293" width="0.7" height="15.0" fill="rgb(220,69,16)" rx="2" ry="2" />
+<text  x="864.95" y="303.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (210,388,511 samples, 0.09%)</title><rect x="1055.6" y="341" width="1.1" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="1058.62" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::CombinedAllocator&lt;__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;, __sanitizer::LargeMmapAllocatorPtrArrayDynamic&gt;::Deallocate (127,276,095 samples, 0.06%)</title><rect x="1120.2" y="421" width="0.7" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="1123.24" y="431.5" ></text>
+</g>
+<g >
+<title>handle_mm_fault (37,063,665 samples, 0.02%)</title><rect x="125.4" y="357" width="0.2" height="15.0" fill="rgb(234,135,32)" rx="2" ry="2" />
+<text  x="128.40" y="367.5" ></text>
+</g>
+<g >
+<title>__asan::GetCurrentThread (1,000,008,980 samples, 0.44%)</title><rect x="48.2" y="405" width="5.1" height="15.0" fill="rgb(219,68,16)" rx="2" ry="2" />
+<text  x="51.17" y="415.5" ></text>
+</g>
+<g >
+<title>__asan::QuickCheckForUnpoisonedRegion (24,803,551 samples, 0.01%)</title><rect x="904.8" y="325" width="0.1" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="907.82" y="335.5" ></text>
+</g>
+<g >
+<title>vm_mmap_pgoff (153,749,722 samples, 0.07%)</title><rect x="1178.9" y="341" width="0.8" height="15.0" fill="rgb(237,150,35)" rx="2" ry="2" />
+<text  x="1181.93" y="351.5" ></text>
+</g>
+<g >
+<title>hrtimer_interrupt (88,291,433 samples, 0.04%)</title><rect x="862.7" y="293" width="0.4" height="15.0" fill="rgb(228,109,26)" rx="2" ry="2" />
+<text  x="865.69" y="303.5" ></text>
+</g>
+<g >
+<title>RedNoise (229,402,690,956 samples, 100.00%)</title><rect x="10.0" y="437" width="1180.0" height="15.0" fill="rgb(240,164,39)" rx="2" ry="2" />
+<text  x="13.01" y="447.5" >RedNoise</text>
+</g>
+<g >
+<title>__asan::GetCurrentThreadStats (76,761,657 samples, 0.03%)</title><rect x="140.7" y="421" width="0.3" height="15.0" fill="rgb(215,48,11)" rx="2" ry="2" />
+<text  x="143.66" y="431.5" ></text>
+</g>
+<g >
+<title>amdgpu_irq_handler (90,520,590 samples, 0.04%)</title><rect x="430.1" y="261" width="0.4" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="433.08" y="271.5" ></text>
+</g>
+<g >
+<title>__asan::asan_memalign (111,613,135 samples, 0.05%)</title><rect x="1055.0" y="341" width="0.6" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="1058.05" y="351.5" ></text>
+</g>
+<g >
+<title>__vma_adjust (37,696,745 samples, 0.02%)</title><rect x="1179.0" y="245" width="0.2" height="15.0" fill="rgb(224,87,20)" rx="2" ry="2" />
+<text  x="1182.00" y="255.5" ></text>
+</g>
+<g >
+<title>asm_exc_page_fault (110,021,015 samples, 0.05%)</title><rect x="35.2" y="389" width="0.6" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="38.19" y="399.5" ></text>
+</g>
+<g >
+<title>handle_pte_fault (60,826,065 samples, 0.03%)</title><rect x="35.3" y="309" width="0.4" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="38.35" y="319.5" ></text>
+</g>
+<g >
+<title>Camera::buildCameraRay (1,231,394,771 samples, 0.54%)</title><rect x="147.8" y="373" width="6.4" height="15.0" fill="rgb(207,10,2)" rx="2" ry="2" />
+<text  x="150.82" y="383.5" ></text>
+</g>
+<g >
+<title>__ieee754_pow_fma (659,921,676 samples, 0.29%)</title><rect x="968.8" y="357" width="3.4" height="15.0" fill="rgb(240,163,39)" rx="2" ry="2" />
+<text  x="971.77" y="367.5" ></text>
+</g>
+<g >
+<title>amdgpu_dm_irq_handler (110,785,256 samples, 0.05%)</title><rect x="862.0" y="197" width="0.6" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
+<text  x="865.01" y="207.5" ></text>
+</g>
+<g >
+<title>__asan::RZSize2Log (730,752,325 samples, 0.32%)</title><rect x="142.3" y="421" width="3.8" height="15.0" fill="rgb(217,58,13)" rx="2" ry="2" />
+<text  x="145.32" y="431.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::QuarantineChunk (107,202,753 samples, 0.05%)</title><rect x="1053.8" y="341" width="0.5" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="1056.78" y="351.5" ></text>
+</g>
+<g >
+<title>drm_update_vblank_count (20,213,774 samples, 0.01%)</title><rect x="430.3" y="165" width="0.1" height="15.0" fill="rgb(238,154,36)" rx="2" ry="2" />
+<text  x="433.29" y="175.5" ></text>
+</g>
+<g >
+<title>__ieee754_pow_fma (90,439,433 samples, 0.04%)</title><rect x="908.0" y="341" width="0.5" height="15.0" fill="rgb(240,163,39)" rx="2" ry="2" />
+<text  x="910.99" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::internal_munmap (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="421" width="0.2" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
+<text  x="1182.73" y="431.5" ></text>
+</g>
+<g >
+<title>pow@@GLIBC_2.29 (33,669,834 samples, 0.01%)</title><rect x="1042.2" y="357" width="0.2" height="15.0" fill="rgb(222,78,18)" rx="2" ry="2" />
+<text  x="1045.22" y="367.5" ></text>
+</g>
+<g >
+<title>__sanitizer::StackTrace::GetCurrentPc (53,400,669 samples, 0.02%)</title><rect x="1048.6" y="341" width="0.3" height="15.0" fill="rgb(243,176,42)" rx="2" ry="2" />
+<text  x="1051.63" y="351.5" ></text>
+</g>
+<g >
+<title>vma_alloc_folio (44,081,178 samples, 0.02%)</title><rect x="1081.8" y="181" width="0.3" height="15.0" fill="rgb(245,187,44)" rx="2" ry="2" />
+<text  x="1084.83" y="191.5" ></text>
+</g>
+<g >
+<title>clear_page_rep (78,226,695 samples, 0.03%)</title><rect x="75.2" y="213" width="0.4" height="15.0" fill="rgb(253,221,52)" rx="2" ry="2" />
+<text  x="78.21" y="223.5" ></text>
+</g>
+<g >
+<title>drm_crtc_handle_vblank (23,259,939 samples, 0.01%)</title><rect x="430.1" y="165" width="0.2" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
+<text  x="433.14" y="175.5" ></text>
+</g>
+<g >
+<title>Camera::specular (611,925,056 samples, 0.27%)</title><rect x="915.8" y="357" width="3.1" height="15.0" fill="rgb(210,24,5)" rx="2" ry="2" />
+<text  x="918.79" y="367.5" ></text>
+</g>
+<g >
+<title>dm_crtc_handle_vblank (42,964,174 samples, 0.02%)</title><rect x="862.1" y="165" width="0.2" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="865.08" y="175.5" ></text>
+</g>
+<g >
+<title>__interceptor_memmove (56,478,009 samples, 0.02%)</title><rect x="924.1" y="341" width="0.3" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="927.11" y="351.5" ></text>
+</g>
+<g >
+<title>drm_handle_vblank (42,964,174 samples, 0.02%)</title><rect x="862.1" y="133" width="0.2" height="15.0" fill="rgb(223,83,19)" rx="2" ry="2" />
+<text  x="865.08" y="143.5" ></text>
+</g>
+<g >
+<title>__interceptor_memmove (89,136,076 samples, 0.04%)</title><rect x="1047.6" y="341" width="0.4" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="1050.57" y="351.5" ></text>
+</g>
+<g >
+<title>rmqueue (25,311,636 samples, 0.01%)</title><rect x="75.6" y="213" width="0.2" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
+<text  x="78.62" y="223.5" ></text>
+</g>
+<g >
+<title>Triangle::v0 (298,252,764 samples, 0.13%)</title><rect x="1079.2" y="373" width="1.5" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="1082.19" y="383.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (43,940,474 samples, 0.02%)</title><rect x="927.0" y="341" width="0.3" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="930.02" y="351.5" ></text>
+</g>
+<g >
+<title>do_wp_page (26,679,845 samples, 0.01%)</title><rect x="125.4" y="309" width="0.2" height="15.0" fill="rgb(212,36,8)" rx="2" ry="2" />
+<text  x="128.43" y="319.5" ></text>
+</g>
+<g >
+<title>__sanitizer::internal_memmove (1,066,205,413 samples, 0.46%)</title><rect x="908.6" y="341" width="5.5" height="15.0" fill="rgb(251,214,51)" rx="2" ry="2" />
+<text  x="911.65" y="351.5" ></text>
+</g>
+<g >
+<title>__alloc_pages (120,259,267 samples, 0.05%)</title><rect x="75.1" y="245" width="0.7" height="15.0" fill="rgb(233,129,30)" rx="2" ry="2" />
+<text  x="78.14" y="255.5" ></text>
+</g>
+<g >
+<title>TextureMap::pixel (123,223,974 samples, 0.05%)</title><rect x="961.6" y="357" width="0.6" height="15.0" fill="rgb(225,93,22)" rx="2" ry="2" />
+<text  x="964.56" y="367.5" ></text>
+</g>
+<g >
+<title>do_anonymous_page (61,561,594 samples, 0.03%)</title><rect x="1081.7" y="197" width="0.4" height="15.0" fill="rgb(238,155,37)" rx="2" ry="2" />
+<text  x="1084.74" y="207.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (117,191,777 samples, 0.05%)</title><rect x="1048.0" y="341" width="0.6" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="1051.03" y="351.5" ></text>
+</g>
+<g >
+<title>operator delete (69,660,665 samples, 0.03%)</title><rect x="1080.8" y="373" width="0.3" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="1083.79" y="383.5" ></text>
+</g>
+<g >
+<title>__interceptor_memcpy (30,469,701 samples, 0.01%)</title><rect x="1043.4" y="341" width="0.2" height="15.0" fill="rgb(221,76,18)" rx="2" ry="2" />
+<text  x="1046.43" y="351.5" ></text>
+</g>
+<g >
+<title>std::istream::get (20,633,030 samples, 0.01%)</title><rect x="1082.3" y="325" width="0.1" height="15.0" fill="rgb(219,65,15)" rx="2" ry="2" />
+<text  x="1085.28" y="335.5" ></text>
+</g>
+<g >
+<title>pthread_getspecific@plt (29,810,535 samples, 0.01%)</title><rect x="105.6" y="405" width="0.2" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="108.61" y="415.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BlockingMutex::Lock (23,465,276 samples, 0.01%)</title><rect x="76.1" y="405" width="0.1" height="15.0" fill="rgb(229,112,26)" rx="2" ry="2" />
+<text  x="79.12" y="415.5" ></text>
+</g>
+<g >
+<title>__vm_munmap (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="357" width="0.2" height="15.0" fill="rgb(231,121,28)" rx="2" ry="2" />
+<text  x="1182.73" y="367.5" ></text>
+</g>
+<g >
+<title>Camera::raycast (181,665,270,771 samples, 79.19%)</title><rect x="147.0" y="389" width="934.4" height="15.0" fill="rgb(232,124,29)" rx="2" ry="2" />
+<text  x="149.97" y="399.5" >Camera::raycast</text>
+</g>
+<g >
+<title>__asan::Allocator::QuarantineChunk (1,138,603,650 samples, 0.50%)</title><rect x="39.3" y="405" width="5.8" height="15.0" fill="rgb(247,194,46)" rx="2" ry="2" />
+<text  x="42.26" y="415.5" ></text>
+</g>
+<g >
+<title>operator delete (28,574,372 samples, 0.01%)</title><rect x="915.6" y="325" width="0.1" height="15.0" fill="rgb(247,196,46)" rx="2" ry="2" />
+<text  x="918.56" y="335.5" ></text>
+</g>
+<g >
+<title>__interceptor_memmove (42,192,417 samples, 0.02%)</title><rect x="925.6" y="341" width="0.2" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="928.63" y="351.5" ></text>
+</g>
+<g >
+<title>__handle_mm_fault (180,771,749 samples, 0.08%)</title><rect x="74.9" y="325" width="0.9" height="15.0" fill="rgb(207,9,2)" rx="2" ry="2" />
+<text  x="77.90" y="335.5" ></text>
+</g>
+<g >
+<title>ksys_mmap_pgoff (153,749,722 samples, 0.07%)</title><rect x="1178.9" y="357" width="0.8" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<text  x="1181.93" y="367.5" ></text>
+</g>
+<g >
+<title>do_syscall_64 (28,043,498 samples, 0.01%)</title><rect x="1179.7" y="389" width="0.2" height="15.0" fill="rgb(209,20,4)" rx="2" ry="2" />
+<text  x="1182.73" y="399.5" ></text>
+</g>
+<g >
+<title>[libX11.so.6.4.0] (22,520,368 samples, 0.01%)</title><rect x="10.4" y="405" width="0.1" height="15.0" fill="rgb(220,73,17)" rx="2" ry="2" />
+<text  x="13.43" y="415.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::Deallocate (669,667,499 samples, 0.29%)</title><rect x="35.8" y="405" width="3.5" height="15.0" fill="rgb(230,119,28)" rx="2" ry="2" />
+<text  x="38.82" y="415.5" ></text>
+</g>
+<g >
+<title>Triangle::v0 (221,577,409 samples, 0.10%)</title><rect x="902.3" y="325" width="1.1" height="15.0" fill="rgb(231,123,29)" rx="2" ry="2" />
+<text  x="905.27" y="335.5" ></text>
+</g>
+<g >
+<title>__sanitizer::RunMallocHooks (418,628,696 samples, 0.18%)</title><rect x="86.9" y="405" width="2.1" height="15.0" fill="rgb(218,62,14)" rx="2" ry="2" />
+<text  x="89.87" y="415.5" ></text>
+</g>
+<g >
+<title>[[vdso]] (42,058,256 samples, 0.02%)</title><rect x="96.8" y="389" width="0.2" height="15.0" fill="rgb(218,60,14)" rx="2" ry="2" />
+<text  x="99.81" y="399.5" ></text>
+</g>
+<g >
+<title>amdgpu_irq_handler (132,576,781 samples, 0.06%)</title><rect x="862.0" y="245" width="0.6" height="15.0" fill="rgb(228,108,25)" rx="2" ry="2" />
+<text  x="864.96" y="255.5" ></text>
+</g>
+<g >
+<title>Scene::getModelFromTri (2,209,623,821 samples, 0.96%)</title><rect x="946.4" y="357" width="11.3" height="15.0" fill="rgb(228,106,25)" rx="2" ry="2" />
+<text  x="949.35" y="367.5" ></text>
+</g>
+<g >
+<title>__asan::asan_memalign (33,151,165 samples, 0.01%)</title><rect x="929.2" y="341" width="0.2" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="932.24" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (991,984,355 samples, 0.43%)</title><rect x="1113.4" y="421" width="5.1" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="1116.37" y="431.5" ></text>
+</g>
+<g >
+<title>amdgpu_ih_process (90,520,590 samples, 0.04%)</title><rect x="430.1" y="245" width="0.4" height="15.0" fill="rgb(209,22,5)" rx="2" ry="2" />
+<text  x="433.08" y="255.5" ></text>
+</g>
+<g >
+<title>__common_interrupt (139,369,801 samples, 0.06%)</title><rect x="861.9" y="309" width="0.8" height="15.0" fill="rgb(237,150,36)" rx="2" ry="2" />
+<text  x="864.95" y="319.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::Allocate (4,546,876,736 samples, 1.98%)</title><rect x="12.4" y="405" width="23.4" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="15.43" y="415.5" >_..</text>
+</g>
+<g >
+<title>pthread_getspecific@plt (21,996,780 samples, 0.01%)</title><rect x="1189.9" y="421" width="0.1" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="1192.87" y="431.5" ></text>
+</g>
+<g >
+<title>__sanitizer::CombinedAllocator&lt;__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;, __sanitizer::LargeMmapAllocatorPtrArrayDynamic&gt;::Deallocate (463,024,943 samples, 0.20%)</title><rect x="82.2" y="405" width="2.4" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="85.17" y="415.5" ></text>
+</g>
+<g >
+<title>dc_stream_get_vblank_counter (21,922,460 samples, 0.01%)</title><rect x="862.2" y="53" width="0.1" height="15.0" fill="rgb(211,30,7)" rx="2" ry="2" />
+<text  x="865.15" y="63.5" ></text>
+</g>
+<g >
+<title>__asan::Allocator::Allocate (3,850,913,082 samples, 1.68%)</title><rect x="105.8" y="421" width="19.8" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="108.82" y="431.5" ></text>
+</g>
+<g >
+<title>amdgpu_get_vblank_counter_kms (31,946,960 samples, 0.01%)</title><rect x="862.1" y="85" width="0.2" height="15.0" fill="rgb(249,204,48)" rx="2" ry="2" />
+<text  x="865.10" y="95.5" ></text>
+</g>
+<g >
+<title>do_mmap (151,448,608 samples, 0.07%)</title><rect x="1178.9" y="325" width="0.8" height="15.0" fill="rgb(228,107,25)" rx="2" ry="2" />
+<text  x="1181.93" y="335.5" ></text>
+</g>
+<g >
+<title>dm_pflip_high_irq (52,761,630 samples, 0.02%)</title><rect x="862.3" y="181" width="0.3" height="15.0" fill="rgb(208,16,3)" rx="2" ry="2" />
+<text  x="865.31" y="191.5" ></text>
+</g>
+<g >
+<title>__sanitizer::BufferedStackTrace::UnwindImpl (39,193,612 samples, 0.02%)</title><rect x="925.8" y="341" width="0.2" height="15.0" fill="rgb(236,145,34)" rx="2" ry="2" />
+<text  x="928.85" y="351.5" ></text>
+</g>
+<g >
+<title>__interceptor_memmove (113,139,020 samples, 0.05%)</title><rect x="929.4" y="341" width="0.6" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="932.41" y="351.5" ></text>
+</g>
+<g >
+<title>exc_page_fault (89,579,108 samples, 0.04%)</title><rect x="35.3" y="373" width="0.5" height="15.0" fill="rgb(212,35,8)" rx="2" ry="2" />
+<text  x="38.29" y="383.5" ></text>
+</g>
+<g >
+<title>__lsan::DisabledInThisThread (535,748,481 samples, 0.23%)</title><rect x="59.5" y="405" width="2.8" height="15.0" fill="rgb(249,202,48)" rx="2" ry="2" />
+<text  x="62.53" y="415.5" ></text>
+</g>
+<g >
+<title>ModelLoader::asFacet (157,401,121 samples, 0.07%)</title><rect x="1081.5" y="341" width="0.8" height="15.0" fill="rgb(244,181,43)" rx="2" ry="2" />
+<text  x="1084.46" y="351.5" ></text>
+</g>
+<g >
+<title>__asan::asan_memalign (20,911,736 samples, 0.01%)</title><rect x="924.0" y="341" width="0.1" height="15.0" fill="rgb(220,71,17)" rx="2" ry="2" />
+<text  x="927.01" y="351.5" ></text>
+</g>
+<g >
+<title>__sanitizer::CombinedAllocator&lt;__sanitizer::SizeClassAllocator64&lt;__asan::AP64&lt;__sanitizer::LocalAddressSpaceView&gt; &gt;, __sanitizer::LargeMmapAllocatorPtrArrayDynamic&gt;::Allocate (344,611,066 samples, 0.15%)</title><rect x="1118.5" y="421" width="1.7" height="15.0" fill="rgb(228,110,26)" rx="2" ry="2" />
+<text  x="1121.47" y="431.5" ></text>
 </g>
 </g>
 </svg>

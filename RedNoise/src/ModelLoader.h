@@ -19,6 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 class ModelLoader {
 public:
     explicit ModelLoader(std::string fileName, float scale, glm::vec3 position, int shading);
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, float fuzz, bool isPhong); // metal or pgh metal
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -33,8 +34,10 @@ public:
     glm::vec3* getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
     //shading mode
-    enum Shading {nrm, grd, phg, mrr, phg_mrr};// normal(s), gouraud, phong, mirror, phong_mirror
+    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls)
     int* getShading();
+    float *getAttenuation();
+    float* getFuzz();
 private:
     glm::vec3 position;
     std::vector<std::string> tailTokens(std::vector<std::string> ln, const std::string& tkn);
@@ -51,6 +54,9 @@ private:
     std::vector<glm::vec3> vertNorms; //one to one correspondance to the verts list
     std::vector<std::vector<Triangle*>> vertToTris; //a lookup for which triangles use the ith vert
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
+    float attenuation; //only set to anything other than 1,1,1 if we are a metal
+    float fuzz; //encodes random ray scattering
+    std::vector<std::vector<glm::vec3>> fuzzMap; //precomputed random vectors to stop weird filmgrain effect on metal surfaces and diffuse reflections
 
     static const std::string TKN_MTLLIB;
     void asMaterial(std::vector<std::string> ln, std::string& location);
@@ -78,5 +84,7 @@ private:
     void boundVertices();
 
     static const float SMALL;
+
+    void makeFuzzMap(DrawingWindow &window);
 };
 

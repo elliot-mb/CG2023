@@ -225,3 +225,17 @@ void Cameraman::LerpLookat::act(DrawingWindow &window, Camera &camera, uint &fra
         frameID++;
     }
 }
+
+
+//instant action
+// row 1:                 IGNORED
+// row 2:                 IGNORED
+// row 3: IGNORED x, Render mode enum y, IGNORED z
+void Cameraman::SetMode::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
+                             DepthBuffer &depthBuffer, bool withPreview) {
+    int mode = static_cast<int>(glm::floor(this->args[2].y));
+    if(mode > Camera::ray || mode < Camera::msh){
+        throw runtime_error("Cameraman::SetMode::act: action set up with an invalid render mode");
+    }
+    camera.setRenderMode(mode);
+}
