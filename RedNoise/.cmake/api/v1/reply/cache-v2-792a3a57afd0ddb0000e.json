@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Debug"
+			"value" : "Release"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -203,7 +203,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : ""
+			"value" : "-pthread"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS_DEBUG",

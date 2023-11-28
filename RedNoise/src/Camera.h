@@ -17,7 +17,7 @@ class Camera {
 public:
     typedef std::pair<bool, pair<int, glm::vec3>> MaybeTriangle;
 
-    Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* s);
+    Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* s, int threads);
     std::tuple<glm::vec3, bool> getCanvasIntersectionPoint(glm::vec3 vertexPosition); //vertex and whether we should draw it (not off image plane)
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
@@ -58,6 +58,8 @@ private:
     float ambientLower;
     glm::vec3* currentFuzz;
     Scene* scene;
+    int threads;
+    std::vector<int> sliceHeights; //0, p, q, r, s gives you the slices 0 -> p, p+1 -> q, q+1 -> r, r+1 -> s, s+1 -> screen height
 
     bool isOrbiting;
     uint mode;
@@ -67,7 +69,7 @@ private:
     vec3 myRight();
 
     vec3 buildCameraRay(int& x, int& y);
-    void raycast(DrawingWindow &window);
+//    void raycast(DrawingWindow &window);
     void hit(int bounces, glm::vec3& source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, glm::vec3& colour);
     void rasterise(DrawingWindow &window, DepthBuffer &depthBuffer);
 
@@ -85,4 +87,6 @@ private:
 
     void reflect(int bounces, glm::vec3& attenuation, vec3 &incidentRay, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
                  vector<Triangle *>& tris, vec3 &colour);
+
+    void raycast(DrawingWindow &window, int start, int end);
 };

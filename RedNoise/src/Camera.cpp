@@ -9,13 +9,14 @@
 #include "Scene.h"
 #include <iostream>
 #include <tuple>
+#include <thread>
 
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
 glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({0, 0, 0});
 
-Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene) {
+Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene, int threads) {
     this->position = cameraPosition;
     this->focalLength = focalLength;
     this->screen = screen;
@@ -35,6 +36,15 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Sc
     this->ambientUpper = 0.95;
     this->ambientLower = 0.2;
     this->scene = scene;
+    this->threads = threads;
+
+    //make slice heights
+    this->sliceHeights = {};
+    int stride = glm::floor(screen.y / static_cast<float>(this->threads));
+    for(int i = -1; i < this->threads; i+=stride){ //we write a -1 in the first slice as we always take row value +1 as the start bound
+        sliceHeights.push_back(i); //exclusivity will be guaranteed by the thread runner (doRaytracing)
+    }
+    sliceHeights.push_back(glm::floor(screen.y - 1)); //the screenheight-1th row
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -263,7 +273,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
 }
 
-void Camera::raycast(DrawingWindow& window){
+//start and end row numbers of the strip
+void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 1; //how large are our ray texturePts (1 is native resolution)
@@ -271,7 +282,7 @@ void Camera::raycast(DrawingWindow& window){
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
-        for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y += stride){
+        for(int y = start; y < end; y += stride){
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
             glm::vec2 vw = {0.0, 0.0};
@@ -448,7 +459,15 @@ void Camera::renderMode() {
 
 void Camera::doRaytracing(DrawingWindow& window) {
     if(this->mode == ray){
-        raycast(window);
+
+        std::vector<std::thread> slices = {};
+        for(int i = 1; i < this->threads; i++){
+            slices.push_back(std::thread(&Camera::raycast, this, std::ref(window), this->sliceHeights[i - 1] + 1, this->sliceHeights[i]));
+        }
+
+        for(std::thread &t : slices){
+            t.join();
+        }
     }
 }
 
