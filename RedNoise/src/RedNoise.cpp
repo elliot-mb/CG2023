@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     glm::vec4 light5 = glm::vec4(-0.1, 0.25,  0.0, 0.5); //so good they made a second second one
 
     Scene* s = new Scene(models, {&light, &light2, &light3, &light4, &light5});
-    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 7);
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 12);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;

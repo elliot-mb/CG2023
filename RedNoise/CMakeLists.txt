@@ -50,14 +50,15 @@ if (MSVC)
             /W3
             /Zc:wchar_t
             )
-    set(DEBUG_OPTIONS /MTd)
-    set(RELEASE_OPTIONS /MT /GF /Gy /O2 /fp:fast)
+    set(DEBUG_OPTIONS /MTd /pthread)
+    set(RELEASE_OPTIONS /MT /GF /Gy /O2 /fp:fast /pthread)
     if (NOT DEFINED SDL2_LIBRARIES)
         set(SDL2_LIBRARIES SDL2::SDL2 SDL2::SDL2main)
     endif()
 else ()
     target_compile_options(RedNoise
         PUBLIC
+        -pthread
         -Wall
         -Wextra
         -Wcast-align
@@ -67,9 +68,9 @@ else ()
         -Wno-unused-variable
         -Wno-ignored-attributes)
 
-    set(DEBUG_OPTIONS -O2 -fno-omit-frame-pointer -g)
-    set(RELEASE_OPTIONS -O3 -march=native -mtune=native)
-    target_link_libraries(RedNoise PUBLIC $<$<CONFIG:Debug>:-Wl,-lasan>)
+    set(DEBUG_OPTIONS -O2 -fno-omit-frame-pointer -g -pthread)
+    set(RELEASE_OPTIONS -O3 -march=native -mtune=native -pthread)
+    target_link_libraries(RedNoise PUBLIC $<$<CONFIG:Debug>:-Wl,-lasan,-pthread>)
 
 endif()
 
