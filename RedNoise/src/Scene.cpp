@@ -6,8 +6,8 @@
 
 #include <utility>
 
-Scene::Scene(std::vector<ModelLoader *> models, std::vector<glm::vec4*> lights) {
-    this->models = std::move(models);
+Scene::Scene(std::vector<ModelLoader*>& models, std::vector<glm::vec4*> lights) {
+    this->models = models;
     this->allTris = {};
     this->toModel = {};
     this->modelOffset = {}; //the offset each model's triangles have in the allTris list

@@ -38,7 +38,7 @@ public:
     int* getShading();
     float *getAttenuation();
     float* getFuzz();
-    glm::vec3 *lookupFuzz(int &x, int &y);
+    glm::vec3& lookupFuzz(int &x, int &y);
     void makeFuzzMap(DrawingWindow &window);
     static glm::vec3 NO_FUZZ;
     void blurFuzzMap();

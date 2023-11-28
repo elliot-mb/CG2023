@@ -100,9 +100,9 @@ void ModelLoader::blurFuzzMap(){ //can be called many times for further blurring
     }
 }
 
-glm::vec3* ModelLoader::lookupFuzz(int& x, int& y){
+glm::vec3& ModelLoader::lookupFuzz(int& x, int& y){
     if(this->fuzz != 0 && this->fuzzMap.empty()) throw runtime_error("ModelLoader::lookupFuzz: no fuzz values in table (missed a call to makeFuzzMap?)");
-    return &this->fuzzMap[y][x];
+    return this->fuzzMap[y][x];
 }
 
 float* ModelLoader::getAttenuation() {

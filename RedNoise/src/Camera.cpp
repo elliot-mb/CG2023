@@ -40,11 +40,11 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Sc
 
     //make slice heights
     this->sliceHeights = {};
-    int stride = glm::floor(screen.y / static_cast<float>(this->threads));
-    for(int i = -1; i < this->threads; i+=stride){ //we write a -1 in the first slice as we always take row value +1 as the start bound
+    int stride = static_cast<int>(screen.y) / this->threads;
+    for(int i = 0; i < static_cast<int>(screen.y); i+=stride){ //we write a -1 in the first slice as we always take row value +1 as the start bound
         sliceHeights.push_back(i); //exclusivity will be guaranteed by the thread runner (doRaytracing)
     }
-    sliceHeights.push_back(glm::floor(screen.y - 1)); //the screenheight-1th row
+    sliceHeights.push_back(static_cast<int>(screen.y)); //the screenheight-1th row
 }
 
 // seems to assume the camera can only point in the negative z direction
@@ -139,16 +139,16 @@ void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, floa
     spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::reflect(int bounces, glm::vec3& attenuation, glm::vec3& incidentRay, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour){
+void Camera::reflect(int bounces, glm::vec3& attenuation, glm::vec3& incidentRay, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, glm::vec3& fuzz, int& x, int& y) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
     glm::vec3 reflectedRay = glm::normalize(incidentRayNrml - (static_cast<float>(2) * norm * glm::dot(incidentRayNrml, norm)));
-    reflectedRay = reflectedRay + *this->currentFuzz; //add some random offset if present
+    reflectedRay = reflectedRay + fuzz; //add some random offset if present
     reflectionIntersect = getClosestIntersection(intersection.first, intercept, reflectedRay, tris, *this->scene,
                                                  vwBounce);
     if (reflectionIntersect.first != NO_INTERSECTION) {
-        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour); //only recursive call
+        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour, x, y); //only recursive call
         colour = (colour * static_cast<float>(0.5)) + (attenuation * static_cast<float>(0.5)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
@@ -159,7 +159,7 @@ void Camera::reflect(int bounces, glm::vec3& attenuation, glm::vec3& incidentRay
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[incidentRay/camRay]
-void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour) {
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, int& x, int& y) /*const*/ {
     if(bounces < 0){
         colour = BACKGROUND_COLOUR;
         return;
@@ -209,9 +209,9 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
 
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
-        glm::vec3 tintedAttenuation =  *model->getAttenuation() * Utils::asVec3(c);
-        reflect(bounces, tintedAttenuation, incidentRay, intersection, intercept, norm, tris, colour);
-        glm::vec3 fuzzNorm = norm + *this->currentFuzz;
+        glm::vec3 tintedAttenuation = *model->getAttenuation() * Utils::asVec3(c);
+        reflect(bounces, tintedAttenuation, incidentRay, intersection, intercept, norm, tris, colour, model->lookupFuzz(x, y), x, y);
+        glm::vec3 fuzzNorm = norm + model->lookupFuzz(x, y);
         for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
             specular(speculars[i], shadowRayNrmls[i], fuzzNorm, incidentRay, 16);
             //diffuse(brightnesses[i], shadowRayNrmls[i], norm);
@@ -233,7 +233,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
         glm::vec3 attenuation = *model->getAttenuation() * glm::vec3(1,1,1);
-        reflect(bounces, attenuation, incidentRay, intersection, intercept, norm, tris, colour);
+        reflect(bounces, attenuation, incidentRay, intersection, intercept, norm, tris, colour, ModelLoader::NO_FUZZ, x, y);
         return;
     }
     if(shading == ModelLoader::phg) {
@@ -277,7 +277,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 1; //how large are our ray texturePts (1 is native resolution)
+    int stride = 2; //how large are our ray texturePts (1 is native resolution)
     int bounces = 2;
 
 
@@ -290,11 +290,11 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
             if(intersection.first != NO_INTERSECTION){ //if its valid...
                 glm::vec3 finalColour;
                 ModelLoader* model = scene->getModel(scene->getModelFromTri(intersection.first));
-                if(*model->getFuzz() != 0)
-                    this->currentFuzz = model->lookupFuzz(x, y);
-                else this->currentFuzz = &ModelLoader::NO_FUZZ;
+//                if(*model->getFuzz() != 0)
+//                    this->currentFuzz = model->lookupFuzz(x, y);
+//                else this->currentFuzz = ModelLoader::NO_FUZZ;
 
-                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour);
+                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour, x, y);
 
                 window.setPixelColour(x, y, Utils::pack(255,
                                                         static_cast<uint8_t>(finalColour.x),
@@ -460,9 +460,14 @@ void Camera::renderMode() {
 void Camera::doRaytracing(DrawingWindow& window) {
     if(this->mode == ray){
 
+        auto f = [&, me = this](int start, int end){
+            me->raycast(window, start, end);
+        };
+
         std::vector<std::thread> slices = {};
-        for(int i = 1; i < this->threads; i++){
-            slices.push_back(std::thread(&Camera::raycast, this, std::ref(window), this->sliceHeights[i - 1] + 1, this->sliceHeights[i]));
+        for(int i = 0; i < this->threads; i++){
+            //slices.push_back(std::thread(&Camera::raycast, this, std::ref(window), this->sliceHeights[i] + 1, this->sliceHeights[i + 1]));
+            slices.push_back(std::thread(f, this->sliceHeights[i], this->sliceHeights[i + 1]));
         }
 
         for(std::thread &t : slices){

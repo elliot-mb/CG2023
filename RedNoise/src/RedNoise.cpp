@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), ModelLoader::phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 1.0, 0.08, false);
     ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), ModelLoader::mrr);
+    std::vector<ModelLoader*> models = { cornell, sphere, tallBox, mirrorBox, sphere2 };
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
@@ -81,8 +82,8 @@ int main(int argc, char *argv[]) {
     glm::vec4 light4 = glm::vec4(0.1, 0.25,  0.0, 0.5); //so good they made a second one
     glm::vec4 light5 = glm::vec4(-0.1, 0.25,  0.0, 0.5); //so good they made a second second one
 
-    Scene* s = new Scene({ cornell, sphere, tallBox, mirrorBox, sphere2 }, {&light, &light2, &light3, &light4, &light5});
-    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 8);
+    Scene* s = new Scene(models, {&light, &light2, &light3, &light4, &light5});
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 7);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
