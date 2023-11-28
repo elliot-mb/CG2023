@@ -105,8 +105,8 @@ int main(int argc, char *argv[]) {
 
 
  //comment to stop the render
-    Cameraman* cm = new Cameraman(camera, "./render/");
-    cm->render(window, *depthBuffer, *s, light, true);
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !

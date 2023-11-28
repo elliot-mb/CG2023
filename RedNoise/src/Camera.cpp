@@ -277,7 +277,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 2; //how large are our ray texturePts (1 is native resolution)
+    int stride = 1; //how large are our ray texturePts (1 is native resolution)
     int bounces = 2;
 
 
