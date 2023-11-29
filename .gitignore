@@ -9,3 +9,5 @@
 **/*.perf
 **/*.png
 **/*.ppm
+**/*.cmake
+**/*.json
