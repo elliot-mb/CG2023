@@ -140,6 +140,22 @@ void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& 
     spec = strength * static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
+glm::vec3 Camera::reflect(glm::vec3& norm, glm::vec3& incident){
+    return glm::normalize(incident - (static_cast<float>(2) * norm * glm::dot(incident, norm)));
+}
+
+//returns the transmitted vector, OR if total interal reflection occurs, the interally reflected vector
+glm::vec3 Camera::refract(glm::vec3& norm, glm::vec3& incident, float ri1, float ri2){
+    float rratio = ri1 / ri2;
+    float cosThtI = glm::dot(static_cast<float>(-1) * incident, norm);
+    float sin2ThtT = rratio * rratio * (1 - (cosThtI * cosThtI));
+    if(sin2ThtT > 1){
+        //reflect?
+        return reflect(norm, incident);
+    }
+    return (rratio * incident) + (((rratio * cosThtI) - glm::sqrt(1 - sin2ThtT)) * norm);
+}
+
 void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
@@ -152,7 +168,7 @@ void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, 
     reflectionIntersect = getClosestIntersection(intersection.first, intercept, reflectedRay, tris, *this->scene,
                                                  vwBounce);
     if (reflectionIntersect.first != NO_INTERSECTION) {
-        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour); //only recursive call
+        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour, 1); //only recursive call
         colour = (colour * (1-attenuation)) + (topColour * (attenuation)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
@@ -163,7 +179,7 @@ void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, 
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[incidentRay/camRay]
-void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour) /*const*/ {
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, float refractI) /*const*/ {
 
     if(bounces < 0){
         colour = BACKGROUND_COLOUR;
@@ -230,17 +246,28 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         std::pair<int, float> nextIntersection = intersection;
         glm::vec3 lastIntercept = intercept;
         glm::vec3 nextIntercept = intercept;
+        float lastRefractI = this->scene->getModel(forbiddenModel)->getRefractI();
+        glm::vec3 transmission = refract(norm, incidentRay, refractI, lastRefractI);
         glm::vec2 nextVW;
         while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
-            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, incidentRay, tris, *scene, nextVW);
+            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, transmission, tris, *scene, nextVW);
             lastIntercept = nextIntercept;
-            nextIntercept = nextIntercept + (incidentRay * nextIntersection.second); //march along the ray
+            nextIntercept = nextIntercept + (transmission * nextIntersection.second); //march along the transmission ray we just made
+            float newRefractI = this->scene->getModel(this->scene->getModelFromTri(nextIntersection.first))->getRefractI();
+            transmission = refract(
+                    norm,
+                    transmission,
+                    lastRefractI,
+                    newRefractI);
+            lastRefractI = newRefractI;
             bounces--;
         }
         transportedColour = BACKGROUND_COLOUR;
         if(nextIntersection.first != -1)
-            hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour);
+            hit(bounces, lastIntercept, transmission, nextVW, nextIntersection, tris, transportedColour, lastRefractI);
 
+        colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
+        return;
     }
     if(shading == ModelLoader::tsp || shading == ModelLoader::tsp_phg){
         float noAttenuation = 0.0; //add colour later
@@ -264,7 +291,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         }
         transportedColour = BACKGROUND_COLOUR;
         if(nextIntersection.first != -1)
-            hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour);
+            hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour, 1);
 
         colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
         return;
@@ -350,7 +377,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
 //                    this->currentFuzz = model->lookupFuzz(x, y);
 //                else this->currentFuzz = ModelLoader::NO_FUZZ;
 
-                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour);
+                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour, 1); //the camera starts in air (refractI 1)
 
                 window.setPixelColour(x, y, Utils::pack(255,
                                                         static_cast<uint8_t>(finalColour.x),

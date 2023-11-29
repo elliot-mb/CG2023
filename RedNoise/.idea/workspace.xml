@@ -24,6 +24,8 @@
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -164,7 +166,7 @@
       <workItem from="1701255168544" duration="180000" />
       <workItem from="1701255360343" duration="2490000" />
       <workItem from="1701258486064" duration="5322000" />
-      <workItem from="1701269800876" duration="9579000" />
+      <workItem from="1701269800876" duration="11679000" />
     </task>
     <servers />
   </component>

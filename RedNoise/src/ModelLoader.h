@@ -48,7 +48,7 @@ public:
     enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg};
     int* getShading();
     float& getAttenuation();
-
+    float getRefractI();
 
 private:
     glm::vec3 position;
@@ -67,6 +67,7 @@ private:
     std::vector<std::vector<Triangle*>> vertToTris; //a lookup for which triangles use the ith vert
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
     float attenuation; //only set to anything other than 1,1,1 if we are a metal
+    float refractI; //refractive index
 
     static const std::string TKN_MTLLIB;
     void asMaterial(std::vector<std::string> ln, std::string& location);
