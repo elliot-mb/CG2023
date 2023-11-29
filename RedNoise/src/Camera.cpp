@@ -14,7 +14,7 @@
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
-glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({0, 0, 0});
+glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({0, 255, 0});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene, int threads) {
     this->position = cameraPosition;
@@ -146,14 +146,16 @@ glm::vec3 Camera::reflect(glm::vec3& norm, glm::vec3& incident){
 
 //returns the transmitted vector, OR if total interal reflection occurs, the interally reflected vector
 glm::vec3 Camera::refract(glm::vec3& norm, glm::vec3& incident, float ri1, float ri2){
+    glm::vec3 n = glm::normalize(norm);
+    glm::vec3 i = glm::normalize(incident);
     float rratio = ri1 / ri2;
-    float cosThtI = glm::dot(static_cast<float>(-1) * incident, norm);
+    float cosThtI = glm::dot(static_cast<float>(-1) * i, n);
     float sin2ThtT = rratio * rratio * (1 - (cosThtI * cosThtI));
     if(sin2ThtT > 1){
         //reflect?
-        return reflect(norm, incident);
+        return reflect(n, i);
     }
-    return (rratio * incident) + (((rratio * cosThtI) - glm::sqrt(1 - sin2ThtT)) * norm);
+    return (rratio * i) + (((rratio * cosThtI) - glm::sqrt(1 - sin2ThtT)) * n);
 }
 
 void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour) /* const*/{
@@ -230,6 +232,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         norm = *tri->getNormal();
     }
 
+    glm::vec3 defaultReflected = {0, 0, 0};
+
     if(glm::dot(incidentRay, norm) > 0){ //is the camera on the other side of the wall from the light?
         colour = colVec * this->ambientLower;
         return;
@@ -249,13 +253,14 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         float lastRefractI = this->scene->getModel(forbiddenModel)->getRefractI();
         glm::vec3 transmission = refract(norm, incidentRay, refractI, lastRefractI);
         glm::vec2 vwTransm;
-        bool inAir = false; // because we KNOW we just entered this object
+        bool inAir = false;
         while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
             nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, transmission, tris, *scene, vwTransm);
             lastIntercept = nextIntercept;
             nextIntercept = nextIntercept + (transmission * nextIntersection.second); //march along the transmission ray we just made
             int hitModelI = this->scene->getModelFromTri(nextIntersection.first);
-            float newRefractI = this->scene->getModel(hitModelI)->getRefractI();
+            ModelLoader* m = this->scene->getModel(hitModelI);
+            float newRefractI = m->getRefractI();
             if(hitModelI == forbiddenModel && !inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves
                 newRefractI = 1;
                 inAir = true;
@@ -271,9 +276,12 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
                     float uTransm = 1 - vwTransm.x - vwTransm.y; //set by intersect function
                     float vTransm = vwTransm.x;
                     float wTransm = vwTransm.y;
-                    Triangle* hitTri = tris[intersection.first];
-                    normTransm = (*hitTri->n0() * u) + (*hitTri->n1() * v) + (*hitTri->n2() * w); //needed just for phong
+                    if(wTransm == 0 && vTransm==0 && uTransm == 0) throw runtime_error("Camera::hit: phong failed with zero barycentrics");
+                    Triangle* hitTri = tris[nextIntersection.first];
+                    normTransm = (*hitTri->n0() * uTransm) + (*hitTri->n1() * vTransm) + (*hitTri->n2() * wTransm); //needed just for phong
                 }
+                if(normTransm.x == 0 && normTransm.y==0 && normTransm.z == 0) throw runtime_error("Camera::hit: refraction off zero vector normals is not possible");
+
                 transmission = refract(
                         normTransm,
                         transmission,
@@ -284,7 +292,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
             bounces--;
         }
         transportedColour = BACKGROUND_COLOUR;
-        if(nextIntersection.first != -1)
+        if(nextIntersection.first != -1 && bounces != 0)
             hit(bounces, lastIntercept, transmission, vwTransm, nextIntersection, tris, transportedColour, lastRefractI);
 
         colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
@@ -364,6 +372,9 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
     }
+    if((shading == ModelLoader::nrm || shading == ModelLoader::grd || shading == ModelLoader::phg) && model->getAttenuation() < 0.95){
+        reflectCast(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, defaultReflected);
+    }
 
     float finalBrightness = 0;
     float finalSpecular = 0;
@@ -375,6 +386,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
     if(finalSpecular > 1.0) finalSpecular = 1.0;
     colour = finalBrightness * Utils::asVec3(c);
+    colour = ((1 - model->getAttenuation()) * defaultReflected) + (model->getAttenuation() * colour); //lerp on any reflectivity
     colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
 }
 

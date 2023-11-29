@@ -18,11 +18,9 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 
 class ModelLoader {
 public:
-    explicit ModelLoader(std::string fileName, float scale, glm::vec3 position, int shading);
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, int shading, int width, int height); // metal or pgh metal
-//    ~ModelLoader(); // delete the byte string and vector of model triangles
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading);
 
-    //loads the file and returns the string
+//loads the file and returns the string
     void load();
 
     // shows all tris coords

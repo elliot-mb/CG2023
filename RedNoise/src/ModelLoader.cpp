@@ -26,25 +26,8 @@ const string ModelLoader::TKN_TXTURE = "map_Kd";
 const float ModelLoader::LARGE = 10000;
 const float ModelLoader::SMALL = -10000;
 
-ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
-    this->scale = scale; //scaling factor
-    this->fileName = fileName;
-    this->bytes = ""; //new string
-    this->tris = vector<Triangle*>{};
-    this->verts = std::vector<glm::vec3>{};
-
-    this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
-    this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
-    this->position = position;
-    this->shading = shading;
-    this->attenuation = 0.0;
-    this->refractI = 1; //simply make all things not metal, transparent or glass have air's refractive index (it only matters for glass)
-}
-
 //for mtl, phg_mtl
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, int width, int height) {
-    if(shading != mtl && shading != phg_mtl && shading != tsp && shading != tsp_phg && shading != gls && shading != gls_phg) throw runtime_error("ModelLoader::ModelLoader: this specific constructor is just for metals and glass");
-
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading) {
     this->scale = scale; //scaling factor
     this->fileName = std::move(fileName);
     this->bytes = ""; //new string
