@@ -18,8 +18,8 @@
 
 class Scene {
 public:
-    Scene(std::vector<ModelLoader *> models, std::vector<glm::vec4*> lights); //just a collection of models (world-like, always at world origin)
-
+    Scene(std::vector<ModelLoader*>& models, std::vector<glm::vec4*> lights); //just a collection of models (world-like, always at world origin)
+//    Scene(const Scene&) = delete;
     std::vector<Triangle*> getTris(); //gets the tris of all models
 
     ModelLoader* getModel(int modelIndex); //gets a specific model

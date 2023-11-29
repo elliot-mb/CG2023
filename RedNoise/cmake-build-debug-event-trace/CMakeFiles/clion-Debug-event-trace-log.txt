@@ -1,2 +1,2 @@
 Cannot generate 'Debug-event-trace' into /home/elliot/Documents/computer-science/year-3/tb1/cg/CG2023/RedNoise/cmake-build-debug-event-trace
-CMakeCache.txt is found in the project dir, only in-source generation will be performed.
+Only in-source generation will be performed.

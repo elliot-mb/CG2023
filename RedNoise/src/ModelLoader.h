@@ -19,7 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 class ModelLoader {
 public:
     explicit ModelLoader(std::string fileName, float scale, glm::vec3 position, int shading);
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, float fuzz, bool isPhong); // metal or pgh metal
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, float fuzz, bool isPhong, int width, int height); // metal or pgh metal
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -36,10 +36,10 @@ public:
     //shading mode
     enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls)
     int* getShading();
-    float *getAttenuation();
+    float& getAttenuation();
     float* getFuzz();
-    glm::vec3 *lookupFuzz(int &x, int &y);
-    void makeFuzzMap(DrawingWindow &window);
+    glm::vec3& lookupFuzz(int &x, int &y);
+
     static glm::vec3 NO_FUZZ;
     void blurFuzzMap();
 
@@ -89,6 +89,7 @@ private:
     void boundVertices();
 
     static const float SMALL;
+    void makeFuzzMap(int width, int height);
 
 };
 

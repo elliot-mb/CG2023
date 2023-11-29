@@ -39,12 +39,12 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int s
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
     this->shading = shading;
-    this->attenuation = 1;
-    this->fuzz = 0;
+    this->attenuation = 0.0;
+    this->fuzz = 0.0;
 }
 
 //for metals only
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, float fuzz, bool isPhong) {
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, float fuzz, bool isPhong, int width, int height) {
     this->scale = scale; //scaling factor
     this->fileName = fileName;
     this->bytes = ""; //new string
@@ -61,16 +61,15 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     }
     this->attenuation = at; //this darkening is combined with the colour of the model/vertex
     this->fuzz = fuzz;
-
+    makeFuzzMap(width, height);
 }
 
 //things that have a nonzero fuzz need a fuzzmap
-void ModelLoader::makeFuzzMap(DrawingWindow& window){
-    if(this->fuzz == 0) throw runtime_error("ModelLoader::makeFuzzMap: grr im not cuddly!");
+void ModelLoader::makeFuzzMap(int width, int height){
     this->fuzzMap = {};
-    for(int y = 0; y < window.height; y++){
+    for(int y = 0; y < height; y++){
         this->fuzzMap.push_back({});
-        for(int x = 0; x < window.width; x++){
+        for(int x = 0; x < width; x++){
             this->fuzzMap[y].push_back(this->fuzz * Utils::getRandomUnitVector());
         }
     }
@@ -100,13 +99,13 @@ void ModelLoader::blurFuzzMap(){ //can be called many times for further blurring
     }
 }
 
-glm::vec3* ModelLoader::lookupFuzz(int& x, int& y){
+glm::vec3& ModelLoader::lookupFuzz(int& x, int& y){
     if(this->fuzz != 0 && this->fuzzMap.empty()) throw runtime_error("ModelLoader::lookupFuzz: no fuzz values in table (missed a call to makeFuzzMap?)");
-    return &this->fuzzMap[y][x];
+    return this->fuzzMap[y][x];
 }
 
-float* ModelLoader::getAttenuation() {
-    return &this->attenuation;
+float& ModelLoader::getAttenuation() {
+    return this->attenuation;
 }
 
 //ModelLoader::~ModelLoader(){

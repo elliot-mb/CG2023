@@ -68,10 +68,11 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 1.0, 0.03, true);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, 0.0, true, WIDTH, HEIGHT);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), ModelLoader::phg);
-    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 1.0, 0.08, false);
+    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 1.0, 0.0, false, WIDTH, HEIGHT);
     ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), ModelLoader::mrr);
+    std::vector<ModelLoader*> models = { cornell, sphere, tallBox, mirrorBox, sphere2 };
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
@@ -81,16 +82,15 @@ int main(int argc, char *argv[]) {
     glm::vec4 light4 = glm::vec4(0.1, 0.25,  0.0, 0.5); //so good they made a second one
     glm::vec4 light5 = glm::vec4(-0.1, 0.25,  0.0, 0.5); //so good they made a second second one
 
-    Scene* s = new Scene({ cornell, sphere, tallBox, mirrorBox, sphere2 }, {&light, &light2, &light3, &light4, &light5});
-    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s);
+    Scene* s = new Scene(models, {&light, &light2, &light3, &light4, &light5});
+    Camera* camera = new Camera(glm::vec3(0.0, 0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 7);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
-    sphere->makeFuzzMap(window); //generate lookup
-    tallBox->makeFuzzMap(window);
-
-    tallBox->blurFuzzMap();
+//
+    sphere->blurFuzzMap();
+    sphere->blurFuzzMap();
 
 	vector<vec3> resultVec = Utils::interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
 	for(int i=0; i < static_cast<int>(resultVec.size()); i++) {
@@ -104,8 +104,8 @@ int main(int argc, char *argv[]) {
 
 
  //comment to stop the render
-    Cameraman* cm = new Cameraman(camera, "./render/");
-    cm->render(window, *depthBuffer, *s, light, true);
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//    cm->render(window, *depthBuffer, *s, light, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
