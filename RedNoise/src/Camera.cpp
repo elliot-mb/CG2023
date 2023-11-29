@@ -248,23 +248,44 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         glm::vec3 nextIntercept = intercept;
         float lastRefractI = this->scene->getModel(forbiddenModel)->getRefractI();
         glm::vec3 transmission = refract(norm, incidentRay, refractI, lastRefractI);
-        glm::vec2 nextVW;
+        glm::vec2 vwTransm;
+        bool inAir = false; // because we KNOW we just entered this object
         while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
-            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, transmission, tris, *scene, nextVW);
+            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, transmission, tris, *scene, vwTransm);
             lastIntercept = nextIntercept;
             nextIntercept = nextIntercept + (transmission * nextIntersection.second); //march along the transmission ray we just made
-            float newRefractI = this->scene->getModel(this->scene->getModelFromTri(nextIntersection.first))->getRefractI();
-            transmission = refract(
-                    norm,
-                    transmission,
-                    lastRefractI,
-                    newRefractI);
-            lastRefractI = newRefractI;
+            int hitModelI = this->scene->getModelFromTri(nextIntersection.first);
+            float newRefractI = this->scene->getModel(hitModelI)->getRefractI();
+            if(hitModelI == forbiddenModel && !inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves
+                newRefractI = 1;
+                inAir = true;
+            }else if(inAir && nextIntersection.first != -1){ //must be else if otherwise they affect each other
+                inAir = false; //we are inside something (could be ourselves, doesnt matter which, this is taken care of by newRefractI initialiser)
+            }
+            if(nextIntersection.first != -1){ //anyway if we do hit something and not infinite air
+                glm::vec3 normTransm; //work out the surface normal here to re-refract a new transmission
+                if(shading == ModelLoader::gls){
+                    normTransm = *tris[nextIntersection.first]->getNormal();
+                }
+                if(shading == ModelLoader::gls_phg){ //mutually exclusive (just an else but clearer)
+                    float uTransm = 1 - vwTransm.x - vwTransm.y; //set by intersect function
+                    float vTransm = vwTransm.x;
+                    float wTransm = vwTransm.y;
+                    Triangle* hitTri = tris[intersection.first];
+                    normTransm = (*hitTri->n0() * u) + (*hitTri->n1() * v) + (*hitTri->n2() * w); //needed just for phong
+                }
+                transmission = refract(
+                        normTransm,
+                        transmission,
+                        lastRefractI,
+                        newRefractI);
+                lastRefractI = newRefractI;
+            }
             bounces--;
         }
         transportedColour = BACKGROUND_COLOUR;
         if(nextIntersection.first != -1)
-            hit(bounces, lastIntercept, transmission, nextVW, nextIntersection, tris, transportedColour, lastRefractI);
+            hit(bounces, lastIntercept, transmission, vwTransm, nextIntersection, tris, transportedColour, lastRefractI);
 
         colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
         return;
@@ -361,7 +382,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 2; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 5;
+    int bounces = 10;
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
