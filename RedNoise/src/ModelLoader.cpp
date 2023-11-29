@@ -56,7 +56,7 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     this->position = position;
     this->shading = shading;
     this->attenuation = at; //this darkening is combined with the colour of the model/vertex
-    this->refractI = 1.4;
+    this->refractI = 1.5;
 }
 
 float& ModelLoader::getAttenuation() {

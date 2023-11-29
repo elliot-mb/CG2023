@@ -156,7 +156,7 @@ glm::vec3 Camera::refract(glm::vec3& norm, glm::vec3& incident, float ri1, float
     return (rratio * incident) + (((rratio * cosThtI) - glm::sqrt(1 - sin2ThtT)) * norm);
 }
 
-void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour) /* const*/{
+void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
@@ -217,7 +217,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     std::vector<float> speculars(this->scene->getInitSpeculars());
     Colour c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
     if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
-    glm::vec3 colVec = Utils::asVec3(c) * this->ambientLower;
+    glm::vec3 colVec = Utils::asVec3(c);
 
     glm::vec3 norm;
     std::vector<glm::vec3*> norms;
@@ -231,14 +231,14 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
 
     if(glm::dot(incidentRay, norm) > 0){ //is the camera on the other side of the wall from the light?
-        colour = colVec;
+        colour = colVec * this->ambientLower;
         return;
     }
 
     if(shading == ModelLoader::gls || shading == ModelLoader::gls_phg){
         float noAttenuation = 0.0; //add colour later
         glm::vec3 reflectedColour;
-        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
+        reflectCast(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
 
         //while we hit the same object, keep going (but bend the light instead of letting follow a parallel path like in tsp and tsp_pgh (transparents)
         glm::vec3 transportedColour;
@@ -293,7 +293,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(shading == ModelLoader::tsp || shading == ModelLoader::tsp_phg){
         float noAttenuation = 0.0; //add colour later
         glm::vec3 reflectedColour;
-        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
+        reflectCast(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
         //colour is now the colour it would be if it were a mirror
         //here we use the models attenuation as (1 - reflectivity)
 
@@ -318,7 +318,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         return;
     }
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
-        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour);
+        glm::vec3 reflectedColour;
+        reflectCast(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, reflectedColour);
         for (int i = 0; i < this->scene->getNumLights(); i++) {
             specular(speculars[i], this->scene->getLightStrengths()[i] * 2, shadowRayNrmls[i], norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
@@ -333,14 +334,14 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 
         if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
         if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
-        colour = ((1 - model->getAttenuation()) + (finalBrightness * model->getAttenuation())) * colour; //lerp diffuse lighting with attenuation, more attenuation is more diffuse lighting
+        colour = ((1 - model->getAttenuation()) * reflectedColour) + (model->getAttenuation() * finalBrightness * colVec); //lerp diffuse lighting with attenuation, more attenuation is more diffuse lighting
         if(finalSpecular > 1.0) finalSpecular = 1.0;
         colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
         return;
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
         float noAttenuation = 0.0;
-        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, colour);
+        reflectCast(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, colour);
         return;
     }
     if(shading == ModelLoader::phg) {
