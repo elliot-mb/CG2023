@@ -84,7 +84,7 @@ private:
     gouraud(float &brightness, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
             vec3 &camRay, float& len, float& strength);
 
-    void reflect(int bounces, glm::vec3& attenuation, vec3 &incidentRay, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
+    void reflect(int bounces, glm::vec3& topColour, vec3 &incidentRay, float& attenuation, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
                  vector<Triangle *>& tris, vec3 &colour, glm::vec3& fuzz, int& x, int& y)/* const*/;
 
     void raycast(DrawingWindow &window, int start, int end);

@@ -139,20 +139,24 @@ void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, floa
     spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::reflect(int bounces, glm::vec3& attenuation, glm::vec3& incidentRay, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, glm::vec3& fuzz, int& x, int& y) /* const*/{
+void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, glm::vec3& fuzz, int& x, int& y) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
     glm::vec3 reflectedRay = glm::normalize(incidentRayNrml - (static_cast<float>(2) * norm * glm::dot(incidentRayNrml, norm)));
     reflectedRay = reflectedRay + fuzz; //add some random offset if present
+    if(glm::dot(norm, reflectedRay) < 0) {
+        colour = topColour; //absorb into the surface
+        return;
+    }
     reflectionIntersect = getClosestIntersection(intersection.first, intercept, reflectedRay, tris, *this->scene,
                                                  vwBounce);
     if (reflectionIntersect.first != NO_INTERSECTION) {
         hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour, x, y); //only recursive call
-        colour = (colour * static_cast<float>(0.5)) + (attenuation * static_cast<float>(0.5)); //darkens it on the way back up the call stack in reverse hit order
+        colour = (colour * (1-attenuation)) + (topColour * (attenuation)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
-        colour = BACKGROUND_COLOUR * attenuation;
+        colour = (BACKGROUND_COLOUR * (1-attenuation)) + (topColour * (attenuation));
         return;
     }
 }
@@ -209,31 +213,31 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
 
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
-        glm::vec3 tintedAttenuation = *model->getAttenuation() * Utils::asVec3(c);
-        reflect(bounces, tintedAttenuation, incidentRay, intersection, intercept, norm, tris, colour, model->lookupFuzz(x, y), x, y);
+        glm::vec3 colVec = Utils::asVec3(c);
+        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, model->lookupFuzz(x, y), x, y);
         glm::vec3 fuzzNorm = norm + model->lookupFuzz(x, y);
         for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            specular(speculars[i], shadowRayNrmls[i], fuzzNorm, incidentRay, 16);
-            //diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            specular(speculars[i], shadowRayNrmls[i], fuzzNorm, incidentRay, 64);
+            diffuse(brightnesses[i], shadowRayNrmls[i], norm);
         }
-//        float finalBrightness = 0;
-//        for(float brightness : brightnesses){ //total them up
-//            finalBrightness += brightness;
-//        }
+        float finalBrightness = 0;
+        for(float brightness : brightnesses){ //total them up
+            finalBrightness += brightness;
+        }
         float finalSpecular = 0;
         for(float specular : speculars){
             finalSpecular += specular;
         }
-//        if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
-//        if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
-//        colour = finalBrightness * colour;
+        if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
+        if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
+        colour = ((1 - model->getAttenuation()) + (finalBrightness * model->getAttenuation())) * colour; //lerp diffuse lighting with attenuation, more attenuation is more diffuse lighting
         if(finalSpecular > 1.0) finalSpecular = 1.0;
         colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
         return;
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
-        glm::vec3 attenuation = *model->getAttenuation() * glm::vec3(1,1,1);
-        reflect(bounces, attenuation, incidentRay, intersection, intercept, norm, tris, colour, ModelLoader::NO_FUZZ, x, y);
+        glm::vec3 colVec = Utils::asVec3(c);
+        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, ModelLoader::NO_FUZZ, x, y);
         return;
     }
     if(shading == ModelLoader::phg) {
