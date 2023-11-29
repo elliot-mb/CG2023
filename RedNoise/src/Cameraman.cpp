@@ -162,9 +162,9 @@ void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &fr
     bool fromCurrent = this->args[2].z == 0;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
     glm::vec3 camRot = this->args[0];
-    if(fromCurrent) camRot = glm::vec3(camera.getRot(), 0);
+    if(fromCurrent) camRot = glm::vec3(camera.getRot().x, camera.getRot().y, 0);
     camera.lookAt(*scene.getModel(modelIndex)->getPos()); //temporarily looks at model to find out rotation
-    glm::vec3 camRotTo = glm::vec3(camera.getRot(), 0);
+    glm::vec3 camRotTo = glm::vec3(camera.getRot().x, camera.getRot().y, 0);
     Action* delegate = new LerpRot(glm::mat3({camRot, camRotTo, this->args[2]}));
 
     delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
@@ -175,7 +175,7 @@ Cameraman::Cameraman(Camera* cam, string outPath) {
     this->outPath = outPath;
 }
 
-void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview) {
+void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview) {
     uint frameID = 0;
 
     for (Action *a: this->actions) {

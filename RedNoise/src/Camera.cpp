@@ -515,14 +515,15 @@ glm::vec2 Camera::getRot(){ //rot round x, rot round y, careful when y is +-90
     if(xHat.z != 0) xSign = xHat.z / glm::abs(xHat.z);//sign on whether its behind or in front of the camera
     if(zHat.y != 0) zSign = zHat.y / glm::abs(zHat.y); //sign on whether its
     // projection vectors
-    glm::vec3 xHat0z = this->myRight(); xHat0z.z = 0;
-    glm::vec3 zHat0y = this->myFwd(); zHat0y.y = 0;
+    glm::vec3 xHat0z = xHat; xHat0z.z = 0;
+    glm::vec3 zHat0y = zHat; zHat0y.y = 0;
     // angles
     xHat = glm::normalize(xHat);
     zHat = glm::normalize(zHat);
     xHat0z = glm::normalize(xHat0z);
     zHat0y = glm::normalize(zHat0y);
     float tX = (glm::acos(glm::dot(xHat, xHat0z))) * xSign; //signed angle from xhat to world x
+    if(zHat.z < 0) tX = M_PI - tX; //if we're facing backwards
     float tZ = (glm::acos(glm::dot(zHat, zHat0y))) * zSign; //signed angle form zhat to world z
 
     return glm::vec2(-tZ, tX);

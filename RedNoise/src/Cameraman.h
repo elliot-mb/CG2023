@@ -12,7 +12,7 @@ class Cameraman {
 public:
     Cameraman(Camera* cam, string outPath);
 
-    void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, glm::vec4& light, bool withPreview);//renders all frames of the animation
+    void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview);//renders all frames of the animation
 
     static Colour background;
     static SDL_Event event;
@@ -112,20 +112,21 @@ private:
     std::vector<Action*> actions = {
             //new Lerp(glm::mat3({0, 2, 4}, {0, -1, 3.5}, {1.5, 0, 0})),
             //new Wait(glm::mat3({0, -1, 3.5}, {0, 0, 0}, {0.5, 0, 0})),
-            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 0, 0})),
-            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 0, 0})),
-            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
-            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 1, 0})),
+//            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 0, 0})),
+//            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 0, 0})),
+//            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
+//            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 1, 0})),
+//            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
+//            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
+//            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 2, 0})),
+//            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
+//            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
+//            new LerpLookat(glm::mat3({0, 0, 4.0}, {0.5, 1, 4}, {2, 1, 0})),
+//            new Wait(glm::mat3({0.5, 1, 4}, {0, 0, 0}, {1.0, 0, 0})),
+//            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 2, 0})),
             new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
-            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
-            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 2, 0})),
-            new Wait(glm::mat3({0.0, 0, 4.0}, {0, 0, 0}, {1.0, 0, 0})),
-            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
-            new LerpLookat(glm::mat3({0, 0, 4.0}, {0.5, 1, 4}, {2, 1, 0})),
-            new Wait(glm::mat3({0.5, 1, 4}, {0, 0, 0}, {1.0, 0, 0})),
-            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 2, 0})),
-            new LerpLookat(glm::mat3({0.5, 1, 4}, {-0.25, 0, -0.7}, {4, 2, 0})),
-            new Wait(glm::mat3({-0.25, 0, -0.7}, {0, 0, 0}, {1.0, 0, 0})),
+            new LerpLookat(glm::mat3({0.5, 1, 4}, {-0.25, 0, -0.7}, {2, 2, 0})),
+//            new Wait(glm::mat3({-0.25, 0, -0.7}, {0, 0, 0}, {1.0, 0, 0})),
             new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 1, 0})),
             new LerpLookat(glm::mat3({-0.25, 0, -0.7}, {-0.25, 0, -0.25}, {1, 1, 0})),
 
