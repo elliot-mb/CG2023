@@ -34,7 +34,18 @@ public:
     glm::vec3* getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
     //shading mode
-    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls), transparency, glass, transparent phong
+    // normal(s),
+    // gouraud,
+    // phong,
+    // mirror,
+    // phong_mirror (for balls),
+    // metal,
+    // phong_metal (for balls),
+    // transparency,
+    // glass,
+    // transparent phong (transparent balls),
+    // glass phong (glass balls)
+    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg};
     int* getShading();
     float& getAttenuation();
 

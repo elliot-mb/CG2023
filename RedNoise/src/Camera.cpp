@@ -207,7 +207,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     std::vector<glm::vec3*> norms;
     int shading = *model->getShading();
 
-    if(shading != ModelLoader::nrm && shading != ModelLoader::mtl && shading != ModelLoader::tsp){ //vertex normals are interpolated just if we need to
+    if(shading != ModelLoader::nrm && shading != ModelLoader::mtl && shading != ModelLoader::tsp && shading != ModelLoader::gls){ //vertex normals are interpolated just if we need to
         norms = model->getNormsForTri(modelTriIndex); //needed for gouraud and phong
         norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //needed just for phong
     }else{ //flat shading doesnt use vertex normals
@@ -219,9 +219,31 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         return;
     }
 
+    if(shading == ModelLoader::gls || shading == ModelLoader::gls_phg){
+        float noAttenuation = 0.0; //add colour later
+        glm::vec3 reflectedColour;
+        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
+
+        //while we hit the same object, keep going (but bend the light instead of letting follow a parallel path like in tsp and tsp_pgh (transparents)
+        glm::vec3 transportedColour;
+        int forbiddenModel = this->scene->getModelFromTri(intersection.first);
+        std::pair<int, float> nextIntersection = intersection;
+        glm::vec3 lastIntercept = intercept;
+        glm::vec3 nextIntercept = intercept;
+        glm::vec2 nextVW;
+        while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
+            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, incidentRay, tris, *scene, nextVW);
+            lastIntercept = nextIntercept;
+            nextIntercept = nextIntercept + (incidentRay * nextIntersection.second); //march along the ray
+            bounces--;
+        }
+        transportedColour = BACKGROUND_COLOUR;
+        if(nextIntersection.first != -1)
+            hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour);
+
+    }
     if(shading == ModelLoader::tsp || shading == ModelLoader::tsp_phg){
-        //we have no colour so we reflect some light like a mirror
-        float noAttenuation = 0.0;
+        float noAttenuation = 0.0; //add colour later
         glm::vec3 reflectedColour;
         reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
         //colour is now the colour it would be if it were a mirror
