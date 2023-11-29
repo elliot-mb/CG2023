@@ -40,10 +40,12 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int s
     this->attenuation = 0.0;
 }
 
-//for metals only
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, bool isPhong, int width, int height) {
+//for mtl, phg_mtl
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, int width, int height) {
+    if(shading != mtl && shading != phg_mtl && shading != tsp && shading != tsp_phg && shading != gls) throw runtime_error("ModelLoader::ModelLoader: this specific constructor is just for metals and glass");
+
     this->scale = scale; //scaling factor
-    this->fileName = fileName;
+    this->fileName = std::move(fileName);
     this->bytes = ""; //new string
     this->tris = vector<Triangle*>{};
     this->verts = std::vector<glm::vec3>{};
@@ -51,11 +53,7 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
-    if(isPhong){
-        this->shading = phg_mtl;
-    }else{
-        this->shading = mtl;
-    }
+    this->shading = shading;
     this->attenuation = at; //this darkening is combined with the colour of the model/vertex
 }
 

@@ -10,7 +10,8 @@ public:
     Light(glm::mat3 light, glm::vec3 colour, float strength, int points);
 
     glm::vec3& getColour();
-
+    float getStrength() const;
+    std::vector<glm::vec3> getPts() const;
 private:
     glm::vec3 pos;
     glm::vec3 u;
@@ -18,7 +19,7 @@ private:
     glm::vec3 colour;
     float strength;
     std::vector<glm::vec3> pts; //points on the light we sample
-    std::vector<glm::vec3> &getPts();
+
 };
 
 

@@ -19,7 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 class ModelLoader {
 public:
     explicit ModelLoader(std::string fileName, float scale, glm::vec3 position, int shading);
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, bool isPhong, int width, int height); // metal or pgh metal
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, int shading, int width, int height); // metal or pgh metal
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -34,7 +34,7 @@ public:
     glm::vec3* getPos();
     std::vector<glm::vec3*> getNormsForTri(int& triIndex);
     //shading mode
-    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls)
+    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls), transparency, glass, transparent phong
     int* getShading();
     float& getAttenuation();
 

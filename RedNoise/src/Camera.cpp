@@ -104,42 +104,43 @@ void Camera::proximity(float& brightness, float& len, float& strength){
     brightness = brightness * static_cast<float>(strength / glm::pow(len, 2));
 }
 
-void Camera::specular(float& brightness, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay, float power){
+void Camera::specular(float& brightness, float strength, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay, float power){
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
     if(similarity < 0) return;
     float specStrength = static_cast<float>(glm::pow(similarity, power));
-    brightness = static_cast<float>(brightness + specStrength);
+    brightness = static_cast<float>(brightness + (strength * specStrength));
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
     brightness = static_cast<float>(brightness * glm::dot(norm, shadowRay));
 }
 
-void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, glm::vec3& intercept,  std::vector<Triangle*>& tris, Scene& scene){
-    std::pair<int, float> shadowRayIntscnt = getClosestIntersection(currentTri, intercept, shadowRay, tris, scene);
+void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, glm::vec3& intercept,  std::vector<Triangle*>& tris){
+    std::pair<int, float> shadowRayIntscnt = getClosestIntersection(currentTri, intercept, shadowRay, tris, *this->scene);
     if((shadowRayIntscnt.first != -1) && (shadowRayIntscnt.second < 1)) //less than 1 means we have not hit a triangle behind the light
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, float& strength){
+void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len){
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0; //characteristics for each vertex
     float specV1 = 0; float specV2 = 0; float specV3 = 0;
-    specular(specV1, shadowRayn, *norms[0], camRay, 128);
+    float flatStrength = 1.0;
+    specular(specV1, 1, shadowRayn, *norms[0], camRay, 128);
     diffuse(diffV1, shadowRayn, *norms[0]);
-    proximity(brightness, len, strength);
-    specular(specV2, shadowRayn, *norms[1], camRay, 128);
+    proximity(brightness, len, flatStrength);
+    specular(specV2, 1, shadowRayn, *norms[1], camRay, 128);
     diffuse(diffV2, shadowRayn, *norms[1]);
-    proximity(brightness, len, strength);
-    specular(specV3, shadowRayn, *norms[2], camRay, 128);
+    proximity(brightness, len, flatStrength);
+    specular(specV3, 1, shadowRayn, *norms[2], camRay, 128);
     diffuse(diffV3, shadowRayn, *norms[2]);
-    proximity(brightness, len, strength);
+    proximity(brightness, len, flatStrength);
     //interpolate brightnesses
-    brightness = brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
-    spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
+    brightness = strength * brightness * static_cast<float>((diffV1 * u) + (diffV2 * v) + (diffV3 * w));
+    spec = strength * static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, int& x, int& y) /* const*/{
+void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
@@ -151,7 +152,7 @@ void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, 
     reflectionIntersect = getClosestIntersection(intersection.first, intercept, reflectedRay, tris, *this->scene,
                                                  vwBounce);
     if (reflectionIntersect.first != NO_INTERSECTION) {
-        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour, x, y); //only recursive call
+        hit(bounces, intercept, reflectedRay, vwBounce, reflectionIntersect, tris, colour); //only recursive call
         colour = (colour * (1-attenuation)) + (topColour * (attenuation)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
@@ -162,7 +163,8 @@ void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, 
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[incidentRay/camRay]
-void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, int& x, int& y) /*const*/ {
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour) /*const*/ {
+
     if(bounces < 0){
         colour = BACKGROUND_COLOUR;
         return;
@@ -199,33 +201,66 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     std::vector<float> speculars(this->scene->getInitSpeculars());
     Colour c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
     if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+    glm::vec3 colVec = Utils::asVec3(c) * this->ambientLower;
 
     glm::vec3 norm;
     std::vector<glm::vec3*> norms;
     int shading = *model->getShading();
 
-    if(shading != ModelLoader::nrm){ //vertex normals are computed just if we need them
+    if(shading != ModelLoader::nrm && shading != ModelLoader::mtl && shading != ModelLoader::tsp){ //vertex normals are interpolated just if we need to
         norms = model->getNormsForTri(modelTriIndex); //needed for gouraud and phong
         norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //needed just for phong
     }else{ //flat shading doesnt use vertex normals
         norm = *tri->getNormal();
     }
 
+    if(glm::dot(incidentRay, norm) > 0){ //is the camera on the other side of the wall from the light?
+        colour = colVec;
+        return;
+    }
+
+    if(shading == ModelLoader::tsp || shading == ModelLoader::tsp_phg){
+        //we have no colour so we reflect some light like a mirror
+        float noAttenuation = 0.0;
+        glm::vec3 reflectedColour;
+        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, reflectedColour);
+        //colour is now the colour it would be if it were a mirror
+        //here we use the models attenuation as (1 - reflectivity)
+
+        //while we hit the same object, keep going
+        glm::vec3 transportedColour;
+        int forbiddenModel = this->scene->getModelFromTri(intersection.first);
+        std::pair<int, float> nextIntersection = intersection;
+        glm::vec3 lastIntercept = intercept;
+        glm::vec3 nextIntercept = intercept;
+        glm::vec2 nextVW;
+        while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
+            nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, incidentRay, tris, *scene, nextVW);
+            lastIntercept = nextIntercept;
+            nextIntercept = nextIntercept + (incidentRay * nextIntersection.second); //march along the ray
+            bounces--;
+        }
+        transportedColour = BACKGROUND_COLOUR;
+        if(nextIntersection.first != -1)
+            hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour);
+
+        colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
+        return;
+    }
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
-        glm::vec3 colVec = Utils::asVec3(c);
-        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, x, y);
-        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            specular(speculars[i], shadowRayNrmls[i], norm, incidentRay, 64);
+        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour);
+        for (int i = 0; i < this->scene->getNumLights(); i++) {
+            specular(speculars[i], this->scene->getLightStrengths()[i] * 2, shadowRayNrmls[i], norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
+            proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
         float finalBrightness = 0;
-        for(float brightness : brightnesses){ //total them up
-            finalBrightness += brightness;
-        }
         float finalSpecular = 0;
-        for(float specular : speculars){
-            finalSpecular += specular;
+        for(int i = 0; i < this->scene->getNumLights(); i++){ //total them up
+            finalBrightness += brightnesses[i];
+            finalSpecular += speculars[i];
         }
+
         if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
         if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
         colour = ((1 - model->getAttenuation()) + (finalBrightness * model->getAttenuation())) * colour; //lerp diffuse lighting with attenuation, more attenuation is more diffuse lighting
@@ -234,43 +269,40 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         return;
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
-        glm::vec3 colVec = Utils::asVec3(c);
-        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, x, y);
+        float noAttenuation = 0.0;
+        reflect(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, colour);
         return;
     }
     if(shading == ModelLoader::phg) {
-        for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            specular(speculars[i], shadowRayNrmls[i], norm, incidentRay, 128);
+        for (int i = 0; i < this->scene->getNumLights(); i++) {
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+            proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
     }
     if(shading == ModelLoader::grd){
-        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            gouraud(brightnesses[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, incidentRay, lens[i], *this->scene->getLightStrengths()[i]);
+        for(int i = 0; i < this->scene->getNumLights(); i++) {
+            gouraud(brightnesses[i], this->scene->getLightStrengths()[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, incidentRay, lens[i]);
         }
     }
     if(shading == ModelLoader::nrm) {
-        for(int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            specular(speculars[i], shadowRayNrmls[i], norm, incidentRay, 128);
+        for(int i = 0; i < this->scene->getNumLights(); i++) {
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
-            shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris, *this->scene);
-            proximity(brightnesses[i], lens[i], *this->scene->getLightStrengths()[i]);
+            shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris);
+            proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
     }
 
     float finalBrightness = 0;
-    for(float brightness : brightnesses){ //total them up
-        finalBrightness += brightness;
-    }
     float finalSpecular = 0;
-    for(float specular : speculars){
-        finalSpecular += specular;
+    for(int i = 0; i < this->scene->getNumLights(); i++){ //total them up
+        finalBrightness += brightnesses[i];
+        finalSpecular += speculars[i];
     }
-    finalSpecular = finalSpecular / static_cast<float>(this->scene->getNumLights()); //normalise so we're between 0 and 1
     if(finalBrightness > this->ambientUpper) finalBrightness = this->ambientUpper;
     if(finalBrightness < this->ambientLower) finalBrightness = this->ambientLower; //if in shadow set to ambient
-
+    if(finalSpecular > 1.0) finalSpecular = 1.0;
     colour = finalBrightness * Utils::asVec3(c);
     colour = ((1 - finalSpecular) * colour) + (finalSpecular * LIGHT_COLOUR); //lerp on specular brightness between pixel colour and light colour
 }
@@ -279,8 +311,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 1; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 2;
+    int stride = 2; //how large are our ray texturePts (1 is native resolution)
+    int bounces = 5;
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
@@ -296,7 +328,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
 //                    this->currentFuzz = model->lookupFuzz(x, y);
 //                else this->currentFuzz = ModelLoader::NO_FUZZ;
 
-                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour, x, y);
+                hit(bounces, this->position, camRay, vw, intersection, tris, finalColour);
 
                 window.setPixelColour(x, y, Utils::pack(255,
                                                         static_cast<uint8_t>(finalColour.x),
@@ -371,12 +403,12 @@ void Camera::setPos(glm::vec3 pos) {
     this->position = pos;
 }
 
-//angleZ is the angle from the xz plane zHat takes,
-//angleX is the angle from the xy plane xHat takes
-void Camera::rot(float angleZ, float angleX) {
-    this->orientation = Utils::pitch(angleZ) * this->orientation; //does correct pitch rotation
+//angleToZ is the angle from the xz plane zHat takes,
+//angleToX is the angle from the xy plane xHat takes
+void Camera::rot(float angleToZ, float angleToX) {
+    this->orientation = Utils::pitch(angleToZ) * this->orientation; //does correct pitch rotation
     //rotate each camera axis around the world y respectively
-    glm::mat3 yaw = Utils::yaw(angleX); //rotation matrix
+    glm::mat3 yaw = Utils::yaw(angleToX); //rotation matrix
     glm::vec3 camX = yaw * glm::vec3(this->orientation[0].x, this->orientation[1].x, this->orientation[2].x);
     glm::vec3 camY = yaw * glm::vec3(this->orientation[0].y, this->orientation[1].y, this->orientation[2].y);
     glm::vec3 camZ = yaw * glm::vec3(this->orientation[0].z, this->orientation[1].z, this->orientation[2].z);
@@ -386,11 +418,11 @@ void Camera::rot(float angleZ, float angleX) {
 }
 
 
-void Camera::setRot(float angleX, float angleY) {
+void Camera::setRot(float angleToZ, float angleToX) {
     this->orientation = glm::mat3({1, 0, 0},
                                   {0, 1, 0},
                                   {0, 0, 1});
-    rot(angleX, angleY);
+    rot(angleToZ, angleToX);
 }
 
 void Camera::lookAt(glm::vec3 at) {

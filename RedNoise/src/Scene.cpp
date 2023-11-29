@@ -6,7 +6,7 @@
 
 #include <utility>
 
-Scene::Scene(std::vector<ModelLoader*>& models, std::vector<glm::vec4*> lights) {
+Scene::Scene(std::vector<ModelLoader*>& models, std::vector<Light> lights) {
     this->models = models;
     this->allTris = {};
     this->toModel = {};
@@ -17,13 +17,15 @@ Scene::Scene(std::vector<ModelLoader*>& models, std::vector<glm::vec4*> lights) 
     this->lightStrengths = {};
     this->initBrightnesses = {};
     this->initSpeculars = {};
-    for(glm::vec4* loc : this->lights){
-        lightLocs.push_back(glm::vec3(*loc));
-        lightStrengths.push_back(&loc->w); //address of the ws
-        initBrightnesses.push_back(1.0);
-        initSpeculars.push_back(0.0);
+    for(const Light& l : this->lights){
+        for(glm::vec3 pos : l.getPts()){
+            lightLocs.push_back(pos);
+            lightStrengths.push_back(l.getStrength()); //address of the ws
+            initBrightnesses.push_back(1.0);
+            initSpeculars.push_back(0.0);
+        }
     }
-    this->numLights = static_cast<int>(this->lights.size());
+    this->numLights = static_cast<int>(this->lightLocs.size());
 }
 
 void Scene::load() {
@@ -64,15 +66,15 @@ void Scene::setModelPosition(int modelIndex, glm::vec3 pos) {
     this->models[modelIndex]->setPos(pos);
 }
 
-std::vector<glm::vec4 *> Scene::getLights() {
-    return this->lights;
+Light& Scene::getLight(int i){
+    return this->lights[i];
 }
 
 std::vector<glm::vec3> Scene::getLightLocs() {
     return this->lightLocs;
 }
 
-std::vector<float *> Scene::getLightStrengths() {
+std::vector<float>& Scene::getLightStrengths() {
     return this->lightStrengths;
 }
 

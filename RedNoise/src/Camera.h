@@ -22,7 +22,7 @@ public:
     void move(glm::vec3 delta); //move
     void setPos(glm::vec3 pos); //set
     glm::vec3 getPos();
-    void rot(float angleZ, float angleX); //move
+    void rot(float angleToZ, float angleToX); //move
     void lookAt(glm::vec3 at); //set
     void moveRelative(glm::vec3 delta);
     void toggleOrbit();
@@ -32,7 +32,7 @@ public:
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, Scene& scene, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
     void doRaytracing(DrawingWindow &window);
     void doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer);
-    void setRot(float angleX, float angleY);
+    void setRot(float angleToZ, float angleToX);
     vec2 getRot();
     enum Mode {msh, rst, ray};//one two or three (mesh, raster, raycast)
 private:
@@ -69,23 +69,23 @@ private:
 
     vec3 buildCameraRay(int& x, int& y);
 //    void raycast(DrawingWindow &window);
-    void hit(int bounces, glm::vec3& source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, glm::vec3& colour, int& x, int& y)/* const*/;
+    void hit(int bounces, glm::vec3& source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, glm::vec3& colour)/* const*/;
     void rasterise(DrawingWindow &window, DepthBuffer &depthBuffer);
 
     //lighting effects
     void proximity(float& brightness, float& len, float& strength);
     void diffuse(float &brightness, vec3 &shadowRay, vec3 &norm);
 
-    void shadow(float &brightness, vec3 &shadowRay, int& intersection, vec3 &intercept, vector<Triangle *> &tris, Scene& scene);
+    void shadow(float &brightness, vec3 &shadowRay, int& intersection, vec3 &intercept, vector<Triangle *> &tris);
 
-    void specular(float &brightness, vec3 &shadowRay, vec3 &norm, vec3 &camRay, float power);
+    void specular(float &brightness, float strength, vec3 &shadowRay, vec3 &norm, vec3 &camRay, float power);
 
     void
-    gouraud(float &brightness, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
-            vec3 &camRay, float& len, float& strength);
+    gouraud(float &brightness, float strength, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
+            vec3 &camRay, float& len);
 
     void reflect(int bounces, glm::vec3& topColour, vec3 &incidentRay, float& attenuation, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
-                 vector<Triangle *>& tris, vec3 &colour, int& x, int& y)/* const*/;
+                 vector<Triangle *>& tris, vec3 &colour)/* const*/;
 
     void raycast(DrawingWindow &window, int start, int end);
 };
