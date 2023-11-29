@@ -19,7 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 class ModelLoader {
 public:
     explicit ModelLoader(std::string fileName, float scale, glm::vec3 position, int shading);
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, float fuzz, bool isPhong, int width, int height); // metal or pgh metal
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float attenuation, bool isPhong, int width, int height); // metal or pgh metal
 //    ~ModelLoader(); // delete the byte string and vector of model triangles
 
     //loads the file and returns the string
@@ -37,11 +37,7 @@ public:
     enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl};// normal(s), gouraud, phong, mirror, phong_mirror (for balls), metal, phong_metal (for balls)
     int* getShading();
     float& getAttenuation();
-    float* getFuzz();
-    glm::vec3& lookupFuzz(int &x, int &y);
 
-    static glm::vec3 NO_FUZZ;
-    void blurFuzzMap();
 
 private:
     glm::vec3 position;
@@ -60,8 +56,6 @@ private:
     std::vector<std::vector<Triangle*>> vertToTris; //a lookup for which triangles use the ith vert
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
     float attenuation; //only set to anything other than 1,1,1 if we are a metal
-    float fuzz; //encodes random ray scattering
-    std::vector<std::vector<glm::vec3>> fuzzMap; //precomputed random vectors to stop weird filmgrain effect on metal surfaces and diffuse reflections
 
     static const std::string TKN_MTLLIB;
     void asMaterial(std::vector<std::string> ln, std::string& location);
@@ -89,7 +83,6 @@ private:
     void boundVertices();
 
     static const float SMALL;
-    void makeFuzzMap(int width, int height);
 
 };
 

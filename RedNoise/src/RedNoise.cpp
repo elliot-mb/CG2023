@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, 0.0, true, WIDTH, HEIGHT);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, true, WIDTH, HEIGHT);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), ModelLoader::phg);
-    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 1.0, 0.0, false, WIDTH, HEIGHT);
+    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 1.0, false, WIDTH, HEIGHT);
     ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), ModelLoader::mrr);
     std::vector<ModelLoader*> models = { cornell, sphere, tallBox, mirrorBox, sphere2 };
 
@@ -87,10 +87,6 @@ int main(int argc, char *argv[]) {
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
-
-//
-    sphere->blurFuzzMap();
-    sphere->blurFuzzMap();
 
 	vector<vec3> resultVec = Utils::interpolateThreeElementValues(vec3(1.0, 4.0, 9.2), vec3(4.0, 1.0, 9.8), 4);
 	for(int i=0; i < static_cast<int>(resultVec.size()); i++) {

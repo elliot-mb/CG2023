@@ -139,12 +139,11 @@ void Camera::gouraud(float& brightness, float& spec, glm::vec3& shadowRayn, floa
     spec = static_cast<float>((specV1 * u) + (specV2 * v) + (specV3 * w));
 }
 
-void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, glm::vec3& fuzz, int& x, int& y) /* const*/{
+void Camera::reflect(int bounces, glm::vec3& topColour, glm::vec3& incidentRay, float& attenuation, std::pair<int, float>& intersection, glm::vec3& intercept, glm::vec3& norm, std::vector<Triangle*>& tris, vec3 &colour, int& x, int& y) /* const*/{
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
     glm::vec3 reflectedRay = glm::normalize(incidentRayNrml - (static_cast<float>(2) * norm * glm::dot(incidentRayNrml, norm)));
-    reflectedRay = reflectedRay + fuzz; //add some random offset if present
     if(glm::dot(norm, reflectedRay) < 0) {
         colour = topColour; //absorb into the surface
         return;
@@ -214,10 +213,9 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 
     if(shading == ModelLoader::mtl || shading == ModelLoader::phg_mtl){
         glm::vec3 colVec = Utils::asVec3(c);
-        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, model->lookupFuzz(x, y), x, y);
-        glm::vec3 fuzzNorm = norm + model->lookupFuzz(x, y);
+        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, x, y);
         for (int i = 0; i < static_cast<int>(brightnesses.size()); i++) {
-            specular(speculars[i], shadowRayNrmls[i], fuzzNorm, incidentRay, 64);
+            specular(speculars[i], shadowRayNrmls[i], norm, incidentRay, 64);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
         }
         float finalBrightness = 0;
@@ -237,7 +235,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
         glm::vec3 colVec = Utils::asVec3(c);
-        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, ModelLoader::NO_FUZZ, x, y);
+        reflect(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour, x, y);
         return;
     }
     if(shading == ModelLoader::phg) {

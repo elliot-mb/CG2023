@@ -22,6 +22,7 @@ namespace Utils{
     glm::mat3 rod(glm::vec3 w, float theta);
     glm::vec3 asVec3(Colour& c);
     //glm::vec3 weightedMeanVects(glm::vec3& vects, std::vector<float> weights);
-    glm::vec3 getRandomUnitVector();
+    glm::vec3 getRandomUnitVec3();
 
+    float getRandom();
 }
