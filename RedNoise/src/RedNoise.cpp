@@ -78,8 +78,8 @@ int main(int argc, char *argv[]) {
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
     Light light = *(new Light(glm::mat3({-0.2, 0.25, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 1));
-
-    Scene* s = new Scene(models, {light});
+    EnvMap env = EnvMap("skybox1.ppm");
+    Scene* s = new Scene(models, {light}, env);
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 6);
     camera->setRot(0, 0);
 

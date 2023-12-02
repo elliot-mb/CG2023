@@ -6,7 +6,7 @@
 
 #include <utility>
 
-Scene::Scene(std::vector<ModelLoader*>& models, std::vector<Light> lights) {
+Scene::Scene(std::vector<ModelLoader *> &models, std::vector<Light> lights, EnvMap env) : env(std::move(env)) {
     this->models = models;
     this->allTris = {};
     this->toModel = {};

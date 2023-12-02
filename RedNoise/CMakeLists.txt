@@ -43,7 +43,8 @@ add_executable(RedNoise
         src/DepthBuffer.cpp
         src/Cameraman.cpp
         src/Scene.cpp
-        src/Light.cpp)
+        src/Light.cpp
+        src/EnvMap.cpp)
 
 if (MSVC)
     target_compile_options(RedNoise

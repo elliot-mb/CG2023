@@ -15,11 +15,12 @@
 #include "Triangle.h"
 #include "ModelLoader.h"
 #include "Light.h"
+#include "EnvMap.h"
 
 
 class Scene {
 public:
-    Scene(std::vector<ModelLoader*>& models, std::vector<Light> lights); //just a collection of models (world-like, always at world origin)
+    Scene(std::vector<ModelLoader *> &models, std::vector<Light> lights, EnvMap env); //just a collection of models (world-like, always at world origin)
 //    Scene(const Scene&) = delete;
     std::vector<Triangle*> getTris(); //gets the tris of all models
 
@@ -57,6 +58,7 @@ private:
     std::vector<float> lightStrengths;
     std::vector<float> initBrightnesses;
     std::vector<float> initSpeculars;
+    EnvMap env;
     int numLights;
 
 
