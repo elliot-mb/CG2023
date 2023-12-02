@@ -14,7 +14,7 @@
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
-glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({64, 64, 64});
+glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({64, 128, 64});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene, int threads) {
     this->position = cameraPosition;
@@ -141,20 +141,31 @@ void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& 
 }
 
 glm::vec3 Camera::reflect(glm::vec3& norm, glm::vec3& incident){
-    return glm::normalize(incident - (static_cast<float>(2) * norm * glm::dot(incident, norm)));
+    glm::vec3 n = glm::normalize(norm);
+    glm::vec3 i = glm::normalize(incident);
+    return glm::normalize(i - (static_cast<float>(2) * n * glm::dot(i, n)));
 }
 
-//returns the transmitted vector, OR if total interal reflection occurs, the interally reflected vector
+bool Camera::willInternallyReflect(glm::vec3& norm, glm::vec3& incident, float ri1, float ri2){
+    glm::vec3 n = glm::normalize(norm);
+    glm::vec3 i = glm::normalize(incident);
+    float rratio = ri1 / ri2;
+    float cosThtI = glm::dot(static_cast<float>(-1) * i, n);
+    float sin2ThtT = rratio * rratio * (1 - (cosThtI * cosThtI));
+    return sin2ThtT > 1;
+}
+
+//returns the transmitted vector
 glm::vec3 Camera::refract(glm::vec3& norm, glm::vec3& incident, float ri1, float ri2){
     glm::vec3 n = glm::normalize(norm);
     glm::vec3 i = glm::normalize(incident);
     float rratio = ri1 / ri2;
     float cosThtI = glm::dot(static_cast<float>(-1) * i, n);
     float sin2ThtT = rratio * rratio * (1 - (cosThtI * cosThtI));
-    if(sin2ThtT > 1){
-        //reflect?
-        return reflect(n, i);
-    }
+//    if(sin2ThtT > 1){
+//        //reflect?
+//        return reflect(n, i);
+//    }
     return (rratio * i) + (((rratio * cosThtI) - glm::sqrt(1 - sin2ThtT)) * n);
 }
 
@@ -268,11 +279,11 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 
             ModelLoader* m = this->scene->getModel(hitModelI);
             newRefractI = m->getRefractI();
-            if(hitModelI == forbiddenModel && !inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves
+            if(!inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves (not always true!)
                 newRefractI = 1;
                 prevRefractI = m->getRefractI();
                 inAir = true;
-            }else if(inAir && nextIntersection.first != -1){ //must be else if otherwise they affect each other
+            }else if(inAir){ //we are always hitting ourselves from air (shape has concavity)
                 newRefractI = m->getRefractI();
                 prevRefractI = 1;
                 inAir = false; //we are inside something (could be ourselves, doesnt matter which, this is taken care of by newRefractI initialiser)
@@ -292,16 +303,26 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
                     std::vector<glm::vec3*> ns = model->getNormsForTri(normsForTriI);
                     normTransm = (*ns[0] * uTransm) + (*ns[1] * vTransm) + (*ns[2] * wTransm); //needed just for phong
                 }
-                if(inAir) normTransm = normTransm * static_cast<float>(-1.0); //invert the refraction normal on the way out
                 if(normTransm.x == 0 && normTransm.y==0 && normTransm.z == 0) throw runtime_error("Camera::hit: refraction off zero vector normals is not possible");
+                // but wait! we arent always leaving when we hit ourselves!
+                // we need a way to tell if we are going to fully internally reflect...
+                // how do we do this? i know! we dont do it here... we do it inside refract!
+                // but then we also need to know if refract fully internally reflected it
+                if(willInternallyReflect(normTransm,transmission,prevRefractI,newRefractI)) {
+                    normTransm = normTransm * static_cast<float>(-1.0); //always flip the normal because we're internally reflecting
+                    transmission = reflect(normTransm, transmission);
+                    inAir = false;
+                }else{
+                    if(inAir) normTransm = normTransm * static_cast<float>(-1.0); //invert the refraction normal on the way out
+                    transmission = refract(
+                            normTransm,
+                            transmission,
+                            prevRefractI,
+                            newRefractI);
 
-                transmission = refract(
-                        normTransm,
-                        transmission,
-                        prevRefractI,
-                        newRefractI);
-                prevRefractI = newRefractI;
+                }
             }
+            prevRefractI = newRefractI;
             bounces--;
         }
         transportedColour = BACKGROUND_COLOUR;

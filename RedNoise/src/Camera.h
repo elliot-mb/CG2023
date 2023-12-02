@@ -92,4 +92,6 @@ private:
     vec3 refract(vec3 &norm, vec3 &incident, float ri1, float ri2);
 
     vec3 reflect(vec3 &norm, vec3 &incident);
+
+    bool willInternallyReflect(vec3 &norm, vec3 &incident, float ri1, float ri2);
 };
