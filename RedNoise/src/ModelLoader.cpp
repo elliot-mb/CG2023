@@ -26,11 +26,10 @@ const string ModelLoader::TKN_TXTURE = "map_Kd";
 const float ModelLoader::LARGE = 10000;
 const float ModelLoader::SMALL = -10000;
 
-glm::vec3 ModelLoader::NO_FUZZ = {0, 0, 0};
-
-ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int shading) {
+//for mtl, phg_mtl
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading) {
     this->scale = scale; //scaling factor
-    this->fileName = fileName;
+    this->fileName = std::move(fileName);
     this->bytes = ""; //new string
     this->tris = vector<Triangle*>{};
     this->verts = std::vector<glm::vec3>{};
@@ -39,69 +38,8 @@ ModelLoader::ModelLoader(string fileName, float scale, glm::vec3 position, int s
     this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
     this->position = position;
     this->shading = shading;
-    this->attenuation = 0.0;
-    this->fuzz = 0.0;
-}
-
-//for metals only
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, float fuzz, bool isPhong, int width, int height) {
-    this->scale = scale; //scaling factor
-    this->fileName = fileName;
-    this->bytes = ""; //new string
-    this->tris = vector<Triangle*>{};
-    this->verts = std::vector<glm::vec3>{};
-
-    this->vertToTris = std::vector<std::vector<Triangle*>>{}; //lookup table for finding the tris using a vertex (index of verts)
-    this->triToVerts = std::vector<std::vector<int>>{}; //the indices of verts that tri[i] is made from
-    this->position = position;
-    if(isPhong){
-        this->shading = phg_mtl;
-    }else{
-        this->shading = mtl;
-    }
     this->attenuation = at; //this darkening is combined with the colour of the model/vertex
-    this->fuzz = fuzz;
-    makeFuzzMap(width, height);
-}
-
-//things that have a nonzero fuzz need a fuzzmap
-void ModelLoader::makeFuzzMap(int width, int height){
-    this->fuzzMap = {};
-    for(int y = 0; y < height; y++){
-        this->fuzzMap.push_back({});
-        for(int x = 0; x < width; x++){
-            this->fuzzMap[y].push_back(this->fuzz * Utils::getRandomUnitVector());
-        }
-    }
-}
-
-void ModelLoader::blurFuzzMap(){ //can be called many times for further blurring
-    size_t width = this->fuzzMap[0].size();
-    size_t height = this->fuzzMap.size();
-    for(int y = 0; y < height; y++){
-        for(int x = 0; x < width; x++){
-            glm::vec3 sum = {0,0,0};
-            //first row
-            sum += this->fuzzMap[(height+y-1) % height][(width+x-1) % width];
-            sum += this->fuzzMap[(height+y-1) % height][(width+x) % width];
-            sum += this->fuzzMap[(height+y-1) % height][(width+x+1) % width];
-            //second row
-            sum += this->fuzzMap[(height+y) % height][(width+x-1) % width];
-            sum += this->fuzzMap[(height+y) % height][(width+x) % width];
-            sum += this->fuzzMap[(height+y) % height][(width+x+1) % width];
-            //third row
-            sum += this->fuzzMap[(height+y+1) % height][(width+x-1) % width];
-            sum += this->fuzzMap[(height+y+1) % height][(width+x) % width];
-            sum += this->fuzzMap[(height+y+1) % height][(width+x+1) % width];
-            sum = sum / static_cast<float>(9.0);
-            this->fuzzMap[y][x] = sum; //mean of itself and neighbours
-        }
-    }
-}
-
-glm::vec3& ModelLoader::lookupFuzz(int& x, int& y){
-    if(this->fuzz != 0 && this->fuzzMap.empty()) throw runtime_error("ModelLoader::lookupFuzz: no fuzz values in table (missed a call to makeFuzzMap?)");
-    return this->fuzzMap[y][x];
+    this->refractI = 1.5;
 }
 
 float& ModelLoader::getAttenuation() {
@@ -386,11 +324,9 @@ int* ModelLoader::getShading() {
     return &this->shading;
 }
 
-float *ModelLoader::getFuzz() {
-    return &this->fuzz;
+float ModelLoader::getRefractI(){
+    return this->refractI;
 }
-
-
 
 
 //vector<glm::vec3> ModelLoader::makeVertexNorms() {

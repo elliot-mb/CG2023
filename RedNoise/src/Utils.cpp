@@ -150,7 +150,7 @@ glm::vec3 Utils::asVec3(Colour& c){
     return glm::vec3(c.red, c.green, c.blue);
 }
 
-glm::vec3 Utils::getRandomUnitVector(){
+glm::vec3 Utils::getRandomUnitVec3(){
     glm::vec3 start = {1,0,0};
     float t1 = static_cast<float>((static_cast<float>(random()) / static_cast<float>(MAX_RAND))) * static_cast<float>(M_PI);
     float t2 = static_cast<float>((static_cast<float>(random()) / static_cast<float>(MAX_RAND))) * static_cast<float>(M_PI);
@@ -158,3 +158,7 @@ glm::vec3 Utils::getRandomUnitVector(){
     start = Utils::pitch(t2) * start;
     return start;
 };
+
+float Utils::getRandom() {
+    return (static_cast<float>(random()) / static_cast<float>(MAX_RAND));
+}

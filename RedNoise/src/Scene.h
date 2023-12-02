@@ -14,11 +14,12 @@
 #include "TextureMap.h"
 #include "Triangle.h"
 #include "ModelLoader.h"
+#include "Light.h"
 
 
 class Scene {
 public:
-    Scene(std::vector<ModelLoader*>& models, std::vector<glm::vec4*> lights); //just a collection of models (world-like, always at world origin)
+    Scene(std::vector<ModelLoader*>& models, std::vector<Light> lights); //just a collection of models (world-like, always at world origin)
 //    Scene(const Scene&) = delete;
     std::vector<Triangle*> getTris(); //gets the tris of all models
 
@@ -32,11 +33,11 @@ public:
 
     void setModelPosition(int modelIndex, glm::vec3 pos);
 
-    std::vector<glm::vec4*> getLights();
+    Light& getLight(int i);
 
     std::vector<glm::vec3> getLightLocs();
 
-    std::vector<float*> getLightStrengths();
+    std::vector<float>& getLightStrengths();
 
     std::vector<float> getInitBrightnesses();
 
@@ -51,9 +52,9 @@ private:
     std::vector<Triangle*> allTris; //tris of all models for raycasting into
     std::vector<int> toModel;
     std::vector<int> modelOffset;
-    std::vector<glm::vec4*> lights;
+    std::vector<Light> lights;
     std::vector<glm::vec3> lightLocs;
-    std::vector<float*> lightStrengths;
+    std::vector<float> lightStrengths;
     std::vector<float> initBrightnesses;
     std::vector<float> initSpeculars;
     int numLights;
