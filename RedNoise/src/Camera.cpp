@@ -257,10 +257,15 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         bool inAir = false;
         while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
             nextIntersection = getClosestIntersection(nextIntersection.first, nextIntercept, transmission, tris, *scene, vwTransm);
+
+            if(nextIntersection.first == -1) break;
+
             lastIntercept = nextIntercept;
             nextIntercept = nextIntercept + (transmission * nextIntersection.second); //march along the transmission ray we just made
             int hitModelI = this->scene->getModelFromTri(nextIntersection.first);
-            //if(hitModelI != forbiddenModel) break;
+
+            if(hitModelI != forbiddenModel) break;
+
             ModelLoader* m = this->scene->getModel(hitModelI);
             newRefractI = m->getRefractI();
             if(hitModelI == forbiddenModel && !inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves
