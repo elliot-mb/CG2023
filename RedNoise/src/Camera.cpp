@@ -14,7 +14,7 @@
 glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional argument in getClosestIntersect
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
-glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({0, 255, 0});
+glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({64, 64, 64});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene, int threads) {
     this->position = cameraPosition;
@@ -181,7 +181,7 @@ void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentR
 
 //recursive raycast function for colouring surfaces, call itself again on reflection. It does not do the initial intersection
 // old_body[incidentRay/camRay]
-void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, float refractI) /*const*/ {
+void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, float lastRefractI) /*const*/ {
 
     if(bounces < 0){
         colour = BACKGROUND_COLOUR;
@@ -250,8 +250,9 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         std::pair<int, float> nextIntersection = intersection;
         glm::vec3 lastIntercept = intercept;
         glm::vec3 nextIntercept = intercept;
-        float lastRefractI = this->scene->getModel(forbiddenModel)->getRefractI();
-        glm::vec3 transmission = refract(norm, incidentRay, refractI, lastRefractI);
+        float prevRefractI = lastRefractI; // prev is the one we use in the while loop
+        float newRefractI = this->scene->getModel(forbiddenModel)->getRefractI();
+        glm::vec3 transmission = refract(norm, incidentRay, prevRefractI, newRefractI);
         glm::vec2 vwTransm;
         bool inAir = false;
         while(bounces > 0 && this->scene->getModelFromTri(nextIntersection.first) == forbiddenModel && nextIntersection.first != -1){ //compare model on its index in the scene
@@ -259,12 +260,16 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
             lastIntercept = nextIntercept;
             nextIntercept = nextIntercept + (transmission * nextIntersection.second); //march along the transmission ray we just made
             int hitModelI = this->scene->getModelFromTri(nextIntersection.first);
+            //if(hitModelI != forbiddenModel) break;
             ModelLoader* m = this->scene->getModel(hitModelI);
-            float newRefractI = m->getRefractI();
+            newRefractI = m->getRefractI();
             if(hitModelI == forbiddenModel && !inAir){ //if we arent in air, and we just hit ourselves, we are leaving ourselves
                 newRefractI = 1;
+                prevRefractI = m->getRefractI();
                 inAir = true;
             }else if(inAir && nextIntersection.first != -1){ //must be else if otherwise they affect each other
+                newRefractI = m->getRefractI();
+                prevRefractI = 1;
                 inAir = false; //we are inside something (could be ourselves, doesnt matter which, this is taken care of by newRefractI initialiser)
             }
             if(nextIntersection.first != -1){ //anyway if we do hit something and not infinite air
@@ -277,23 +282,26 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
                     float vTransm = vwTransm.x;
                     float wTransm = vwTransm.y;
                     if(wTransm == 0 && vTransm==0 && uTransm == 0) throw runtime_error("Camera::hit: phong failed with zero barycentrics");
-                    Triangle* hitTri = tris[nextIntersection.first];
-                    normTransm = (*hitTri->n0() * uTransm) + (*hitTri->n1() * vTransm) + (*hitTri->n2() * wTransm); //needed just for phong
+                    //Triangle* hitTri = tris[nextIntersection.first];
+                    int normsForTriI = nextIntersection.first - scene->getModelOffset(hitModelI);
+                    std::vector<glm::vec3*> ns = model->getNormsForTri(normsForTriI);
+                    normTransm = (*ns[0] * uTransm) + (*ns[1] * vTransm) + (*ns[2] * wTransm); //needed just for phong
+                    if(inAir) normTransm = normTransm * static_cast<float>(-1.0);
                 }
                 if(normTransm.x == 0 && normTransm.y==0 && normTransm.z == 0) throw runtime_error("Camera::hit: refraction off zero vector normals is not possible");
 
                 transmission = refract(
                         normTransm,
                         transmission,
-                        lastRefractI,
+                        prevRefractI,
                         newRefractI);
-                lastRefractI = newRefractI;
+                prevRefractI = newRefractI;
             }
             bounces--;
         }
         transportedColour = BACKGROUND_COLOUR;
         if(nextIntersection.first != -1 && bounces != 0)
-            hit(bounces, lastIntercept, transmission, vwTransm, nextIntersection, tris, transportedColour, lastRefractI);
+            hit(bounces, lastIntercept, transmission, vwTransm, nextIntersection, tris, transportedColour, prevRefractI);
 
         colour = (model->getAttenuation() * reflectedColour) + ((1 - model->getAttenuation()) * transportedColour);
         return;

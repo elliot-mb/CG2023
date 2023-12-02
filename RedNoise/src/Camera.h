@@ -69,7 +69,7 @@ private:
 
     vec3 buildCameraRay(int& x, int& y);
 //    void raycast(DrawingWindow &window);
-    void hit(int bounces, glm::vec3& source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, glm::vec3& colour, float refractI)/* const*/;
+    void hit(int bounces, glm::vec3& source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, glm::vec3& colour, float lastRefractI)/* const*/;
     void rasterise(DrawingWindow &window, DepthBuffer &depthBuffer);
 
     //lighting effects
