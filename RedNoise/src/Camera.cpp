@@ -162,7 +162,7 @@ void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentR
     glm::vec2 vwBounce;
     std::pair<int, float> reflectionIntersect;
     glm::vec3 incidentRayNrml = glm::normalize(incidentRay);
-    glm::vec3 reflectedRay = glm::normalize(incidentRayNrml - (static_cast<float>(2) * norm * glm::dot(incidentRayNrml, norm)));
+    glm::vec3 reflectedRay = reflect(norm, incidentRayNrml);
     if(glm::dot(norm, reflectedRay) < 0) {
         colour = topColour; //absorb into the surface
         return;
@@ -286,8 +286,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
                     int normsForTriI = nextIntersection.first - scene->getModelOffset(hitModelI);
                     std::vector<glm::vec3*> ns = model->getNormsForTri(normsForTriI);
                     normTransm = (*ns[0] * uTransm) + (*ns[1] * vTransm) + (*ns[2] * wTransm); //needed just for phong
-                    if(inAir) normTransm = normTransm * static_cast<float>(-1.0);
                 }
+                if(inAir) normTransm = normTransm * static_cast<float>(-1.0); //invert the refraction normal on the way out
                 if(normTransm.x == 0 && normTransm.y==0 && normTransm.z == 0) throw runtime_error("Camera::hit: refraction off zero vector normals is not possible");
 
                 transmission = refract(
@@ -403,7 +403,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 2; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 10;
+    int bounces = 6;
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
@@ -412,7 +412,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
             //first, cast from the camera to the scene
             glm::vec2 vw = {0.0, 0.0};
             std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *scene, vw);
-            if(intersection.first != NO_INTERSECTION){ //if its valid...
+            if(intersection.first != NO_INTERSECTION){ //ifs its valid...
                 glm::vec3 finalColour;
                 ModelLoader* model = scene->getModel(scene->getModelFromTri(intersection.first));
 //                if(*model->getFuzz() != 0)
