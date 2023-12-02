@@ -45,6 +45,8 @@ public:
     std::vector<float> getInitSpeculars();
 
     int getNumLights();
+
+    uint32_t getEnvPixel(float lat, float lng);
 private:
     //delegates to all models
     void load();

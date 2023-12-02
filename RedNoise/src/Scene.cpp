@@ -89,3 +89,7 @@ std::vector<float> Scene::getInitSpeculars(){
 int Scene::getNumLights() {
     return this->numLights;
 }
+
+uint32_t Scene::getEnvPixel(float lat, float lng) {
+    return this->env.getPixel(lat, lng);
+}

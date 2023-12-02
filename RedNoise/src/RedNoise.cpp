@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.3, ModelLoader::phg_mtl);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.4, ModelLoader::mtl);
-    ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), 0.5, ModelLoader::gls);
+    ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), 0.2, ModelLoader::gls);
     std::vector<ModelLoader*> models = { cornell, sphere, tallBox, mirrorBox, sphere2 };
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);

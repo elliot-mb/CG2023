@@ -36,5 +36,7 @@ std::ostream &operator<<(std::ostream &os, const TextureMap &map) {
 }
 
 uint32_t TextureMap::pixel(int x, int y) {
+    x = static_cast<int>((x + this->width) % this->width);
+    y = static_cast<int>((y + this->height) % this->height);
     return this->pixels[(y * this->width) + x];
 }

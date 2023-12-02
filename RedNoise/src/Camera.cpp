@@ -92,6 +92,18 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
     }
     return {closestTri, closestValid}; //simply returns the index and distance along the ray
 }
+//colour by the env in scene
+glm::vec3 Camera::envColour(glm::vec3 escapedRay){
+    glm::vec3 v = glm::normalize(escapedRay);
+    float latitude = glm::asin(-v.y);
+    float longitude = glm::atan(v.x, v.z);
+
+    uint32_t px = this->scene->getEnvPixel(latitude, longitude);
+    Colour c = Utils::unpack(px);
+
+    return {c.red, c.green, c.blue};
+}
+
 //
 glm::vec3 Camera::buildCameraRay(int& x, int& y){
     glm::vec2 imagePlanePos = this->imageCoords[y][x]; //inverse of what we did for rasterising
@@ -185,7 +197,7 @@ void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentR
         colour = (colour * (1-attenuation)) + (topColour * (attenuation)); //darkens it on the way back up the call stack in reverse hit order
         return;
     } else {
-        colour = (BACKGROUND_COLOUR * (1-attenuation)) + (topColour * (attenuation));
+        colour = (envColour(reflectedRay) * (1-attenuation)) + (topColour * (attenuation));
         return;
     }
 }
@@ -195,7 +207,7 @@ void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentR
 void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, float lastRefractI) /*const*/ {
 
     if(bounces < 0){
-        colour = BACKGROUND_COLOUR;
+        colour = envColour(incidentRay);
         return;
     }
     bounces--; //decrement for each all to hit
@@ -325,7 +337,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
             prevRefractI = newRefractI;
             bounces--;
         }
-        transportedColour = BACKGROUND_COLOUR;
+        transportedColour = envColour(transmission);
         if(nextIntersection.first != -1 && bounces != 0)
             hit(bounces, lastIntercept, transmission, vwTransm, nextIntersection, tris, transportedColour, prevRefractI);
 
@@ -352,7 +364,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
             nextIntercept = nextIntercept + (incidentRay * nextIntersection.second); //march along the ray
             bounces--;
         }
-        transportedColour = BACKGROUND_COLOUR;
+        transportedColour = envColour(incidentRay);
         if(nextIntersection.first != -1)
             hit(bounces, lastIntercept, incidentRay, nextVW, nextIntersection, tris, transportedColour, 1);
 
@@ -428,7 +440,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 2; //how large are our ray texturePts (1 is native resolution)
+    int stride = 1; //how large are our ray texturePts (1 is native resolution)
     int bounces = 6;
 
 
@@ -461,17 +473,18 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
                         }
                     }
             }else{
+                glm::vec3 bgCol = envColour(camRay);
                 window.setPixelColour(x, y, Utils::pack(255,
-                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.x),
-                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.y),
-                                                                static_cast<uint8_t>(BACKGROUND_COLOUR.z)));
+                                                                static_cast<uint8_t>(bgCol.x),
+                                                                static_cast<uint8_t>(bgCol.y),
+                                                                static_cast<uint8_t>(bgCol.z)));
                 if(stride > 1)
                     for(int i = 0; i < stride; i++){
                         for(int j = 0; j < stride; j++){
                             window.setPixelColour(x + i, y + j, Utils::pack(255,
-                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.x),
-                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.y),
-                                                                            static_cast<uint8_t>(BACKGROUND_COLOUR.z)));
+                                                                            static_cast<uint8_t>(bgCol.x),
+                                                                            static_cast<uint8_t>(bgCol.y),
+                                                                            static_cast<uint8_t>(bgCol.z)));
                         }
                     }
             }
