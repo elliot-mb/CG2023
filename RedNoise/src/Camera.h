@@ -96,4 +96,6 @@ private:
     bool willInternallyReflect(vec3 &norm, vec3 &incident, float ri1, float ri2);
 
     vec3 envColour(vec3 escapedRay);
+
+    static vec3 MIRROR_COLOUR;
 };

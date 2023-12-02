@@ -68,7 +68,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.8, ModelLoader::nrm);
+    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.7, ModelLoader::nrm);
     ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.3, ModelLoader::phg_mtl);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.4, ModelLoader::mtl);

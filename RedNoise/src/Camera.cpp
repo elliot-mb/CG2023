@@ -15,6 +15,7 @@ glm::vec2 Camera::DEFAULT_INTERSECT = {0.0, 0.0}; //gives reference to optional 
 int Camera::NO_INTERSECTION = -1;
 glm::vec3 Camera::LIGHT_COLOUR = glm::vec3({255, 255, 255});
 glm::vec3 Camera::BACKGROUND_COLOUR = glm::vec3({64, 128, 64});
+glm::vec3 Camera::MIRROR_COLOUR = glm::vec3({0, 0, 0});
 
 Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Scene* scene, int threads) {
     this->position = cameraPosition;
@@ -207,7 +208,7 @@ void Camera::reflectCast(int bounces, glm::vec3& topColour, glm::vec3& incidentR
 void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::vec2& vw, std::pair<int, float>& intersection, std::vector<Triangle*>& tris, vec3 &colour, float lastRefractI) /*const*/ {
 
     if(bounces < 0){
-        colour = envColour(incidentRay);
+        colour = MIRROR_COLOUR;
         return;
     }
     bounces--; //decrement for each all to hit
@@ -394,8 +395,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         return;
     }
     if(shading == ModelLoader::mrr || shading == ModelLoader::phg_mrr) { // if there is no intersection we return black (this will eventually be the skybox)
-        float noAttenuation = 0.0;
-        reflectCast(bounces, colVec, incidentRay, noAttenuation, intersection, intercept, norm, tris, colour);
+
+        reflectCast(bounces, MIRROR_COLOUR, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, colour);
         return;
     }
     if(shading == ModelLoader::phg) {
@@ -441,7 +442,7 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
     int stride = 1; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 6;
+    int bounces = 10;
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
