@@ -21,7 +21,7 @@ public:
 private:
     constexpr static const float SEC_STD_LAT = 1.0;
     constexpr static const float COS_STD_LAT = 1.0;
-    constexpr static const float STD_LONG = 0.0;
+    constexpr static const float STD_LONG = M_PI;
 
     int width;
     int height;

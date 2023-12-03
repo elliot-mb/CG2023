@@ -68,17 +68,20 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.7, ModelLoader::nrm);
+    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.86, ModelLoader::nrm);
     ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.3, ModelLoader::phg_mtl);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
-    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.4, ModelLoader::mtl);
-    ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(-0.6, -1.0, 1), 0.2, ModelLoader::gls);
-    std::vector<ModelLoader*> models = { cornell, sphere, tallBox, mirrorBox, sphere2 };
+    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.5, ModelLoader::mtl);
+    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -0.75, 1), 0.2, ModelLoader::gls);
+    ModelLoader* mirrorBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.2, ModelLoader::mrr);
+
+    std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox};
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
     Light light = *(new Light(glm::mat3({-0.2, 0.25, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 1));
-    EnvMap env = EnvMap("skybox1.ppm");
+    //Light light = *(new Light(glm::mat3({1, 2, 2}, {2.0, 0, 0}, {0, 1.4, 1.4}), glm::vec3({255, 255, 255}),  5, 16));
+    EnvMap env = EnvMap("skybox.ppm");
     Scene* s = new Scene(models, {light}, env);
     Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 6);
     camera->setRot(0, 0);
@@ -97,9 +100,9 @@ int main(int argc, char *argv[]) {
 	cout << endl;
 
 
-// //comment to stop the render
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//    cm->render(window, *depthBuffer, *s, true);
+//// //comment to stop the render
+    Cameraman* cm = new Cameraman(camera, "./render/");
+    cm->render(window, *depthBuffer, *s, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
