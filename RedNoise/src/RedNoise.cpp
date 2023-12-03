@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
-    Light light = *(new Light(glm::mat3({-0.2, 0.25, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 1));
+    Light light = *(new Light(glm::mat3({-0.2, 0.25, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 2, 4));
     //Light light = *(new Light(glm::mat3({1, 2, 2}, {2.0, 0, 0}, {0, 1.4, 1.4}), glm::vec3({255, 255, 255}),  5, 16));
     EnvMap env = EnvMap("skybox.ppm");
     Scene* s = new Scene(models, {light}, env);

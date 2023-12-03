@@ -7,7 +7,7 @@
 class Light {
 public:
     //mat3 is p, u and v of the plane, points is how many points we sample
-    Light(glm::mat3 light, glm::vec3 colour, float strength, int points);
+    Light(glm::mat3 light, glm::vec3 colour, float strength, int points, int segments);
 
     glm::vec3& getColour();
     float getStrength() const;
