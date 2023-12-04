@@ -252,11 +252,11 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(shading != ModelLoader::nrm && shading != ModelLoader::mtl && shading != ModelLoader::tsp && shading != ModelLoader::gls && shading != ModelLoader::mrr){ //vertex normals are interpolated just if we need to
         norms = model->getNormsForTri(modelTriIndex); //needed for gouraud and phong
         norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //needed just for phong
-        if(model->getIsTextureNormMap()){
-            norm +=
-        }
     }else{ //flat shading doesnt use vertex normals
         norm = *tri->getNormal();
+    }
+    if(model->getIsTextureNormMap() && tri->isNormalMapped()){
+        norm = tri->getNormMapRot() * tri->getNormalMapNormal(u, v, w);
     }
 
     glm::vec3 defaultReflected = {0, 0, 0};
@@ -444,7 +444,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 4; //how large are our ray texturePts (1 is native resolution)
+    int stride = 1; //how large are our ray texturePts (1 is native resolution)
     int bounces = 4;
 
 

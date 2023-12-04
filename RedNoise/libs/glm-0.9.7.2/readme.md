@@ -142,7 +142,7 @@ glm::mat4 camera(float Translate, glm::vec2 const & Rotate)
 - Fixed mat4x3 = mat2x3 * mat4x2 operator #297
 - Fixed warnings in F2x11_1x10 packing function in GTC_packing #295
 - Fixed Visual Studio natvis support for vec4 #288
-- Fixed GTC_packing *pack*norm*x* build and added tests #292
+- Fixed GTC_packing *pack*getNormal*x* build and added tests #292
 - Disabled GTX_scalar_multiplication for GCC, failing to build tests #242
 - Fixed Visual C++ 2015 constexpr errors: Disabled only partial support
 - Fixed functions not inlined with Clang #302

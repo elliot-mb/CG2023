@@ -13,10 +13,10 @@ class NormalMap {
 public:
     NormalMap();
     explicit NormalMap(std::string fileName);
-    glm::vec3& norm(int x, int y);
+    glm::vec3& getNormal(int x, int y);
     size_t getWidth() const;
     size_t getHeight() const;
 private:
-    TextureMap t;
+    TextureMap texture;
     std::vector<std::vector<glm::vec3>> norms;
 };

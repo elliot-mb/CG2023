@@ -19,10 +19,11 @@ public:
     Triangle(glm::mat3 tri3, Colour &colour);
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour);
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture);
-    Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri, NormalMap& nm);
+    Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri, NormalMap& nm, bool hasNormalMap);
 
     glm::vec3 &getNormalMapNormal(float u, float v, float w);
     bool isTextured();
+    bool isNormalMapped();
     void draw(DrawingWindow& window); //just needs the window to draw tri
     void fill(DrawingWindow& window, DepthBuffer& db);
     void fillTexture(DrawingWindow& window, DepthBuffer& db);
@@ -43,6 +44,7 @@ public:
     glm::vec3* n0();
     glm::vec3* n1();
     glm::vec3* n2();
+    glm::mat3& getNormMapRot();
 
     glm::vec3 e0;
     glm::vec3 e1;
@@ -66,7 +68,8 @@ private:
     Colour colour;
     TextureMap texture;
     bool hasTexture;
-    NormalMap &normalMap;
-
+    NormalMap normalMap;
+    bool hasNormalMap;
+    glm::mat3 normRot; //rotate normals to align with surface direction
 };
 

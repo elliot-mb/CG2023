@@ -242,7 +242,7 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
         CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
-        tri = new Triangle(v0, v1, v2, currentColour, currentTexture.first, textureTri, currentNormalMap.first);
+        tri = new Triangle(v0, v1, v2, currentColour, currentTexture.first, textureTri, currentNormalMap.first, currentNormalMap.second);
     }else tri = new Triangle(v0, v1, v2, currentColour);
 
     this->tris.push_back(tri);
@@ -267,7 +267,7 @@ void ModelLoader::load() {
 
     Colour currentColour = Colour(255, 0, 0);
     MaybeTexture currentTexture = std::pair<TextureMap, bool>{TextureMap(), false}; //texture map and validity
-    MaybeTexture currentNormalMap = std::pair<TextureMap, bool>{TextureMap(), false};
+    std::pair<NormalMap, bool> currentNormalMap = std::pair<NormalMap, bool>{NormalMap(), false};
     std::vector<vec2> textureVerts = {};
 
     //average the vertex positions first
@@ -285,7 +285,7 @@ void ModelLoader::load() {
             if(isLineType(ln, TKN_USEMTL)) asUseMaterial(ln, currentColour, currentTexture, currentNormalMap);
             //if(isLineType(ln, TKN_VERTEX)) asVertex(ln, this->verts); // we already load in the vertices
             if(isLineType(ln, TKN_VTXTEX)) asVertexTexture(ln, textureVerts);
-            if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture);
+            if(isLineType(ln, TKN_FACET)) asFacet(ln, this->verts, textureVerts, currentColour, currentTexture, currentNormalMap);
         }
     }
     this->makeVertexNorms();

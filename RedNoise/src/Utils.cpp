@@ -162,3 +162,11 @@ glm::vec3 Utils::getRandomUnitVec3(){
 float Utils::getRandom() {
     return (static_cast<float>(random()) / static_cast<float>(MAX_RAND));
 }
+
+//gets the latitude and longitude of this vector inside a sphere
+glm::vec2 Utils::latLong(glm::vec3 v){
+    glm::vec3 vn = glm::normalize(v);
+    float latitude = glm::asin(-vn.y);
+    float longitude = glm::atan(vn.x, vn.z);
+    return glm::vec2(latitude, longitude);
+}
