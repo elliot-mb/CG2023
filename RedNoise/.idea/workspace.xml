@@ -27,16 +27,8 @@
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/glm-0.9.7.2/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/libs/glm-0.9.7.2/readme.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NormalMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/NormalMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NormalMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/NormalMap.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Triangle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Triangle.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Triangle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Utils.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Utils.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,7 +179,7 @@
       <workItem from="1701561802765" duration="5960000" />
       <workItem from="1701698234984" duration="3000" />
       <workItem from="1701703427158" duration="10925000" />
-      <workItem from="1701722615845" duration="3434000" />
+      <workItem from="1701722615845" duration="4045000" />
     </task>
     <servers />
   </component>

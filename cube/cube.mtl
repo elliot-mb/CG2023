@@ -1,0 +1,5 @@
+# Blender MTL File: 
+# Material Count: 2
+
+newmtl CubeNormals
+map_Kd Trimm_Normal_OpenGL.ppm
