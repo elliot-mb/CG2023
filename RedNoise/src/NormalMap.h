@@ -9,6 +9,8 @@
 #include "glm/vec3.hpp"
 #include "TextureMap.h"
 
+
+
 class NormalMap {
 public:
     NormalMap();

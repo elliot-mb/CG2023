@@ -24,6 +24,9 @@ Light::Light(glm::mat3 light, glm::vec3 colour, float strength, int points, int 
 
         }
     }
+    Colour c = Colour(0, 0, 0);
+    this->surfaceTri1 = new Triangle(pos, pos + u, pos + v, c);
+    this->surfaceTri2 = new Triangle(pos + u, pos + v, pos + u + v, c);
 }
 
 glm::vec3& Light::getColour(){
@@ -36,5 +39,12 @@ std::vector<glm::vec3> Light::getPts() const{
 
 float Light::getStrength() const{ return this->strength; }
 
+Triangle &Light::getSurfaceTri1() {
+    return this->surfaceTri1;
+}
+
+Triangle &Light::getSurfaceTri2() {
+    return this->surfaceTri2;
+}
 
 

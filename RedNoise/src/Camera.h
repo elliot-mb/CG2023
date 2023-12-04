@@ -99,4 +99,6 @@ private:
     vec3 envColour(vec3 escapedRay);
 
     static vec3 MIRROR_COLOUR;
+
+    void areaSpecular(float &brightness, float strength, vec3 &intercept, vec3 &camRay, vec3 &norm, Light &light);
 };

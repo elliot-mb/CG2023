@@ -4,6 +4,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "Colour.h"
+#include "Triangle.h"
 
 
 namespace Utils{
@@ -25,4 +26,6 @@ namespace Utils{
     glm::vec3 getRandomUnitVec3();
     glm::vec2 latLong(glm::vec3 v);
     float getRandom();
+
+    bool doesCollide(glm::vec3 &origin, glm::vec3 &beam, Triangle &tri, glm::vec3 &loc);
 }

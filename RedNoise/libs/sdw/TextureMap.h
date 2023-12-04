@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -14,7 +13,7 @@ public:
     uint32_t pixel(int x, int y);
 
 	TextureMap();
-	TextureMap(const std::string &filename);
+	explicit TextureMap(const std::string &filename);
 	friend std::ostream &operator<<(std::ostream &os, const TextureMap &point);
 
 };

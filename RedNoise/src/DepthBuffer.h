@@ -2,10 +2,10 @@
 // Created by elliot on 22/10/23.
 //
 
+#pragma once
+
 #include <vector>
 #include "glm/glm.hpp"
-
-#pragma once
 
 class DepthBuffer {
 public:

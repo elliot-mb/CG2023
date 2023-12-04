@@ -1,9 +1,9 @@
 //
 // Created by elliot on 20/11/23.
 //
-#include "Camera.h"
-
 #pragma once
+
+#include "Camera.h"
 
 /**
  * This class will render our scene for us, export the frames as a video

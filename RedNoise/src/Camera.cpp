@@ -117,6 +117,15 @@ void Camera::proximity(float& brightness, float& len, float& strength){
     brightness = brightness * static_cast<float>(strength / glm::pow(len, 2));
 }
 
+void Camera::areaSpecular(float& brightness, float strength, glm::vec3& intercept, glm::vec3& camRay, glm::vec3& norm, Light& light){
+    glm::vec3 reflectedRay = reflect(norm, camRay);
+    glm::vec3 origin = {0, 0, 0};
+    if(Utils::doesCollide(intercept, reflectedRay, light.getSurfaceTri1(), origin) ||
+       Utils::doesCollide(intercept, reflectedRay, light.getSurfaceTri2(), origin)){
+        brightness = strength;
+    }
+}
+
 void Camera::specular(float& brightness, float strength, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay, float power){
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
@@ -405,6 +414,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(shading == ModelLoader::phg) {
         for (int i = 0; i < this->scene->getNumLights(); i++) {
             specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
+            areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
