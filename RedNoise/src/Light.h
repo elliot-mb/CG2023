@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "glm/glm.hpp"
+#include "Triangle.h"
 
 class Light {
 public:
@@ -18,8 +19,9 @@ private:
     glm::vec3 v;
     glm::vec3 colour;
     float strength;
-    std::vector<glm::vec3> pts; //points on the light we sample
-
+    std::vector<glm::vec3> pts; //points on the light we sample`#
+    Triangle surface1;
+    Triangle surface2;
 };
 
 

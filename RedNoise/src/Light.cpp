@@ -24,6 +24,9 @@ Light::Light(glm::mat3 light, glm::vec3 colour, float strength, int points, int 
 
         }
     }
+    Colour c = Colour(0, 0, 0);
+    this->surface1 = Triangle(pos, pos + u, pos + v, c);
+    this->surface2 = Triangle(pos + u, pos + v, pos + u + v, c);
 }
 
 glm::vec3& Light::getColour(){
