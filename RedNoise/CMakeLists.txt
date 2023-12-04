@@ -44,7 +44,8 @@ add_executable(RedNoise
         src/Cameraman.cpp
         src/Scene.cpp
         src/Light.cpp
-        src/EnvMap.cpp)
+        src/EnvMap.cpp
+        src/NormalMap.cpp)
 
 if (MSVC)
     target_compile_options(RedNoise

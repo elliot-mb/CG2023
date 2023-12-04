@@ -13,12 +13,13 @@
 #include "ModelTriangle.h"
 #include "TextureMap.h"
 #include "Triangle.h"
+#include "NormalMap.h"
 
 using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 
 class ModelLoader {
 public:
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading);
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture = true, bool isTextureNormalMap = false);
 
 //loads the file and returns the string
     void load();
@@ -43,12 +44,15 @@ public:
     // glass,
     // transparent phong (transparent balls),
     // glass phong (glass balls)
-    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg, nrm_map}; //normal use texture as normal map
+    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg}; //normal use texture as normal map
     int* getShading();
     float& getAttenuation();
     float getRefractI();
+    bool getIsTextureNormMap() const;
 
 private:
+    bool forceTexture;
+    bool isTextureNormalMap;
     glm::vec3 position;
     std::vector<std::string> tailTokens(std::vector<std::string> ln, const std::string& tkn);
     bool isLineType(std::vector<std::string> ln, const std::string& tkn);
@@ -58,7 +62,7 @@ private:
     std::vector<Triangle*> tris; //tris generated from verts and facets
     std::map<std::string, Colour> materials; //vector of colour maps
     std::map<std::string, TextureMap> textures;
-    std::map<std::string, TextureMap> normalMaps;
+    std::map<std::string, NormalMap> normalMaps;
     float scale;
     std::vector<glm::vec3> verts; //just those vertices which are used to build facets
     glm::vec3 vertCentre; // mean of all vertex locations
@@ -72,11 +76,11 @@ private:
     void asMaterial(std::vector<std::string> ln, std::string& location);
     static const std::string TKN_SUBOBJ;
     static const std::string TKN_USEMTL;
-    void asUseMaterial(std::vector<std::string> ln, Colour &currentColour, MaybeTexture &currentTexture, MaybeTexture &currentNormalMap);
+    void asUseMaterial(std::vector<std::string> ln, Colour &currentColour, MaybeTexture &currentTexture, std::pair<NormalMap, bool> &currentNormalMap);
     static const std::string TKN_VERTEX;
     void asVertex(std::vector<std::string> ln, std::vector<glm::vec3> &verts);
     static const std::string TKN_FACET;
-    void asFacet(std::vector<std::string> ln, std::vector<glm::vec3> &verts, std::vector<glm::vec2>& textureVerts, Colour &currentColour, MaybeTexture &currentTexture);
+    void asFacet(std::vector<std::string> ln, std::vector<glm::vec3> &verts, std::vector<glm::vec2>& textureVerts, Colour &currentColour, MaybeTexture &currentTexture, std::pair<NormalMap, bool>& currentNormalMap);
     static const std::string TKN_NEWMTL;
     static const std::string TKN_KD;
     static const std::string TKN_COMMNT;
@@ -97,5 +101,6 @@ private:
 
     static const std::string TKN_BMPMAP;
     std::string path;
+
 };
 

@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "glm/glm.hpp"
+#include "NormalMap.h"
 #include <tuple>
 #include <algorithm>
 
@@ -43,7 +44,7 @@ Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, Tex
     this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
 }
 
-Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture, CanvasTriangle textureTri) {
+Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap& texture, CanvasTriangle textureTri, NormalMap& nm) {
     this->tri3 = glm::mat3(v0, v1, v2);
     this->vt0 = glm::vec2(textureTri.v0().x, textureTri.v0().y); //default set texture vertices to triangle vertices
     this->vt1 = glm::vec2(textureTri.v1().x, textureTri.v1().y);
@@ -54,7 +55,7 @@ Triangle::Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, Tex
     this->e0 = this->v1() - this->v0();
     this->e1 = this->v2() - this->v0();
     this->normal = glm::normalize(glm::cross(this->v2() - this->v1(), this->v0() - this->v1()));
-
+    this->normalMap = nm;
 }
 
 
@@ -298,4 +299,11 @@ Colour Triangle::getTextureColour(float u, float v, float w) {
     int y = static_cast<int>(glm::floor((this->vt0.y * u) + (this->vt1.y * v) + (this->vt2.y * w)));
     return Utils::unpack(this->texture.pixel(x, y));
 }
+
+glm::vec3& Triangle::getNormalMapNormal(float u, float v, float w) {
+    int x = static_cast<int>(glm::floor((this->vt0.x * u) + (this->vt1.x * v) + (this->vt2.x * w)));
+    int y = static_cast<int>(glm::floor((this->vt0.y * u) + (this->vt1.y * v) + (this->vt2.y * w)));
+    return this->normalMap.norm(x, y);
+}
+
 

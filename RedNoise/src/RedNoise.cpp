@@ -72,8 +72,8 @@ int main(int argc, char *argv[]) {
     ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35),  1.0, ModelLoader::phg);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.5, ModelLoader::mtl);
-    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -0.75, 1), 0.2, ModelLoader::gls);
-    ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.2, ModelLoader::nrm);
+    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -0.75, 1), 0.2, ModelLoader::gls, false);
+    ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 1.0, ModelLoader::nrm, true, true);
     ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.0025, glm::vec3(0, 0, -0.5), 1.0, ModelLoader::nrm);
 
     std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox, hackspace};

@@ -6,6 +6,7 @@
 #include "Utils.h"
 #include "CanvasTriangle.h"
 #include "Triangle.h"
+#include "NormalMap.h"
 #include <iostream>
 #include <fstream>
 #include <string.h>
@@ -28,7 +29,7 @@ const float ModelLoader::LARGE = 10000;
 const float ModelLoader::SMALL = -10000;
 
 //for mtl, phg_mtl
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading) {
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture, bool isTextureNormalMap) {
     this->scale = scale; //scaling factor
     this->fileName = std::move(fileName);
     std::vector<std::string> path = Utils::split(this->fileName, '/');
@@ -46,6 +47,12 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     this->shading = shading;
     this->attenuation = at; //this darkening is combined with the colour of the model/vertex
     this->refractI = 1.5;
+    this->forceTexture = forceTexture;
+    this->isTextureNormalMap = isTextureNormalMap;
+}
+
+bool ModelLoader::getIsTextureNormMap() const{
+    return this->isTextureNormalMap;
 }
 
 float& ModelLoader::getAttenuation() {
@@ -84,6 +91,7 @@ std::vector<string> ModelLoader::tailTokens(std::vector<string> ln, const string
 
 //makes the necessary changes assuming line is of type mtllib
 void ModelLoader::asMaterial(std::vector<string> ln, std::string& location){
+    std::cout << "adding new material" << std::endl;
     std::vector<string> tkns = tailTokens(ln, TKN_MTLLIB);
     const string NO_TEXTURE = "none";
     string filename = location + tkns.back();
@@ -107,29 +115,34 @@ void ModelLoader::asMaterial(std::vector<string> ln, std::string& location){
             std::cout << "colour added '" << lastName << "'" << std::endl;
             this->materials.insert(pair<string, Colour>(lastName, Colour(lastName, chVals[0], chVals[1], chVals[2])));
         }
-        if(isLineType(mtlLn, TKN_TXTURE) && lastName != NO_TEXTURE){
+        if(isLineType(mtlLn, TKN_TXTURE) && lastName != NO_TEXTURE && !this->isTextureNormalMap){
             string fName = tailTokens(mtlLn, TKN_TXTURE).back();
             std::cout << "registered texture '" << lastName << "' in file '" <<  this->path + fName << "'" << std::endl;
             this->textures.insert(pair<string, TextureMap>(lastName, TextureMap( this->path + fName)));
         }
-        if(isLineType(mtlLn, TKN_BMPMAP) && lastName != NO_TEXTURE){
-            std::vector<std::string> tokens = tailTokens(mtlLn, TKN_BMPMAP);
-            std::string optnOrName = tokens[0];
-            int nameOffset = 0;
-            if(optnOrName == "-bm"){ //recognise the multiplier option
-                //ignore this for now
-                nameOffset += 2; //option and arg
-            }else if(optnOrName.front() == '-'){
-                throw runtime_error("ModelLoader::asMaterial: unsupported option given for normal map: '"+optnOrName+"'");
-            }
-            std::cout << "registered normal map '" << lastName << "' in file '" << this->path + tokens[nameOffset] << "'" << std::endl;
-            this->normalMaps.insert(pair<string, TextureMap>(lastName, TextureMap(this->path + tokens[nameOffset])));
+        if(isLineType(mtlLn, TKN_TXTURE) && lastName != NO_TEXTURE && this->isTextureNormalMap){
+            string fName = tailTokens(mtlLn, TKN_TXTURE).back();
+            std::cout << "registered texture '" << lastName << "' in file '" <<  this->path + fName << "'" << std::endl;
+            this->normalMaps.insert(pair<string, NormalMap>(lastName, NormalMap( this->path + fName)));
         }
+//        if(isLineType(mtlLn, TKN_BMPMAP) && lastName != NO_TEXTURE){
+//            std::vector<std::string> tokens = tailTokens(mtlLn, TKN_BMPMAP);
+//            std::string optnOrName = tokens[0];
+//            int nameOffset = 0;
+//            if(optnOrName == "-bm"){ //recognise the multiplier option
+//                //ignore this for now
+//                nameOffset += 2; //option and arg
+//            }else if(optnOrName.front() == '-'){
+//                throw runtime_error("ModelLoader::asMaterial: unsupported option given for normal map: '"+optnOrName+"'");
+//            }
+//            std::cout << "registered normal map '" << lastName << "' in file '" << this->path + tokens[nameOffset] << "'" << std::endl;
+//            this->normalMaps.insert(pair<string, TextureMap>(lastName, TextureMap(this->path + tokens[nameOffset])));
+//        }
     }
 }
 //look up colour in material map and read
 //throws a runtime error if there is no colour with that name
-void ModelLoader::asUseMaterial(std::vector<string> ln, Colour& currentColour, MaybeTexture &currentTexture, MaybeTexture &currentNormalMap){
+void ModelLoader::asUseMaterial(std::vector<string> ln, Colour& currentColour, MaybeTexture &currentTexture, pair<NormalMap, bool> &currentNormalMap){
     string name = tailTokens(ln, TKN_USEMTL).back(); //.back used to get last token for a usemtl line
     if(this->materials.count(name) > 0){
         currentColour = this->materials[name];
@@ -138,11 +151,12 @@ void ModelLoader::asUseMaterial(std::vector<string> ln, Colour& currentColour, M
         currentTexture = std::pair<TextureMap, bool>(this->textures[name], true);
     }else{
         currentTexture = std::pair<TextureMap, bool>(TextureMap(), false); //there is no texture corresponding to this name
+        std::cout << "ModelLoader::asUseMaterial: warning: name '" << name << "' has no corresponding texture" << std::endl;
     }
     if(this->normalMaps.count(name) > 0){
-        currentNormalMap = std::pair<TextureMap, bool>(this->normalMaps[name], true);
+        currentNormalMap = std::pair<NormalMap, bool>(this->normalMaps[name], true);
     }else{
-        currentNormalMap = std::pair<TextureMap, bool>(TextureMap(), false);
+        currentNormalMap = std::pair<NormalMap, bool>(NormalMap(), false);
     }
 
 }
@@ -181,20 +195,20 @@ void ModelLoader::asVertexTexture(std::vector<string> ln, vector<vec2>& textureV
 }
 
 
-void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<vec2>& textureVerts, Colour& currentColour, MaybeTexture& currentTexture){
+void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<vec2>& textureVerts, Colour& currentColour, MaybeTexture& currentTexture, std::pair<NormalMap, bool>& currentNormalMap){
     vector<string> facetsLn = tailTokens(ln, TKN_FACET);
     vector<int> facetVertsIndices = {};
     vector<int> textureVertsIndices = {}; //stays empty if no valid texture is present
-    size_t VERT_TEXTURE_LEN = 2;
+    size_t VERT_TEXTURE_LEN = 2; size_t VERT_TEXTURE_NORMAL = 3;
     size_t VERT_COUNT = 3;
     for(string& fct: facetsLn){
         std::vector<string> vertMaybeTexture = toTokens(fct, '/'); //vert and potential texture coord
-        bool hasTextureVert = vertMaybeTexture.size() == VERT_TEXTURE_LEN;
+        bool hasTextureVert = (vertMaybeTexture.size() == VERT_TEXTURE_LEN) || (vertMaybeTexture.size() == VERT_TEXTURE_NORMAL);
         //for(string s : vertMaybeTexture) std::cout << "'" << s << "'" << endl;
-        if(hasTextureVert && !currentTexture.second) //there is a texture vertex but no valid current texture
-            throw runtime_error("ModelLoader::asFacet: facet has a texture vertex but no valid texture");
-        if(!hasTextureVert && currentTexture.second)
-            throw runtime_error("ModelLoader::asFacet: facet has no texture vertex but a valid texture");
+        if(hasTextureVert && !currentNormalMap.second && !currentTexture.second && this->forceTexture) //there is a texture vertex but no valid current texture
+            throw runtime_error("ModelLoader::asFacet: facet has a texture vertex but no valid texture for line '" + fct + "'");
+        if(!hasTextureVert && (currentTexture.second || currentNormalMap.second) && this->forceTexture)
+            throw runtime_error("ModelLoader::asFacet: facet has no texture vertex but a valid texture for line '" + fct + "'");
         facetVertsIndices.push_back(stoi(vertMaybeTexture[0]));
         if(hasTextureVert) textureVertsIndices.push_back(stoi(vertMaybeTexture[1]));
     }
@@ -208,10 +222,19 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
     vec3 v1 = verts[i1] - this->vertCentre;
     vec3 v2 = verts[i2] - this->vertCentre;
     Triangle* tri;
-    if(currentTexture.second){ //do we have a valid texture mapping
-        TextureMap texture = currentTexture.first;
-        size_t w = texture.width;
-        size_t h = texture.height;
+    if(this->isTextureNormalMap && !currentNormalMap.second){
+        throw runtime_error("ModelLoader::asFacet: texture set to be used as normal map, but no normal map found");
+    }
+    if((currentTexture.second && !this->isTextureNormalMap) || (currentNormalMap.second && this->isTextureNormalMap)){ //do we have a valid texture mapping or normal mapping
+        size_t w;
+        size_t h;
+        if(currentTexture.second){
+            w = currentTexture.first.width;
+            h = currentTexture.first.height;
+        }else{
+            w = currentNormalMap.first.getWidth();
+            h = currentNormalMap.first.getHeight();
+        }
         glm::vec2 vt0 = textureVerts[textureVertsIndices[0] - 1];
         glm::vec2 vt1 = textureVerts[textureVertsIndices[1] - 1];
         glm::vec2 vt2 = textureVerts[textureVertsIndices[2] - 1];
@@ -219,7 +242,7 @@ void ModelLoader::asFacet(std::vector<string> ln, vector<vec3>& verts, vector<ve
         CanvasPoint scaledVt1 = *new CanvasPoint(vt1.x * static_cast<float>(w), vt1.y * static_cast<float>(h));
         CanvasPoint scaledVt2 = *new CanvasPoint(vt2.x * static_cast<float>(w), vt2.y * static_cast<float>(h));
         CanvasTriangle textureTri = *new CanvasTriangle(scaledVt0, scaledVt1, scaledVt2);
-        tri = new Triangle(v0, v1, v2, currentColour, texture, textureTri);
+        tri = new Triangle(v0, v1, v2, currentColour, currentTexture.first, textureTri, currentNormalMap.first);
     }else tri = new Triangle(v0, v1, v2, currentColour);
 
     this->tris.push_back(tri);

@@ -1,19 +1,19 @@
 # ninja log v5
-3	1297	1701711879996938272	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	8a392e4e4ebac68e
+1	1158	1701713170298343008	CMakeFiles/RedNoise.dir/src/RedNoise.cpp.o	8a392e4e4ebac68e
 5	982	1701704379866226989	CMakeFiles/RedNoise.dir/libs/sdw/RayTriangleIntersection.cpp.o	6e3ff542e895177b
-2554	2687	1701711881384957066	RedNoise	a1693735291021f3
+2237	2407	1701713179238057596	RedNoise	a1693735291021f3
 1876	2961	1701704381846109751	CMakeFiles/RedNoise.dir/src/DepthBuffer.cpp.o	df5a410e4d69747a
 3	427	1701704379314259683	CMakeFiles/RedNoise.dir/libs/sdw/CanvasPoint.cpp.o	4c7143f831eedc10
 427	1876	1701704380762173931	CMakeFiles/RedNoise.dir/src/Utils.cpp.o	77177280bc439608
-5	1136	1701711879836936108	CMakeFiles/RedNoise.dir/src/Scene.cpp.o	d641cda43f04c58a
+3	987	1701713170126348555	CMakeFiles/RedNoise.dir/src/Scene.cpp.o	d641cda43f04c58a
 1026	2939	1701704381826110935	CMakeFiles/RedNoise.dir/src/Triangle.cpp.o	6dd7adb347d25f63
-0	30	1701598264226606572	build.ninja	4df360b16ce9fe3d
-4	1616	1701711880316942604	CMakeFiles/RedNoise.dir/src/Cameraman.cpp.o	aeaef810375c4d84
+0	30	1701713602325881319	build.ninja	4df360b16ce9fe3d
+2	1388	1701713170526335655	CMakeFiles/RedNoise.dir/src/Cameraman.cpp.o	aeaef810375c4d84
 3	425	1701704379310259921	CMakeFiles/RedNoise.dir/libs/sdw/CanvasTriangle.cpp.o	36aa75a8ec5a97a3
-4	1830	1701711880528945473	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	e631660419f779aa
+2	1624	1701713170762328045	CMakeFiles/RedNoise.dir/src/Camera.cpp.o	e631660419f779aa
 4	1051	1701704379938222725	CMakeFiles/RedNoise.dir/libs/sdw/DrawingWindow.cpp.o	e7bb79d98095eeec
 5	1026	1701704379914224147	CMakeFiles/RedNoise.dir/libs/sdw/ModelTriangle.cpp.o	6e8b29f83eef8fb9
-3	2554	1701711881252955278	CMakeFiles/RedNoise.dir/src/ModelLoader.cpp.o	c46636a1a1097ad4
+2	2237	1701713179066063026	CMakeFiles/RedNoise.dir/src/ModelLoader.cpp.o	c46636a1a1097ad4
 982	2173	1701704381058156402	CMakeFiles/RedNoise.dir/src/Line.cpp.o	b7314becc08ae5fb
 425	742	1701704379626241205	CMakeFiles/RedNoise.dir/libs/sdw/TexturePoint.cpp.o	e8fad7547b1e8532
 2939	4028	1701704382914046533	CMakeFiles/RedNoise.dir/src/Light.cpp.o	11dabba1f68a2411

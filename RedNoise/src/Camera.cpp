@@ -242,7 +242,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     std::vector<float> brightnesses(this->scene->getInitBrightnesses()); //supposedly a deep copy
     std::vector<float> speculars(this->scene->getInitSpeculars());
     Colour c = tri->getColour(); //find out what colour we draw it (in most render methods thats the triangle colour)
-    if(tri->isTextured()) c = tri->getTextureColour(u, v, w);
+    if(tri->isTextured() && !model->getIsTextureNormMap()) c = tri->getTextureColour(u, v, w); //make sure it doesnt read an uninitailised texture map when normal mapping
     glm::vec3 colVec = Utils::asVec3(c);
 
     glm::vec3 norm;
@@ -252,6 +252,9 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(shading != ModelLoader::nrm && shading != ModelLoader::mtl && shading != ModelLoader::tsp && shading != ModelLoader::gls && shading != ModelLoader::mrr){ //vertex normals are interpolated just if we need to
         norms = model->getNormsForTri(modelTriIndex); //needed for gouraud and phong
         norm = (*norms[0] * u) + (*norms[1] * v) + (*norms[2] * w); //needed just for phong
+        if(model->getIsTextureNormMap()){
+            norm +=
+        }
     }else{ //flat shading doesnt use vertex normals
         norm = *tri->getNormal();
     }

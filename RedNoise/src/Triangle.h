@@ -6,6 +6,7 @@
 #include "Colour.h"
 #include "TextureMap.h"
 #include "DepthBuffer.h"
+#include "NormalMap.h"
 #include <tuple>
 
 #pragma once
@@ -18,8 +19,9 @@ public:
     Triangle(glm::mat3 tri3, Colour &colour);
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour);
     Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture);
-    Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri);
+    Triangle(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, Colour &colour, TextureMap &texture, CanvasTriangle textureTri, NormalMap& nm);
 
+    glm::vec3 &getNormalMapNormal(float u, float v, float w);
     bool isTextured();
     void draw(DrawingWindow& window); //just needs the window to draw tri
     void fill(DrawingWindow& window, DepthBuffer& db);
@@ -64,5 +66,7 @@ private:
     Colour colour;
     TextureMap texture;
     bool hasTexture;
+    NormalMap &normalMap;
+
 };
 
