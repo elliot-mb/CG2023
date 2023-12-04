@@ -68,22 +68,23 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
-    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.86, ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.3, ModelLoader::phg_mtl);
+    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.8, ModelLoader::nrm);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35),  1.0, ModelLoader::phg);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.5, ModelLoader::mtl);
     ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -0.75, 1), 0.2, ModelLoader::gls);
-    ModelLoader* mirrorBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.2, ModelLoader::mrr);
+    ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.2, ModelLoader::nrm);
+    ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.0025, glm::vec3(0, 0, -0.5), 1.0, ModelLoader::nrm);
 
-    std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox};
+    std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox, hackspace};
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
-    Light light = *(new Light(glm::mat3({-0.2, 0.25, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 2, 4));
+    Light light = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 1, 3));
     //Light light = *(new Light(glm::mat3({1, 2, 2}, {2.0, 0, 0}, {0, 1.4, 1.4}), glm::vec3({255, 255, 255}),  5, 16));
     EnvMap env = EnvMap("skybox.ppm");
     Scene* s = new Scene(models, {light}, env);
-    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 6);
+    Camera* camera = new Camera(glm::vec3(0.0, 0.0, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 8);
     camera->setRot(0, 0);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -101,8 +102,8 @@ int main(int argc, char *argv[]) {
 
 
 //// //comment to stop the render
-    Cameraman* cm = new Cameraman(camera, "./render/");
-    cm->render(window, *depthBuffer, *s, true);
+//    Cameraman* cm = new Cameraman(camera, "./render/");
+//    cm->render(window, *depthBuffer, *s, true);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !

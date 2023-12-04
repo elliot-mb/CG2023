@@ -33,7 +33,7 @@ void Cameraman::Lerp::act(DrawingWindow& window,
                           DepthBuffer& depthBuffer,
                           bool withPreview) {
 
-    std::cout << "lerp" << std::endl;
+    std::cout << "Lerp" << std::endl;
     glm::vec3* current = &this->args[0];
     glm::vec3* target = &this->args[1];
     float timeframe = this->args[2].x;
@@ -66,7 +66,7 @@ void Cameraman::Wait::act(DrawingWindow& window,
                           DepthBuffer& depthBuffer,
                           bool withPreview) {
 
-    std::cout << "wait" << std::endl;
+    std::cout << "Wait" << std::endl;
     glm::vec3* target = &this->args[0];
     float timeframe = this->args[2].x;
     if(timeframe <= 0){ throw runtime_error("Cameraman::Lerp::act: cannot perform an action for zero duration"); }
@@ -96,7 +96,7 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
                              DepthBuffer& depthBuffer,
                              bool withPreview) {
 
-    std::cout << "rot" << std::endl;
+    std::cout << "LerpRot" << std::endl;
     float* xCurrent = &this->args[0].x;
     float* yCurrent = &this->args[0].y;
     float* xTarget = &this->args[1].x;
@@ -130,7 +130,7 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
                                Scene &scene,
                                DepthBuffer &depthBuffer,
                                bool withPreview) {
-    std::cout << "lerp model" << std::endl;
+    std::cout << "LerpModel" << std::endl;
     glm::vec3 *start = &this->args[0];
     glm::vec3 *end = &this->args[1];
     float timeframe = this->args[2].x;
@@ -158,7 +158,7 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
 // row 3: timeframe,        model index,        == 1 ? from start angle : from current angle
 void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                                  DepthBuffer &depthBuffer, bool withPreview) {
-    std::cout << "lookat" << std::endl;
+    std::cout << "LookAtModel" << std::endl;
     bool fromCurrent = this->args[2].z == 0;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
     glm::vec3 camRot = this->args[0];
@@ -179,6 +179,7 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& s
     uint frameID = 0;
 
     for (Action *a: this->actions) {
+        std::cout << "frame: " << frameID << std::endl;
         a->act(window,
                *this->cam,
                frameID,
@@ -203,7 +204,7 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& s
 // row 3: timeframe x,       model index,         IGNORED z
 void Cameraman::LerpLookat::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                                 DepthBuffer &depthBuffer, bool withPreview) {
-    std::cout << "lerp" << std::endl;
+    std::cout << "LerpLookat" << std::endl;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
     glm::vec3* current = &this->args[0];
     glm::vec3* target = &this->args[1];
@@ -233,9 +234,34 @@ void Cameraman::LerpLookat::act(DrawingWindow &window, Camera &camera, uint &fra
 // row 3: IGNORED x, Render mode enum y, IGNORED z
 void Cameraman::SetMode::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
                              DepthBuffer &depthBuffer, bool withPreview) {
+    std::cout << "SetMode" << std::endl;
     int mode = static_cast<int>(glm::floor(this->args[2].y));
     if(mode > Camera::ray || mode < Camera::msh){
         throw runtime_error("Cameraman::SetMode::act: action set up with an invalid render mode");
     }
     camera.setRenderMode(mode);
+}
+
+//orbit so many degrees around a model from the current position
+// row 1:                          IGNORED
+// row 2: angle (radians),         IGNORE y,            IGNORED z
+// row 3: timeframe x,             model index,         IGNORED z
+void Cameraman::Orbit::act(DrawingWindow &window, Camera &camera, uint &frameID, string &out, Scene &scene,
+                           DepthBuffer &depthBuffer, bool withPreview) {
+    float angle = this->args[1].x;
+    float timeframe = this->args[2].x;
+    int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    float angleStep = angle / (timeframe *  Cameraman::FRAMERATE);
+    int frames = glm::floor(timeframe * Cameraman::FRAMERATE);
+    for(int i = 0; i < frames; i++){
+        if (window.pollForInputEvents(event)){} //mandatory
+        window.clearPixels();
+        drawBackground(window);
+        camera.orbit(*scene.getModel(modelIndex), angleStep);
+        camera.doRaytracing(window);
+        camera.doRasterising(window, depthBuffer);
+        if(withPreview){ window.renderFrame(); }
+        window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
+        frameID++;
+    }
 }

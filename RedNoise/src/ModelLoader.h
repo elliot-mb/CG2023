@@ -43,7 +43,7 @@ public:
     // glass,
     // transparent phong (transparent balls),
     // glass phong (glass balls)
-    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg};
+    enum Shading {nrm, grd, phg, mrr, phg_mrr, mtl, phg_mtl, tsp, gls, tsp_phg, gls_phg, nrm_map}; //normal use texture as normal map
     int* getShading();
     float& getAttenuation();
     float getRefractI();
@@ -58,6 +58,7 @@ private:
     std::vector<Triangle*> tris; //tris generated from verts and facets
     std::map<std::string, Colour> materials; //vector of colour maps
     std::map<std::string, TextureMap> textures;
+    std::map<std::string, TextureMap> normalMaps;
     float scale;
     std::vector<glm::vec3> verts; //just those vertices which are used to build facets
     glm::vec3 vertCentre; // mean of all vertex locations
@@ -71,7 +72,7 @@ private:
     void asMaterial(std::vector<std::string> ln, std::string& location);
     static const std::string TKN_SUBOBJ;
     static const std::string TKN_USEMTL;
-    void asUseMaterial(std::vector<std::string> ln, Colour &currentColour, MaybeTexture &currentTexture);
+    void asUseMaterial(std::vector<std::string> ln, Colour &currentColour, MaybeTexture &currentTexture, MaybeTexture &currentNormalMap);
     static const std::string TKN_VERTEX;
     void asVertex(std::vector<std::string> ln, std::vector<glm::vec3> &verts);
     static const std::string TKN_FACET;
@@ -94,5 +95,7 @@ private:
 
     static const float SMALL;
 
+    static const std::string TKN_BMPMAP;
+    std::string path;
 };
 

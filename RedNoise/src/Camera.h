@@ -29,6 +29,7 @@ public:
     void renderMode();
     void setRenderMode(int m);
     void doOrbit(ModelLoader model);
+    void orbit(ModelLoader model, float angle);
     static std::pair<int, float> getClosestIntersection(int& forbiddenIndex, glm::vec3& origin, glm::vec3& rayDir, std::vector<Triangle*>& tris, Scene& scene, glm::vec2& intersectLoc = DEFAULT_INTERSECT);
     void doRaytracing(DrawingWindow &window);
     void doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer);

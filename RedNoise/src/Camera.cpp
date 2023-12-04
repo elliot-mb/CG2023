@@ -376,7 +376,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         glm::vec3 reflectedColour;
         reflectCast(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, reflectedColour);
         for (int i = 0; i < this->scene->getNumLights(); i++) {
-            specular(speculars[i], this->scene->getLightStrengths()[i] * 2, shadowRayNrmls[i], norm, incidentRay, 128);
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
@@ -441,8 +441,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 1; //how large are our ray texturePts (1 is native resolution)
-    int bounces = 10;
+    int stride = 4; //how large are our ray texturePts (1 is native resolution)
+    int bounces = 4;
 
 
     for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
@@ -618,6 +618,15 @@ void Camera::doOrbit(ModelLoader model) {
         this->lookAt(modelCentre);
     }
 }
+
+//positive angle is cw, negative is ccw
+void Camera::orbit(ModelLoader model, float angle) {
+    glm::vec3 modelCentre = *model.getPos();
+    glm::vec3 toModel = this->position - modelCentre;
+    this->position = modelCentre + (Utils::yaw(angle) * toModel); //rotate then translate
+    this->lookAt(modelCentre);
+}
+
 
 void Camera::renderMode() {
     this->mode = (this->mode + 1) % 3;
