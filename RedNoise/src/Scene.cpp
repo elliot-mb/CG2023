@@ -93,3 +93,9 @@ int Scene::getNumLights() {
 uint32_t Scene::getEnvPixel(float lat, float lng) {
     return this->env.getPixel(lat, lng);
 }
+
+void Scene::rst() {
+    for(int i = 0; i < this->models.size(); i++){
+        this->models[i]->load();
+    }
+}

@@ -22,11 +22,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0bd82d80-bede-4035-a133-adb0cff6e6ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_deps" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeFiles/rules.ninja" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RedNoise" beforeDir="false" afterPath="$PROJECT_DIR$/RedNoise" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.bmp" beforeDir="false" afterPath="$PROJECT_DIR$/output.bmp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/output.ppm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/output.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/render/output.mp4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Camera.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Cameraman.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Cameraman.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModelLoader.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ModelLoader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RedNoise.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RedNoise.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,5 +198,16 @@
     <isAutomaticCheckingOnLaunch value="false" />
     <isAutomaticFoundErrors value="true" />
     <isAutomaticFoundErrors value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/Camera.cpp</url>
+          <line>284</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

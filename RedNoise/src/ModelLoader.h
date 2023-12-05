@@ -19,7 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 
 class ModelLoader {
 public:
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture = true, bool isTextureNormalMap = false);
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture = true, bool isTextureNormalMap = false, bool invertedNormals = false);
 
 //loads the file and returns the string
     void load();
@@ -49,6 +49,10 @@ public:
     float& getAttenuation();
     float getRefractI();
     bool getIsTextureNormMap() const;
+    void rotate(float yaw, float pitch);
+    void rst(); //resets rotation
+    glm::mat3& getOrientation();
+
 
 private:
     bool forceTexture;
@@ -71,6 +75,8 @@ private:
     std::vector<std::vector<int>> triToVerts; //a lookup for which vertices(indices) are used by the ith triangle in tris
     float attenuation; //only set to anything other than 1,1,1 if we are a metal
     float refractI; //refractive index
+    glm::mat3 orientation;
+    bool invertNormals;
 
     static const std::string TKN_MTLLIB;
     void asMaterial(std::vector<std::string> ln, std::string& location);

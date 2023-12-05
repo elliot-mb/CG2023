@@ -29,7 +29,7 @@ const float ModelLoader::LARGE = 10000;
 const float ModelLoader::SMALL = -10000;
 
 //for mtl, phg_mtl
-ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture, bool isTextureNormalMap) {
+ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture, bool isTextureNormalMap, bool invertNormals) {
     this->scale = scale; //scaling factor
     this->fileName = std::move(fileName);
     std::vector<std::string> path = Utils::split(this->fileName, '/');
@@ -49,6 +49,8 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     this->refractI = 1.5;
     this->forceTexture = forceTexture;
     this->isTextureNormalMap = isTextureNormalMap;
+    this->orientation = glm::mat3(1); //identity
+    this->invertNormals = invertNormals;
 }
 
 bool ModelLoader::getIsTextureNormMap() const{
@@ -303,6 +305,7 @@ void ModelLoader::makeVertexNorms() {
             normSum = normSum + *sharedTri->getNormal();
         }
         normSum = glm::normalize(normSum); //the vertex normal
+        if(this->invertNormals) normSum *= -1;
         this->vertNorms.push_back(normSum);
     }
 }
@@ -376,6 +379,18 @@ float ModelLoader::getRefractI(){
     return this->refractI;
 }
 
+void ModelLoader::rotate(float yaw, float pitch) {
+    this->orientation = Utils::yaw(yaw) * Utils::pitch(pitch) * this->orientation;
+}
+
+glm::mat3 &ModelLoader::getOrientation() {
+    return this->orientation;
+}
+
+void ModelLoader::rst(){
+    load();
+    this->orientation = glm::mat3(1);
+}
 
 //vector<glm::vec3> ModelLoader::makeVertexNorms() {
 //
