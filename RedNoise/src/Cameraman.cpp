@@ -4,13 +4,16 @@
 
 #include "Cameraman.h"
 
+#include <utility>
+
 //std::vector<glm::vec3> Cameraman::Action::act();
 
 Colour Cameraman::background = Colour(0, 0, 0);
 SDL_Event Cameraman::event;
 
-Cameraman::Action::Action(glm::mat3 args) {
+Cameraman::Action::Action(glm::mat3 args, std::vector<Ambient*> ambients) {
     this->args = args; //used differently depending on underlying implement
+    this->ambients = std::move(ambients);
 }
 
 void Cameraman::Action::drawBackground(DrawingWindow &window) {
@@ -44,7 +47,9 @@ void Cameraman::Lerp::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         camera.setPos(pos);
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
@@ -76,6 +81,9 @@ void Cameraman::Wait::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
         if(withPreview){ window.renderFrame(); }
@@ -109,7 +117,9 @@ void Cameraman::LerpRot::act(DrawingWindow& window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         camera.setRot(angles.x, angles.y);
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
@@ -142,9 +152,10 @@ void Cameraman::LerpModel::act(DrawingWindow &window,
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         scene.setModelPosition(modelIndex, pos);
-
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
         if(withPreview){ window.renderFrame(); }
@@ -165,18 +176,22 @@ void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &fr
     if(fromCurrent) camRot = glm::vec3(camera.getRot().x, camera.getRot().y, 0);
     camera.lookAt(*scene.getModel(modelIndex)->getPos()); //temporarily looks at model to find out rotation
     glm::vec3 camRotTo = glm::vec3(camera.getRot().x, camera.getRot().y, 0);
-    Action* delegate = new LerpRot(glm::mat3({camRot, camRotTo, this->args[2]}));
+    Action* delegate = new LerpRot(glm::mat3({camRot, camRotTo, this->args[2]}), std::move(this->ambients));
 
     delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
 }
 
-Cameraman::Cameraman(Camera* cam, string outPath) {
+Cameraman::Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, std::vector<float>& sceneChanges) {
     this->cam = cam;
     this->outPath = outPath;
+    this->scenes = scenes;
+    this->sceneChanges = sceneChanges;
+    this->currentScene = 0;
 }
 
 void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview) {
     uint frameID = 0;
+    scene = this->scenes[0];
 
     for (Action *a: this->actions) {
         std::cout << "frame: " << frameID << std::endl;
@@ -187,6 +202,13 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& s
                scene,
                depthBuffer,
                withPreview);
+        float time = static_cast<float>(frameID) / FRAMERATE; //scenes only change after actions
+        if((this->sceneChanges[this->currentScene] < time) && (this->currentScene + 1 < this->scenes.size())){
+            this->currentScene++;
+            scene = this->scenes[currentScene];
+            std::cout << "set scene to " << this->currentScene << std::endl;
+        }
+
     }
     std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
 }
@@ -216,7 +238,9 @@ void Cameraman::LerpLookat::act(DrawingWindow &window, Camera &camera, uint &fra
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
-
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         camera.setPos(pos);
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
@@ -251,12 +275,15 @@ void Cameraman::Orbit::act(DrawingWindow &window, Camera &camera, uint &frameID,
     float angle = this->args[1].x;
     float timeframe = this->args[2].x;
     int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
-    float angleStep = angle / (timeframe *  Cameraman::FRAMERATE);
+    float angleStep = angle / glm::floor(timeframe *  Cameraman::FRAMERATE);
     int frames = glm::floor(timeframe * Cameraman::FRAMERATE);
     for(int i = 0; i < frames; i++){
         if (window.pollForInputEvents(event)){} //mandatory
         window.clearPixels();
         drawBackground(window);
+        for(Ambient* a : ambients){
+            a->act(window, camera, scene, depthBuffer);
+        }
         camera.orbit(*scene.getModel(modelIndex), angleStep);
         camera.doRaytracing(window);
         camera.doRasterising(window, depthBuffer);
@@ -264,4 +291,20 @@ void Cameraman::Orbit::act(DrawingWindow &window, Camera &camera, uint &frameID,
         window.savePPM(out + "frame_" + std::to_string(frameID) + ".ppm");
         frameID++;
     }
+}
+
+//effects that start with 'loop' are ambient and only happen during an action, action actually renders the frame
+// row 1: yaw rate in rad/s,       pitch rate in rad/s, IGNORED
+// row 2:                          IGNORED
+// row 3: IGNORED,                 model index,         IGNORED z
+void Cameraman::LoopRotModel::act(DrawingWindow &window, Camera &camera, Scene &scene, DepthBuffer &depthBuffer) {
+    float yawRate = this->args[0].x;
+    float pitchRate = this->args[0].y;
+    int modelIndex = static_cast<int>(glm::floor(this->args[2].y));
+    // one radian in one second is one radian in 25 frames
+    scene.getModel(modelIndex)->rotate(yawRate / FRAMERATE, pitchRate / FRAMERATE);
+}
+
+Cameraman::Ambient::Ambient(glm::mat3 args) {
+    this->args = args;
 }

@@ -68,24 +68,43 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 int main(int argc, char *argv[]) {
     uint frame = 0;
 
+    ModelLoader* blockBox =  new ModelLoader("tall_box.obj", 1, glm::vec3(3, 0, 0), 1.0, ModelLoader::nrm);
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.8, ModelLoader::nrm);
     ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35),  0.5, ModelLoader::phg_mtl);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
+    ModelLoader* sphere3 = new ModelLoader("sphere.obj", 0.20, glm::vec3(0, -0.7, 0),  1.0, ModelLoader::grd);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.5, ModelLoader::mtl);
     ModelLoader* tallBox2 = new ModelLoader("tall_box.obj", 1.0, glm::vec3(3.0, -1.0, 1), 0.5, ModelLoader::mtl);
-    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -0.75, 1), 0.1, ModelLoader::mrr, false);
+    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -1.1, 0.75), 0.1, ModelLoader::mrr, false);
+    glassBox->rotate(M_PI_4, 0);
     ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.5, ModelLoader::nrm, true, true);
     ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.0025, glm::vec3(0, 0, -0.5), 1.0, ModelLoader::nrm);
 
-    std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox, hackspace};
+
+    std::vector<ModelLoader*> models0 = {cornell, sphere, tallBox, glassBox, sphere2, sphere3, mirrorBox, hackspace, blockBox};
+    std::vector<ModelLoader*> modelsCornellSphere = {cornell, sphere, blockBox};
+    std::vector<ModelLoader*> modelsCornell = {cornell, blockBox};
+    std::vector<ModelLoader*> modelsGourad = {cornell, sphere3, blockBox};
+
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
-    Light light = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.4, 0, 0}, {0, 0, 0.4}), glm::vec3({255, 255, 255}), 5, 1, 5 ));
-    //Light light = *(new Light(glm::mat3({1, 2, 2}, {2.0, 0, 0}, {0, 1.4, 1.4}), glm::vec3({255, 255, 255}),  5, 16));
-    EnvMap env = EnvMap("Ocean-from-horn.ppm");
-    Scene* s = new Scene(models, {light}, env);
-    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), s, 8);
+    Light lightHard = *(new Light(glm::mat3({0, 0.35, 0}, {0.01, 0, 0}, {0, 0, 0.01}), glm::vec3({255, 255, 255}), 5, 1, 1 ));
+    Light lightSoft = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.4, 0, 0}, {0, 0, 0.4}), glm::vec3({255, 255, 255}), 5, 1, 5 ));
+    EnvMap envRocks = EnvMap("Ocean-from-horn.ppm");
+    EnvMap envSky = EnvMap("skybox.ppm");
+
+//    Scene* sceneWireframe = new Scene(modelsCornell, {lightHard}, envRocks);
+    Scene* sceneRasteriser = new Scene(modelsCornellSphere, {lightHard}, envRocks);
+//    Scene* sceneRayHard = new Scene(modelsCornellSphere, {lightHard}, envSky);
+    Scene* sceneRaySoft = new Scene(models0, {lightSoft}, envRocks);
+
+    Scene* sceneAll = new Scene(models0, {lightSoft}, envRocks);
+
+    Scene* sceneCamera = new Scene(modelsCornellSphere, {lightSoft}, envRocks);
+
+
+    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), sceneAll, 8);
     camera->setRot(0, 0);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -103,8 +122,13 @@ int main(int argc, char *argv[]) {
 
 
 //// //comment to stop the render
-//    Cameraman* cm = new Cameraman(camera, "./render/");
-//    cm->render(window, *depthBuffer, *s, true);
+    std::vector<Scene> scenes = {*sceneRasteriser, *sceneRaySoft};
+    std::vector<float> sceneChanges = {3.25};
+    Cameraman* cm = new Cameraman(camera, "./render/", scenes, sceneChanges);
+    cm->render(window, *depthBuffer, *sceneAll, true);
+    for(ModelLoader* m: modelsCornellSphere){
+        m->rst();
+    }
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
@@ -114,9 +138,6 @@ int main(int argc, char *argv[]) {
         camera->doOrbit(*tallBox);
         camera->doRaytracing(window);
         camera->doRasterising(window, *depthBuffer);
-
-//        light += glm::vec4(0.0, glm::cos(frame * 0.2) * 0.1, glm::sin(frame * 0.2) * 0.1, 0.0);
-//        sphere->setPos(glm::vec3(0, sphere->getPos()->y + 0.01, 0));
 
         window.renderFrame();
         frame = (frame + 1) % (SDL_MAX_UINT32);

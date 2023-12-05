@@ -12,7 +12,7 @@ NormalMap::NormalMap(std::string fileName) {
         for(int x = 0; x < this->texture.width; x++){
             uint32_t px = this->texture.pixel(x, y);
             Colour temp = Utils::unpack(px);
-            glm::vec3 norm = glm::normalize(glm::vec3({temp.red, temp.green, temp.blue}));
+            glm::vec3 norm = glm::normalize(glm::vec3({temp.red - 128, temp.green - 128, temp.blue - 128}));
             this->norms[y].push_back(norm);
         }
     }

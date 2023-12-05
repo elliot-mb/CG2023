@@ -87,8 +87,9 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
     for(int i = 0; i < static_cast<int>(tris.size()); i++){
         if(i != forbiddenIndex){
             Triangle* tri = tris[i];
-            glm::vec3 spVector = origin - tri->v0() - *(scene.getModel(scene.getModelFromTri(i))->getPos()); // final term is for the individual model position
-            glm::mat3 diff(-rayDir, tri->e0, tri->e1);
+            ModelLoader* model = scene.getModel(scene.getModelFromTri(i));
+            glm::vec3 spVector = origin - (model->getOrientation() * tri->v0()) - *(scene.getModel(scene.getModelFromTri(i))->getPos()); // final term is for the individual model position
+            glm::mat3 diff(-rayDir, model->getOrientation() * tri->e0, model->getOrientation() * tri->e1);
             glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
             if(possibleSolution.x > 0 && //is the ray colliding in front of the point (along the ray line)
                possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
@@ -278,6 +279,12 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(model->getIsTextureNormMap() && tri->isNormalMapped()){
         norm = tri->getNormMapRot() * tri->getNormalMapNormal(u, v, w);
     }
+    // from here on out 'norm' and 'norms' are objectively what is used in all rendering methods
+    norm = model->getOrientation() * norm; //rotate it according to the orientation of the model
+    for(int i = 0; i < norms.size(); i++) {
+        glm::vec3 rotNorm = model->getOrientation() * *norms[i];
+        norms[i] = &rotNorm;
+    }
 
     glm::vec3 defaultReflected = {0, 0, 0};
 
@@ -466,7 +473,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 2; //how large are our ray texturePts (1 is native resolution)
+    int stride = 8; //how large are our ray texturePts (1 is native resolution)
     int bounces = 4;
 
 
@@ -524,9 +531,9 @@ void Camera::rasterise(DrawingWindow& window, DepthBuffer& depthBuffer){
     for(size_t i = 0; i < tris.size(); i++){
         Triangle thisTri = *tris[i];
         ModelLoader* currentModel = scene->getModel(scene->getModelFromTri(static_cast<int>(i)));
-        auto [pt0, valid0] = getCanvasIntersectionPoint(thisTri.v0() + *currentModel->getPos()); //project to flat (z becomes the distance to the camera)
-        auto [pt1, valid1] = getCanvasIntersectionPoint(thisTri.v1() + *currentModel->getPos());
-        auto [pt2, valid2] = getCanvasIntersectionPoint(thisTri.v2() + *currentModel->getPos());
+        auto [pt0, valid0] = getCanvasIntersectionPoint((currentModel->getOrientation() * thisTri.v0()) + *currentModel->getPos()); //project to flat (z becomes the distance to the camera)
+        auto [pt1, valid1] = getCanvasIntersectionPoint((currentModel->getOrientation() * thisTri.v1()) + *currentModel->getPos());
+        auto [pt2, valid2] = getCanvasIntersectionPoint((currentModel->getOrientation() * thisTri.v2()) + *currentModel->getPos());
         if(valid0 && valid1 && valid2){
             Colour thisColour = thisTri.getColour();
             thisTri.setV0(pt0);

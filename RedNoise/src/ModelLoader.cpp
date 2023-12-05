@@ -49,6 +49,7 @@ ModelLoader::ModelLoader(std::string fileName, float scale, glm::vec3 position, 
     this->refractI = 1.5;
     this->forceTexture = forceTexture;
     this->isTextureNormalMap = isTextureNormalMap;
+    this->orientation = glm::mat3(1); //identity
 }
 
 bool ModelLoader::getIsTextureNormMap() const{
@@ -376,6 +377,17 @@ float ModelLoader::getRefractI(){
     return this->refractI;
 }
 
+void ModelLoader::rotate(float yaw, float pitch) {
+    this->orientation = Utils::yaw(yaw) * Utils::pitch(pitch) * this->orientation;
+}
+
+glm::mat3 &ModelLoader::getOrientation() {
+    return this->orientation;
+}
+
+void ModelLoader::rst(){
+    this->orientation = glm::mat3(1);
+}
 
 //vector<glm::vec3> ModelLoader::makeVertexNorms() {
 //

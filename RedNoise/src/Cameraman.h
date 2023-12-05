@@ -12,7 +12,7 @@ class Cameraman {
 public:
 
 
-    Cameraman(Camera* cam, string outPath);
+    Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, std::vector<float>& sceneChanges);
 
     void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview);//renders all frames of the animation
 
@@ -20,9 +20,27 @@ public:
     static SDL_Event event;
 private:
 
+    class Ambient {
+    public:
+        explicit Ambient(glm::mat3 args);
+        virtual void act(DrawingWindow& window,
+                         Camera& camera,
+                         Scene &scene,
+                         DepthBuffer& depthBuffer) = 0;
+    protected:
+        glm::mat3 args;
+    };
+    class LoopRotModel: public Ambient{
+        using Ambient::Ambient;
+        void act(DrawingWindow& window,
+                 Camera& camera,
+                 Scene &scene,
+                 DepthBuffer& depthBuffer) override;
+    };
+
     class Action { //private action class
     public:
-        explicit Action(glm::mat3 args);
+        Action(glm::mat3 args, std::vector<Ambient*> ambients);
         //this act function modifies the camera and renders frames and saves them for a given action
         //returns the frames rendered
         virtual void act(DrawingWindow& window,
@@ -33,9 +51,11 @@ private:
                          DepthBuffer& depthBuffer,
                          bool withPreview) = 0; // =0 is a pure specifier (weird c++ stuff)
         void drawBackground(DrawingWindow& window);
+        static std::vector<Action*> ambientActions; //actions for all classes
+
     protected:
         glm::mat3 args;
-
+        std::vector<Ambient*> ambients;
     };
 
     class Lerp: public Action{
@@ -119,10 +139,45 @@ private:
                  bool withPreview) override;
     };
 
+    std::vector<Scene> scenes; //scenes to switch over
+    std::vector<float> sceneChanges; // in seconds
+    int currentScene;
+
     static const int FRAMERATE = 25; //fps (static)
     constexpr static const float STEP = static_cast<float>(1.0) / FRAMERATE; //evaulate at compile time
-
+    //blank aciton: {{0,0,0}, {0,0,0}, {1,0,0}}, {}
     std::vector<Action*> actions = {
+            new SetMode({{0,0,0}, {0,0,0}, {0,Camera::msh,0}}, {}),
+            new Wait({{0,-0.5,4}, {0,0,0}, {0.5,0,0}}, {}),
+            new Lerp({{0,-0.5,4}, {0,-0.5,6}, {0.5,0,0}}, {}),
+            new Orbit({{0,0,0}, {3*M_PI/2,0,0}, {0.75,0,0}}, {}),
+            new SetMode({{0,0,0}, {0,0,0}, {0,Camera::rst,0}}, {}),
+            new Orbit({{0,0,0}, {M_PI/2,0,0}, {0.25,0,0}}, {}),
+            new Lerp({{0,-0.5,6}, {0,-0.5,4}, {0.25,0,0}}, {}),
+            new Lerp({{0,-0.5,4}, {0,-0.5,6}, {0.25,0,0}}, {}),
+            new Orbit({{0,0,0}, {3*M_PI/2,0,0}, {0.75,0,0}}, {}),
+            new SetMode({{0,0,0}, {0,0,0}, {0,Camera::ray,0}}, {}),
+            new Orbit({{0,0,0}, {M_PI/2,0,0}, {0.25,0,0}}, {}),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             //new Lerp(glm::mat3({0, 2, 4}, {0, -1, 3.5}, {1.5, 0, 0})),
             //new Wait(glm::mat3({0, -1, 3.5}, {0, 0, 0}, {0.5, 0, 0})),
 //            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 0, 0})),
@@ -137,9 +192,13 @@ private:
 //            new LerpLookat(glm::mat3({0, 0, 4.0}, {0.5, 1, 4}, {2, 1, 0})),
 //            new Wait(glm::mat3({0.5, 1, 4}, {0, 0, 0}, {1.0, 0, 0})),
 //            new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 2, 0})),
-            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 1, 0})),
-            new Orbit(glm::mat3({0, 0, 0}, {M_PI, 0, 0}, {2, 0, 0})),
-            new Orbit(glm::mat3({0, 0, 0}, {-M_PI, 0, 0}, {2, 0, 0}))
+
+
+
+/*            new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 1, 0}), {}),
+            new Wait(glm::mat3({0, -0.5, 4}, {0, 0, 0}, {2, 0, 0}), {new LoopRotModel(glm::mat3({{6, 0, 0}, {0, 0, 0}, {0, 0, 0}}))}),
+            new Orbit(glm::mat3({0, 0, 0}, {-M_PI, 0, 0}, {2, 0, 0}), {})*/
+
             /*new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 0, 0})),
             new LookAtModel(glm::mat3({0, 0, 0}, {0, 0, 0}, {0.5, 0, 0})),
             new SetMode(glm::mat3({0, 0, 0}, {0, 0, 0}, {0, 1, 0})),
