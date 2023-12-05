@@ -2,12 +2,8 @@
 *.o
 **/.vscode
 **/RedNoise/cmake-build-debug
-**/*.ppm
-**/*.bmp
 **/*.mp4
 **/*.perl
 **/*.perf
-**/*.png
-**/*.ppm
 **/*.cmake
 **/*.json
