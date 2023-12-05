@@ -6,6 +6,7 @@
 #include "Colour.h"
 #include "TextureMap.h"
 #include "DepthBuffer.h"
+#include "NormalMap.h"
 #include <tuple>
 
 #pragma once

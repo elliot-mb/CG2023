@@ -25,5 +25,4 @@ namespace Utils{
     glm::vec2 latLong(glm::vec3 v);
     float getRandom();
 
-    bool doesCollide(glm::vec3 &origin, glm::vec3 &beam, Triangle &tri, glm::vec3 &loc);
 }

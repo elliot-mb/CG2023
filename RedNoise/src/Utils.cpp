@@ -5,7 +5,6 @@
 #include "glm/glm.hpp"
 #include <fstream>
 #include <iostream>
-#include "Triangle.h"
 
 uint MAX_RAND = static_cast<uint>(glm::floor(glm::pow(2, 31) - 1));
 
@@ -170,14 +169,4 @@ glm::vec2 Utils::latLong(glm::vec3 v){
     float latitude = glm::asin(-vn.y);
     float longitude = glm::atan(vn.x, vn.z);
     return glm::vec2(latitude, longitude);
-}
-
-bool Utils::doesCollide(glm::vec3& origin, glm::vec3& beam, Triangle& tri, glm::vec3& loc){
-    glm::vec3 spVector = origin - tri.v0() - loc; // final term is for the individual model position
-    glm::mat3 diff(-beam, tri.e0, tri.e1);
-    glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
-    return possibleSolution.x > 0 && //is the ray colliding in front of the point (along the ray line)
-           possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
-           possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
-           possibleSolution.y + possibleSolution.z <= 1;
 }

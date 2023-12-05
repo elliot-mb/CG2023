@@ -39,5 +39,13 @@ std::vector<glm::vec3> Light::getPts() const{
 
 float Light::getStrength() const{ return this->strength; }
 
+Triangle &Light::getSurface1() {
+    return this->surface1;
+}
+
+Triangle &Light::getSurface2() {
+    return this->surface2;
+}
+
 
 

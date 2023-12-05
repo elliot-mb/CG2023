@@ -13,6 +13,9 @@ public:
     glm::vec3& getColour();
     float getStrength() const;
     std::vector<glm::vec3> getPts() const;
+
+    Triangle& getSurface1();
+    Triangle& getSurface2();
 private:
     glm::vec3 pos;
     glm::vec3 u;
