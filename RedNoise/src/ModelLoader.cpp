@@ -386,6 +386,7 @@ glm::mat3 &ModelLoader::getOrientation() {
 }
 
 void ModelLoader::rst(){
+    load();
     this->orientation = glm::mat3(1);
 }
 

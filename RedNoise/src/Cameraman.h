@@ -14,7 +14,7 @@ public:
 
     Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, std::vector<float>& sceneChanges);
 
-    void render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview);//renders all frames of the animation
+    void render(DrawingWindow& window, DepthBuffer& depthBuffer, bool withPreview);//renders all frames of the animation
 
     static Colour background;
     static SDL_Event event;

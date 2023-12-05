@@ -28,6 +28,7 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Sc
     this->isOrbiting = false;
     this->mode = ray;
 
+
     for(int y = 0; y < static_cast<int>(glm::floor(this->screen.y)); y++){
         imageCoords.push_back({});
         for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x++)
@@ -473,7 +474,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 void Camera::raycast(DrawingWindow& window, int start, int end){
     std::vector<Triangle*> tris = scene->getTris();
 
-    int stride = 8; //how large are our ray texturePts (1 is native resolution)
+    int stride = 2; //how large are our ray texturePts (1 is native resolution)
     int bounces = 4;
 
 
@@ -691,5 +692,10 @@ void Camera::doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer){
 
 void Camera::setRenderMode(int m) {
     this->mode = m % 3;
+}
+
+void Camera::setScene(Scene *s) {
+    this->scene = s;
+
 }
 

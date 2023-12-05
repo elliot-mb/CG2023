@@ -80,12 +80,10 @@ int main(int argc, char *argv[]) {
     ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.5, ModelLoader::nrm, true, true);
     ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.0025, glm::vec3(0, 0, -0.5), 1.0, ModelLoader::nrm);
 
-
     std::vector<ModelLoader*> models0 = {cornell, sphere, tallBox, glassBox, sphere2, sphere3, mirrorBox, hackspace, blockBox};
     std::vector<ModelLoader*> modelsCornellSphere = {cornell, sphere, blockBox};
     std::vector<ModelLoader*> modelsCornell = {cornell, blockBox};
     std::vector<ModelLoader*> modelsGourad = {cornell, sphere3, blockBox};
-
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
@@ -99,12 +97,12 @@ int main(int argc, char *argv[]) {
 //    Scene* sceneRayHard = new Scene(modelsCornellSphere, {lightHard}, envSky);
     Scene* sceneRaySoft = new Scene(models0, {lightSoft}, envRocks);
 
-    Scene* sceneAll = new Scene(models0, {lightSoft}, envRocks);
+//    Scene* sceneAll = new Scene(models0, {lightSoft}, envRocks);
 
-    Scene* sceneCamera = new Scene(modelsCornellSphere, {lightSoft}, envRocks);
+//    Scene* sceneCamera = new Scene(modelsCornellSphere, {lightSoft}, envRocks);
 
 
-    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), sceneAll, 8);
+    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), sceneRasteriser, 8);
     camera->setRot(0, 0);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
@@ -123,12 +121,13 @@ int main(int argc, char *argv[]) {
 
 //// //comment to stop the render
     std::vector<Scene> scenes = {*sceneRasteriser, *sceneRaySoft};
-    std::vector<float> sceneChanges = {3.25};
+    std::vector<float> sceneChanges = {3};
     Cameraman* cm = new Cameraman(camera, "./render/", scenes, sceneChanges);
-    cm->render(window, *depthBuffer, *sceneAll, true);
+    cm->render(window, *depthBuffer, true);
     for(ModelLoader* m: modelsCornellSphere){
         m->rst();
     }
+    camera->setScene(sceneRasteriser);
 
     while (true) {
 		// We MUST poll for events - otherwise the window will freeze !

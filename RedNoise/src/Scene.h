@@ -47,6 +47,8 @@ public:
     int getNumLights();
 
     uint32_t getEnvPixel(float lat, float lng);
+
+    void rst();
 private:
     //delegates to all models
     void load();

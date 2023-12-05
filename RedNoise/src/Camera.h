@@ -35,6 +35,8 @@ public:
     void doRasterising(DrawingWindow &window, DepthBuffer &depthBuffer);
     void setRot(float angleToZ, float angleToX);
     vec2 getRot();
+    void setScene(Scene* s);
+
     enum Mode {msh, rst, ray};//one two or three (mesh, raster, raycast)
 private:
     static int NO_INTERSECTION;

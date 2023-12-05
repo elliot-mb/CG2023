@@ -6,6 +6,29 @@
 
 #include <utility>
 
+void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, bool withPreview) {
+    uint frameID = 0;
+    this->cam->setScene(&this->scenes[this->currentScene]);
+    for (Action *a: this->actions) {
+        std::cout << "frame: " << frameID << std::endl;
+        a->act(window,
+               *this->cam,
+               frameID,
+               this->outPath,
+               this->scenes[this->currentScene],
+               depthBuffer,
+               withPreview);
+        float time = static_cast<float>(frameID) / FRAMERATE; //scenes only change after actions
+        if((this->sceneChanges[this->currentScene] < time) && (this->currentScene + 1 < this->scenes.size())){
+            this->currentScene++;
+            this->cam->setScene(&this->scenes[this->currentScene]);
+            std::cout << "set scene to " << this->currentScene << std::endl;
+        }
+
+    }
+    std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
+}
+
 //std::vector<glm::vec3> Cameraman::Action::act();
 
 Colour Cameraman::background = Colour(0, 0, 0);
@@ -189,29 +212,7 @@ Cameraman::Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, st
     this->currentScene = 0;
 }
 
-void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, Scene& scene, bool withPreview) {
-    uint frameID = 0;
-    scene = this->scenes[0];
 
-    for (Action *a: this->actions) {
-        std::cout << "frame: " << frameID << std::endl;
-        a->act(window,
-               *this->cam,
-               frameID,
-               this->outPath,
-               scene,
-               depthBuffer,
-               withPreview);
-        float time = static_cast<float>(frameID) / FRAMERATE; //scenes only change after actions
-        if((this->sceneChanges[this->currentScene] < time) && (this->currentScene + 1 < this->scenes.size())){
-            this->currentScene++;
-            scene = this->scenes[currentScene];
-            std::cout << "set scene to " << this->currentScene << std::endl;
-        }
-
-    }
-    std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
-}
 
     /**
      * run the following to compile the frames into a video at 25fps:
