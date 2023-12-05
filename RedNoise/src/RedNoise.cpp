@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     uint frame = 0;
 
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.8, ModelLoader::nrm);
-    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35),  0.4, ModelLoader::phg_mtl);
+    ModelLoader* sphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35),  0.5, ModelLoader::phg_mtl);
     ModelLoader* sphere2 = new ModelLoader("sphere.obj", 0.20, glm::vec3(-0.64, -0.25, 0.75), 0.2, ModelLoader::gls_phg);
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.5, ModelLoader::mtl);
     ModelLoader* tallBox2 = new ModelLoader("tall_box.obj", 1.0, glm::vec3(3.0, -1.0, 1), 0.5, ModelLoader::mtl);
@@ -77,11 +77,11 @@ int main(int argc, char *argv[]) {
     ModelLoader* mirrorBox = new ModelLoader("../cube/cube.obj", 0.25, glm::vec3(-0.65, -0.05, -0.25), 0.5, ModelLoader::nrm, true, true);
     ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.0025, glm::vec3(0, 0, -0.5), 1.0, ModelLoader::nrm);
 
-    std::vector<ModelLoader*> models = {cornell, sphere};//, tallBox, glassBox, sphere2, mirrorBox, hackspace};
+    std::vector<ModelLoader*> models = {cornell, sphere, tallBox, glassBox, sphere2, mirrorBox, hackspace};
 
     DepthBuffer* depthBuffer = new DepthBuffer(WIDTH, HEIGHT);
 
-    Light light = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.4, 0, 0}, {0, 0.0, 0.4}), glm::vec3({255, 255, 255}), 3, 1, 2));
+    Light light = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.4, 0, 0}, {0, 0, 0.4}), glm::vec3({255, 255, 255}), 5, 1, 5 ));
     //Light light = *(new Light(glm::mat3({1, 2, 2}, {2.0, 0, 0}, {0, 1.4, 1.4}), glm::vec3({255, 255, 255}),  5, 16));
     EnvMap env = EnvMap("Ocean-from-horn.ppm");
     Scene* s = new Scene(models, {light}, env);

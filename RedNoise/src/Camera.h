@@ -41,6 +41,8 @@ private:
     static glm::vec2 DEFAULT_INTERSECT; //gives optionality to getClosestIntersection as to whether we care to return barycentrics
     static glm::vec3 LIGHT_COLOUR;
     static glm::vec3 BACKGROUND_COLOUR;
+    static glm::vec3 ORIGIN;
+    static glm::vec3 HALF;
 
     glm::vec3 myUp(); //return normalised up vector
     glm::mat3 orientation; //the basis of the camera stored in columns [xxx^T, yyy^T, zzz^T]
@@ -79,11 +81,11 @@ private:
 
     void shadow(float &brightness, vec3 &shadowRay, int& intersection, vec3 &intercept, vector<Triangle *> &tris);
 
-    void specular(float &brightness, float strength, vec3 &shadowRay, vec3 &norm, vec3 &camRay, float power);
+    void specular(float &brightness, float strength, vec3 &shadowRay, glm::vec3& intercept, vec3 &norm, vec3 &camRay, float power);
 
     void
     gouraud(float &brightness, float strength, float& spec, vec3 &shadowRayn, float &u, float &v, float &w, vector<glm::vec3 *> &norms,
-            vec3 &camRay, float& len);
+            vec3 &camRay, float& len, glm::vec3& intercept);
 
     void reflectCast(int bounces, glm::vec3& topColour, vec3 &incidentRay, float& attenuation, pair<int, float> &intersection, vec3 &intercept, vec3 &norm,
                  vector<Triangle *>& tris, vec3 &colour)/* const*/;
@@ -99,4 +101,8 @@ private:
     vec3 envColour(vec3 escapedRay);
 
     static vec3 MIRROR_COLOUR;
+
+    bool collisionCoords(vec3 &origin, vec3 &beam, Triangle &tri, vec3 &loc);
+
+    void areaSpecular(float &brightness, float strength, vec3 &intercept, vec3 &camRay, vec3 &norm, Light &light);
 };

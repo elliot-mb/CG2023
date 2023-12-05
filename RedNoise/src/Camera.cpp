@@ -65,6 +65,16 @@ std::tuple<glm::vec3, bool> Camera::getCanvasIntersectionPoint(glm::vec3 vertexP
     return std::tuple<glm::vec3, bool>{glm::vec3(u, v, dist), true}; //dist is the distance to the camera squared
 }
 
+bool Camera::collisionCoords(glm::vec3 &origin, glm::vec3 &beam, Triangle& tri, glm::vec3 &loc){
+    glm::vec3 spVector = origin - tri.v0() - loc; // final term is for the individual model position
+    glm::mat3 diff(-beam, tri.e0, tri.e1);
+    glm::vec3 possibleSolution = glm::inverse(diff) * spVector;
+    return possibleSolution.x > 0 && //is the ray colliding in front of the point (along the ray line)
+           possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
+           possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
+           possibleSolution.y + possibleSolution.z <= 1;
+}
+
 //please given -1 for fobiddenIndex if there is no index forbade
 //returns {index: int ::= index of triangle intersection OR -1 if not found, closestValid: float ::= distance along ray of collision}
 //sets (by ref) the u and v of the intersection (intersectLoc) corresponding to the edges distance for conversion to barycentric coords
@@ -117,12 +127,22 @@ void Camera::proximity(float& brightness, float& len, float& strength){
     brightness = brightness * static_cast<float>(strength / glm::pow(len, 2));
 }
 
-void Camera::specular(float& brightness, float strength, glm::vec3& shadowRay, glm::vec3& norm, glm::vec3& camRay, float power){
+void Camera::areaSpecular(float& brightness, float strength, glm::vec3& intercept, glm::vec3& camRay, glm::vec3& norm, Light& light){
+    glm::vec3 reflectedRay = reflect(norm, camRay);
+    glm::vec3 origin = {0, 0, 0};
+    if(collisionCoords(intercept, reflectedRay, light.getSurface1(), origin) ||
+       collisionCoords(intercept, reflectedRay, light.getSurface2(), origin)){
+        brightness = (0.5 * brightness) + (strength * 0.5);
+    }
+}
+
+void Camera::specular(float& brightness, float strength, glm::vec3& shadowRay, glm::vec3& intercept, glm::vec3& norm, glm::vec3& camRay, float power){
     glm::vec3 incidentRay = glm::normalize(shadowRay - ((static_cast<float>(2.0) * norm) * (glm::dot(shadowRay, norm))));
     float similarity = glm::dot(glm::normalize(camRay), incidentRay);
     if(similarity < 0) return;
     float specStrength = static_cast<float>(glm::pow(similarity, power));
     brightness = static_cast<float>(brightness + (strength * specStrength));
+    //areaSpecular(brightness, strength, intercept, camRay, norm, this->scene->getLight(0));
 }
 
 void Camera::diffuse(float& brightness, glm::vec3& shadowRay, glm::vec3& norm){
@@ -135,17 +155,17 @@ void Camera::shadow(float& brightness, glm::vec3& shadowRay, int& currentTri, gl
         brightness = this->ambientLower;
 }
 
-void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len){
+void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& shadowRayn, float& u, float& v, float& w, std::vector<glm::vec3 *>& norms, glm::vec3& camRay, float& len, glm::vec3& intercept){
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0; //characteristics for each vertex
     float specV1 = 0; float specV2 = 0; float specV3 = 0;
     float flatStrength = 1.0;
-    specular(specV1, 1, shadowRayn, *norms[0], camRay, 128);
+    specular(specV1, 1, shadowRayn,intercept, *norms[0], camRay, 16);
     diffuse(diffV1, shadowRayn, *norms[0]);
     proximity(brightness, len, flatStrength);
-    specular(specV2, 1, shadowRayn, *norms[1], camRay, 128);
+    specular(specV2, 1, shadowRayn,intercept, *norms[1], camRay, 16);
     diffuse(diffV2, shadowRayn, *norms[1]);
     proximity(brightness, len, flatStrength);
-    specular(specV3, 1, shadowRayn, *norms[2], camRay, 128);
+    specular(specV3, 1, shadowRayn, intercept, *norms[2], camRay, 16);
     diffuse(diffV3, shadowRayn, *norms[2]);
     proximity(brightness, len, flatStrength);
     //interpolate brightnesses
@@ -379,7 +399,8 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         glm::vec3 reflectedColour;
         reflectCast(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, reflectedColour);
         for (int i = 0; i < this->scene->getNumLights(); i++) {
-            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], intercept, norm, incidentRay, 128);
+            areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
@@ -404,19 +425,20 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     }
     if(shading == ModelLoader::phg) {
         for (int i = 0; i < this->scene->getNumLights(); i++) {
-            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], intercept, norm, incidentRay, 128);
+            areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
     }
     if(shading == ModelLoader::grd){
         for(int i = 0; i < this->scene->getNumLights(); i++) {
-            gouraud(brightnesses[i], this->scene->getLightStrengths()[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, incidentRay, lens[i]);
+            gouraud(brightnesses[i], this->scene->getLightStrengths()[i], speculars[i], shadowRayNrmls[i], u, v, w, norms, incidentRay, lens[i], intercept);
         }
     }
     if(shading == ModelLoader::nrm) {
         for(int i = 0; i < this->scene->getNumLights(); i++) {
-            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], norm, incidentRay, 128);
+            specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], intercept, norm, incidentRay, 128);
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             shadow(brightnesses[i], shadowRays[i], intersection.first, intercept, tris);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
