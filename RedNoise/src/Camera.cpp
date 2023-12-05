@@ -400,7 +400,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
         reflectCast(bounces, colVec, incidentRay, model->getAttenuation(), intersection, intercept, norm, tris, reflectedColour);
         for (int i = 0; i < this->scene->getNumLights(); i++) {
             specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], intercept, norm, incidentRay, 128);
-            //areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
+            areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
@@ -426,7 +426,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     if(shading == ModelLoader::phg) {
         for (int i = 0; i < this->scene->getNumLights(); i++) {
             specular(speculars[i], this->scene->getLightStrengths()[i], shadowRayNrmls[i], intercept, norm, incidentRay, 128);
-            //areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
+            areaSpecular(speculars[i], this->scene->getLightStrengths()[i], intercept, incidentRay, norm, this->scene->getLight(0));
             diffuse(brightnesses[i], shadowRayNrmls[i], norm);
             proximity(brightnesses[i], lens[i], this->scene->getLightStrengths()[i]);
         }
