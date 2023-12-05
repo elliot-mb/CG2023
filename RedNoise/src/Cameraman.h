@@ -12,7 +12,7 @@ class Cameraman {
 public:
 
 
-    Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, std::vector<float>& sceneChanges);
+    Cameraman(Camera* cam, string outPath, std::vector<Scene*>& scenes, std::vector<float>& sceneChanges);
 
     void render(DrawingWindow& window, DepthBuffer& depthBuffer, bool withPreview);//renders all frames of the animation
 
@@ -139,7 +139,7 @@ private:
                  bool withPreview) override;
     };
 
-    std::vector<Scene> scenes; //scenes to switch over
+    std::vector<Scene*> scenes; //scenes to switch over
     std::vector<float> sceneChanges; // in seconds
     int currentScene;
 
@@ -153,15 +153,25 @@ private:
             new Orbit({{0,0,0}, {3*M_PI/2,0,0}, {0.75,0,0}}, {}),
             new SetMode({{0,0,0}, {0,0,0}, {0,Camera::rst,0}}, {}),
             new Orbit({{0,0,0}, {M_PI/2,0,0}, {0.25,0,0}}, {}),
-            new Lerp({{0,-0.5,6}, {0,-0.5,4}, {0.25,0,0}}, {}),
+            new Lerp({{0,-0.5,6}, {0,-0.5,4}, {0.5,0,0}}, {}),
             new Lerp({{0,-0.5,4}, {0,-0.5,6}, {0.25,0,0}}, {}),
             new Orbit({{0,0,0}, {3*M_PI/2,0,0}, {0.75,0,0}}, {}),
             new SetMode({{0,0,0}, {0,0,0}, {0,Camera::ray,0}}, {}),
             new Orbit({{0,0,0}, {M_PI/2,0,0}, {0.25,0,0}}, {}),
-
-
-
-
+            new Lerp({{0,-0.5,6}, {0,-0.5,4}, {0.5,0,0}}, {}),
+            new LookAtModel({{0,0,0}, {0,0,0}, {0.5,1,0}}, {}),
+            new LerpLookat({{0,-0.5,4}, {-0.75,0.25,-0.75}, {2,1,0}}, {}),
+            new Wait({{-0.75,0.25,-0.75}, {0,0,0}, {0.5,0,0}}, {}),
+            //new SetMode({{0,0,0}, {0,0,0}, {0,Camera::msh,0}}, {}),
+            new LookAtModel({{0,0,0}, {0,0,0}, {1,2,0}}, {new LoopRotModel({{2,0,0}, {0,0,0}, {0,2,0}})}),
+            new LerpLookat({{-0.75,0.25,-0.75}, {0,0,4}, {1,2,0}}, {new LoopRotModel({{2,0,0}, {0,0,0}, {0,2,0}})}),
+            new LookAtModel({{0,0,0}, {0,0,0}, {1,0,0}}, {new LoopRotModel({{2,0,0}, {0,0,0}, {2,2,0}})}),
+            new Orbit({{0,0,0}, {3*M_PI/2,0,0}, {0.75,0,0}}, {}),
+            new Orbit({{0,0,0}, {M_PI/2,0,0}, {0.25,0,0}}, {}),
+            new Wait({{0,0,4}, {0,0,0}, {0.5,0,0}}, {new LoopRotModel({{0,M_PI * 2,0}, {0,0,0}, {0,3,0}})}),
+            new LerpModel({{-0.45, -1.1, 0.75}, {0.75, 0.75, 0.75}, {2.5,5,0}}, {new LoopRotModel({{0,M_PI * 2,0}, {0,0,0}, {0,3,0}})}),
+            new LookAtModel({{0,0,4}, {0,0,0}, {0.5,4,0}}, {new LoopRotModel({{M_PI * 2,0,0}, {0,0,0}, {0,4,0}})}),
+            new LerpLookat({{0,0,4}, {0.0, -0.6, 0.65}, {1.5,4,0}}, {new LoopRotModel({{M_PI_2,-M_PI_4,0}, {0,0,0}, {0,4,0}})}),
 
 
 

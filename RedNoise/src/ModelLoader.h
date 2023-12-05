@@ -19,7 +19,7 @@ using MaybeTexture = std::pair<TextureMap, bool>; //a texture and its validity
 
 class ModelLoader {
 public:
-    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture = true, bool isTextureNormalMap = false);
+    ModelLoader(std::string fileName, float scale, glm::vec3 position, float at, int shading, bool forceTexture = true, bool isTextureNormalMap = false, bool invertedNormals = false);
 
 //loads the file and returns the string
     void load();
@@ -76,6 +76,7 @@ private:
     float attenuation; //only set to anything other than 1,1,1 if we are a metal
     float refractI; //refractive index
     glm::mat3 orientation;
+    bool invertNormals;
 
     static const std::string TKN_MTLLIB;
     void asMaterial(std::vector<std::string> ln, std::string& location);

@@ -8,23 +8,21 @@
 
 void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, bool withPreview) {
     uint frameID = 0;
-    this->cam->setScene(&this->scenes[this->currentScene]);
+    this->cam->setScene(this->scenes[this->currentScene]);
     for (Action *a: this->actions) {
         std::cout << "frame: " << frameID << std::endl;
         a->act(window,
                *this->cam,
                frameID,
                this->outPath,
-               this->scenes[this->currentScene],
+               this->cam->getScene(),
                depthBuffer,
                withPreview);
         float time = static_cast<float>(frameID) / FRAMERATE; //scenes only change after actions
-        if((this->sceneChanges[this->currentScene] < time) && (this->currentScene + 1 < this->scenes.size())){
+        if(time > this->sceneChanges[this->currentScene] && this->currentScene + 1 < this->scenes.size()){
             this->currentScene++;
-            this->cam->setScene(&this->scenes[this->currentScene]);
-            std::cout << "set scene to " << this->currentScene << std::endl;
+            this->cam->setScene(this->scenes[this->currentScene]);
         }
-
     }
     std::cout << "rendered " + std::to_string(frameID) + " frames" << std::endl;
 }
@@ -32,6 +30,7 @@ void Cameraman::render(DrawingWindow& window, DepthBuffer& depthBuffer, bool wit
 //std::vector<glm::vec3> Cameraman::Action::act();
 
 Colour Cameraman::background = Colour(0, 0, 0);
+
 SDL_Event Cameraman::event;
 
 Cameraman::Action::Action(glm::mat3 args, std::vector<Ambient*> ambients) {
@@ -204,7 +203,7 @@ void Cameraman::LookAtModel::act(DrawingWindow &window, Camera &camera, uint &fr
     delegate->act(window, camera, frameID, out, scene, depthBuffer, withPreview);
 }
 
-Cameraman::Cameraman(Camera* cam, string outPath, std::vector<Scene>& scenes, std::vector<float>& sceneChanges) {
+Cameraman::Cameraman(Camera* cam, string outPath, std::vector<Scene*>& scenes, std::vector<float>& sceneChanges) {
     this->cam = cam;
     this->outPath = outPath;
     this->scenes = scenes;

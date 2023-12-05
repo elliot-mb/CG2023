@@ -40,11 +40,12 @@ Camera::Camera(glm::vec3 cameraPosition, float focalLength, glm::vec2 screen, Sc
     this->scene = scene;
     this->threads = threads;
 
+    this->relativeResolution = 1;
     //make slice heights
     this->sliceHeights = {};
-    int stride = static_cast<int>(screen.y) / this->threads;
+    int stride = static_cast<int>(glm::floor(screen.y / static_cast<float>(this->relativeResolution))) / this->threads;
     for(int i = 0; i < static_cast<int>(screen.y); i+=stride){ //we write a -1 in the first slice as we always take row value +1 as the start bound
-        sliceHeights.push_back(i); //exclusivity will be guaranteed by the thread runner (doRaytracing)
+        sliceHeights.push_back(i * this->relativeResolution); //exclusivity will be guaranteed by the thread runner (doRaytracing)
     }
     sliceHeights.push_back(static_cast<int>(screen.y)); //the screenheight-1th row
 }
@@ -96,7 +97,7 @@ std::pair<int, float> Camera::getClosestIntersection(int& forbiddenIndex, glm::v
                possibleSolution.y <= 1 && possibleSolution.y >= 0 &&
                possibleSolution.z <= 1 && possibleSolution.z >= 0 &&
                possibleSolution.y + possibleSolution.z <= 1 &&
-               possibleSolution.x < closestValid){ //if it hits the triangle AND its the new smallest OR the first we've seen
+               possibleSolution.x < closestValid && possibleSolution.x > 0.001){ //if it hits the triangle AND its the new smallest OR the first we've seen
                 intersectLoc = {possibleSolution.y, possibleSolution.z}; //u and v to be returned via reference setting
                 closestValid = possibleSolution.x;
                 closestTri = i;
@@ -161,13 +162,13 @@ void Camera::gouraud(float& brightness, float strength, float& spec, glm::vec3& 
     float diffV1 = 1.0; float diffV2 = 1.0; float diffV3 = 1.0; //characteristics for each vertex
     float specV1 = 0; float specV2 = 0; float specV3 = 0;
     float flatStrength = 1.0;
-    specular(specV1, 1, shadowRayn,intercept, *norms[0], camRay, 16);
+    specular(specV1, 1, shadowRayn,intercept, *norms[0], camRay, 128);
     diffuse(diffV1, shadowRayn, *norms[0]);
     proximity(brightness, len, flatStrength);
-    specular(specV2, 1, shadowRayn,intercept, *norms[1], camRay, 16);
+    specular(specV2, 1, shadowRayn,intercept, *norms[1], camRay, 128);
     diffuse(diffV2, shadowRayn, *norms[1]);
     proximity(brightness, len, flatStrength);
-    specular(specV3, 1, shadowRayn, intercept, *norms[2], camRay, 16);
+    specular(specV3, 1, shadowRayn, intercept, *norms[2], camRay, 128);
     diffuse(diffV3, shadowRayn, *norms[2]);
     proximity(brightness, len, flatStrength);
     //interpolate brightnesses
@@ -283,8 +284,7 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
     // from here on out 'norm' and 'norms' are objectively what is used in all rendering methods
     norm = model->getOrientation() * norm; //rotate it according to the orientation of the model
     for(int i = 0; i < norms.size(); i++) {
-        glm::vec3 rotNorm = model->getOrientation() * *norms[i];
-        norms[i] = &rotNorm;
+        *norms[i] = model->getOrientation() * *norms[i];
     }
 
     glm::vec3 defaultReflected = {0, 0, 0};
@@ -472,24 +472,20 @@ void Camera::hit(int bounces, glm::vec3 &source, glm::vec3& incidentRay, glm::ve
 
 //start and end row numbers of the strip
 void Camera::raycast(DrawingWindow& window, int start, int end){
-    std::vector<Triangle*> tris = scene->getTris();
+    std::vector<Triangle*> tris = this->scene->getTris();
 
-    int stride = 2; //how large are our ray texturePts (1 is native resolution)
     int bounces = 4;
 
 
-    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += stride){
-        for(int y = start; y < end; y += stride){
+    for(int x = 0; x < static_cast<int>(glm::floor(this->screen.x)); x += this->relativeResolution){
+        for(int y = start; y < end; y += this->relativeResolution){
             glm::vec3 camRay = buildCameraRay(x, y);
             //first, cast from the camera to the scene
             glm::vec2 vw = {0.0, 0.0};
-            std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *scene, vw);
+            std::pair<int, float> intersection = getClosestIntersection(NO_INTERSECTION, this->position, camRay, tris, *this->scene, vw);
             if(intersection.first != NO_INTERSECTION){ //ifs its valid...
                 glm::vec3 finalColour;
-                ModelLoader* model = scene->getModel(scene->getModelFromTri(intersection.first));
-//                if(*model->getFuzz() != 0)
-//                    this->currentFuzz = model->lookupFuzz(x, y);
-//                else this->currentFuzz = ModelLoader::NO_FUZZ;
+                ModelLoader* model = this->scene->getModel(scene->getModelFromTri(intersection.first));
 
                 hit(bounces, this->position, camRay, vw, intersection, tris, finalColour, 1); //the camera starts in air (refractI 1)
 
@@ -497,9 +493,9 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
                                                         static_cast<uint8_t>(finalColour.x),
                                                         static_cast<uint8_t>(finalColour.y),
                                                         static_cast<uint8_t>(finalColour.z)));
-                if(stride > 1)
-                    for(int i = 0; i < stride; i++){
-                        for(int j = 0; j < stride; j++){
+                if(this->relativeResolution > 1)
+                    for(int i = 0; i < this->relativeResolution; i++){
+                        for(int j = 0; j < this->relativeResolution; j++){
                             window.setPixelColour(x + i, y + j, Utils::pack(255,
                                                                             static_cast<uint8_t>(finalColour.x),
                                                                             static_cast<uint8_t>(finalColour.y),
@@ -512,9 +508,9 @@ void Camera::raycast(DrawingWindow& window, int start, int end){
                                                                 static_cast<uint8_t>(bgCol.x),
                                                                 static_cast<uint8_t>(bgCol.y),
                                                                 static_cast<uint8_t>(bgCol.z)));
-                if(stride > 1)
-                    for(int i = 0; i < stride; i++){
-                        for(int j = 0; j < stride; j++){
+                if(this->relativeResolution > 1)
+                    for(int i = 0; i < this->relativeResolution; i++){
+                        for(int j = 0; j < this->relativeResolution; j++){
                             window.setPixelColour(x + i, y + j, Utils::pack(255,
                                                                             static_cast<uint8_t>(bgCol.x),
                                                                             static_cast<uint8_t>(bgCol.y),
@@ -602,25 +598,27 @@ glm::vec2 Camera::getRot(){ //rot round x, rot round y, careful when y is +-90
 //    glm::vec3 lastRow = this->orientation[2];
 //    return glm::vec2(glm::atan(lastRow.y, lastRow.z),
 //                     glm::atan(-lastRow.y, glm::sqrt((lastRow.y * lastRow.y) + (lastRow.z * lastRow.z))));
-    glm::vec3 xHat = this->myRight();
-    glm::vec3 zHat = this->myFwd();
-    float xSign = 1;
-    float zSign = 1;
-    if(xHat.z != 0) xSign = xHat.z / glm::abs(xHat.z);//sign on whether its behind or in front of the camera
-    if(zHat.y != 0) zSign = zHat.y / glm::abs(zHat.y); //sign on whether its
-    // projection vectors
-    glm::vec3 xHat0z = xHat; xHat0z.z = 0;
-    glm::vec3 zHat0y = zHat; zHat0y.y = 0;
-    // angles
-    xHat = glm::normalize(xHat);
-    zHat = glm::normalize(zHat);
-    xHat0z = glm::normalize(xHat0z);
-    zHat0y = glm::normalize(zHat0y);
-    float tX = (glm::acos(glm::dot(xHat, xHat0z))) * xSign; //signed angle from xhat to world x
-    if(zHat.z < 0) tX = M_PI - tX; //if we're facing backwards
-    float tZ = (glm::acos(glm::dot(zHat, zHat0y))) * zSign; //signed angle form zhat to world z
+//    glm::vec3 xHat = this->myRight();
+//    glm::vec3 zHat = this->myFwd();
+//    float xSign = 1;
+//    float zSign = 1;
+//    if(xHat.z != 0) xSign = xHat.z / glm::abs(xHat.z);//sign on whether its behind or in front of the camera
+//    if(zHat.y != 0) zSign = zHat.y / glm::abs(zHat.y); //sign on whether its
+//    // projection vectors
+//    glm::vec3 xHat0z = xHat; xHat0z.z = 0;
+//    glm::vec3 zHat0y = zHat; zHat0y.y = 0;
+//    // angles
+//    xHat = glm::normalize(xHat);
+//    zHat = glm::normalize(zHat);
+//    xHat0z = glm::normalize(xHat0z);
+//    zHat0y = glm::normalize(zHat0y);
+//    float tX = (glm::acos(glm::dot(xHat, xHat0z))) * xSign; //signed angle from xhat to world x
+//    if(zHat.z < 0) tX = M_PI - tX; //if we're facing backwards
+//    float tZ = (glm::acos(glm::dot(zHat, zHat0y))) * zSign; //signed angle form zhat to world z
+    glm::vec3 z = myFwd();
+    glm::vec2 latLng = Utils::latLong(z);
 
-    return glm::vec2(-tZ, tX);
+    return {latLng.x, -latLng.y};
 }
 
 //normalised vector
@@ -697,5 +695,9 @@ void Camera::setRenderMode(int m) {
 void Camera::setScene(Scene *s) {
     this->scene = s;
 
+}
+
+Scene &Camera::getScene() {
+    return *this->scene;
 }
 

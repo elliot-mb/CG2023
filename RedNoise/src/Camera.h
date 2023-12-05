@@ -36,7 +36,7 @@ public:
     void setRot(float angleToZ, float angleToX);
     vec2 getRot();
     void setScene(Scene* s);
-
+    Scene& getScene();
     enum Mode {msh, rst, ray};//one two or three (mesh, raster, raycast)
 private:
     static int NO_INTERSECTION;
@@ -107,4 +107,6 @@ private:
     bool collisionCoords(vec3 &origin, vec3 &beam, Triangle &tri, vec3 &loc);
 
     void areaSpecular(float &brightness, float strength, vec3 &intercept, vec3 &camRay, vec3 &norm, Light &light);
+
+    int relativeResolution;
 };
