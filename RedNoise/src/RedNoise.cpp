@@ -67,20 +67,20 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 
 int main(int argc, char *argv[]) {
     uint frame = 0;
-    ModelLoader* blockBox =  new ModelLoader("tall_box.obj", 1, glm::vec3(4.5, 0, 0), 1.0, ModelLoader::nrm);
-    ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.75, ModelLoader::nrm);
-    ModelLoader* metalSphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, ModelLoader::phg_mtl);
-    ModelLoader* mirrorSphere = new ModelLoader("sphere.obj", 0.25, glm::vec3(-0.55, -0.2, 0.35), 0.0, ModelLoader::phg_mrr);
-    ModelLoader* glassSphere = new ModelLoader("sphere.obj", 0.30, glm::vec3(-0.45, -1.1, 0.75), 0.2, ModelLoader::gls_phg);
-    ModelLoader* gouraudSphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 1.0, ModelLoader::grd);;
-    ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.3, ModelLoader::mtl);
-    ModelLoader* tallBox2 = new ModelLoader("tall_box.obj", 1.0, glm::vec3(3.0, -1.0, 1), 0.4, ModelLoader::mtl);
-    ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -1.1, 0.75), 0.1, ModelLoader::gls, false);
+    ModelLoader* blockBox =  new ModelLoader("objs/tall_box.obj", 1, glm::vec3(4.5, 0, 0), 1.0, ModelLoader::nrm);
+    ModelLoader* cornell = new ModelLoader("objs/textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.75, ModelLoader::nrm);
+    ModelLoader* metalSphere = new ModelLoader("objs/sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, ModelLoader::phg_mtl);
+    ModelLoader* mirrorSphere = new ModelLoader("objs/sphere.obj", 0.25, glm::vec3(-0.55, -0.2, 0.35), 0.0, ModelLoader::phg_mrr);
+    ModelLoader* glassSphere = new ModelLoader("objs/sphere.obj", 0.30, glm::vec3(-0.45, -1.1, 0.75), 0.2, ModelLoader::gls_phg);
+    ModelLoader* gouraudSphere = new ModelLoader("objs/sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 1.0, ModelLoader::grd);;
+    ModelLoader* tallBox = new ModelLoader("objs/tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.3, ModelLoader::mtl);
+    ModelLoader* tallBox2 = new ModelLoader("objs/tall_box.obj", 1.0, glm::vec3(3.0, -1.0, 1), 0.4, ModelLoader::mtl);
+    ModelLoader* glassBox = new ModelLoader("objs/cube.obj", 0.25, glm::vec3(-0.45, -1.1, 0.75), 0.1, ModelLoader::gls, false);
     glassBox->rotate(M_PI_4, 0);
-    ModelLoader* normalBox = new ModelLoader("../cube/cube.obj", 0.20, glm::vec3(-0.5, -0.6, 0.65), 0.5, ModelLoader::mtl, true, true);
-    ModelLoader* hackspace = new ModelLoader("hackspace-logo/logo.obj", 0.002, glm::vec3(0.35, 0, 0.5), 1.0, ModelLoader::nrm);
-    ModelLoader* mirrorBox = new ModelLoader("tall_box.obj", 0.4, glm::vec3(0.4, -1.2, -0.45), 0.0, ModelLoader::mrr);
-    ModelLoader* glassBunny = new ModelLoader("LowpolyStanfordBunnyUprightEars.obj", 0.05, glm::vec3(0.0, 0.0, 0.0), 0.2, ModelLoader::gls_phg, false, false, true);
+    ModelLoader* normalBox = new ModelLoader("objs/cube/cube.obj", 0.20, glm::vec3(-0.5, -0.6, 0.65), 0.5, ModelLoader::mtl, true, true);
+    ModelLoader* hackspace = new ModelLoader("objs/hackspace-logo/logo.obj", 0.002, glm::vec3(0.35, 0, 0.5), 1.0, ModelLoader::nrm);
+    ModelLoader* mirrorBox = new ModelLoader("objs/tall_box.obj", 0.4, glm::vec3(0.4, -1.2, -0.45), 0.0, ModelLoader::mrr);
+    ModelLoader* glassBunny = new ModelLoader("objs/LowpolyStanfordBunnyUprightEars.obj", 0.05, glm::vec3(0.0, 0.0, 0.0), 0.2, ModelLoader::gls_phg, false, false, true);
     mirrorBox->rotate(M_PI_4, 0);
     glassBunny->rotate(0, M_PI_2);
 
@@ -96,9 +96,9 @@ int main(int argc, char *argv[]) {
     Light lightHard = *(new Light(glm::mat3({-0.2, 0.35, 0}, {0.01, 0, 0}, {0, 0, 0.01}), glm::vec3({255, 255, 255}), 2, 1, 2 ));
     Light lightUp = *(new Light(glm::mat3({-0.2, 1.35, 0}, {0.01, 0, 0}, {0, 0, 0.01}), glm::vec3({255, 255, 255}), 2, 1, 2 ));
 
-    EnvMap envRocks = EnvMap("Ocean-from-horn.ppm");
-    EnvMap envClouds = EnvMap("skybox.ppm");
-    EnvMap envPark = EnvMap("skybox1.ppm");
+    EnvMap envRocks = EnvMap("objs/Ocean-from-horn.ppm");
+    EnvMap envClouds = EnvMap("objs/skybox.ppm");
+    EnvMap envPark = EnvMap("objs/skybox1.ppm");
 
     Scene* scene0 = new Scene(box, {lightHard}, envPark);
     Scene* scene1 = new Scene(boxGouraud, {lightHard}, envPark);
