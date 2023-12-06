@@ -67,13 +67,12 @@ void handleEvent(SDL_Event event, DrawingWindow &window, Camera& camera, ModelLo
 
 int main(int argc, char *argv[]) {
     uint frame = 0;
-
     ModelLoader* blockBox =  new ModelLoader("tall_box.obj", 1, glm::vec3(4.5, 0, 0), 1.0, ModelLoader::nrm);
     ModelLoader* cornell = new ModelLoader("textured-cornell-box.obj", 0.35, glm::vec3(0, -0.5, 0), 0.75, ModelLoader::nrm);
     ModelLoader* metalSphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 0.5, ModelLoader::phg_mtl);
     ModelLoader* mirrorSphere = new ModelLoader("sphere.obj", 0.25, glm::vec3(-0.55, -0.2, 0.35), 0.0, ModelLoader::phg_mrr);
     ModelLoader* glassSphere = new ModelLoader("sphere.obj", 0.30, glm::vec3(-0.45, -1.1, 0.75), 0.2, ModelLoader::gls_phg);
-    ModelLoader* gouraudSphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 1.0, ModelLoader::grd);
+    ModelLoader* gouraudSphere = new ModelLoader("sphere.obj", 0.35, glm::vec3(0.4, -0.25, -0.35), 1.0, ModelLoader::grd);;
     ModelLoader* tallBox = new ModelLoader("tall_box.obj", 0.25, glm::vec3(0.45, -1.0, 1), 0.3, ModelLoader::mtl);
     ModelLoader* tallBox2 = new ModelLoader("tall_box.obj", 1.0, glm::vec3(3.0, -1.0, 1), 0.4, ModelLoader::mtl);
     ModelLoader* glassBox = new ModelLoader("cube.obj", 0.25, glm::vec3(-0.45, -1.1, 0.75), 0.1, ModelLoader::gls, false);
@@ -107,7 +106,7 @@ int main(int argc, char *argv[]) {
     Scene* scene3 = new Scene(boxHackspaceRefractPhongNormal, {lightSoft}, envRocks);
     Scene* scene4 = new Scene(bunny, {lightUp}, envPark);
 
-    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), scene0, 1);
+    Camera* camera = new Camera(glm::vec3(0.0, -0.5, 4.0), 2.0, glm::vec2(WIDTH, HEIGHT), scene0, 12);
     camera->setRot(0, 0);
 
     DrawingWindow window = DrawingWindow(WIDTH, HEIGHT, false);
