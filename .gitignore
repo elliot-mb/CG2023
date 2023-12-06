@@ -1,9 +1,5 @@
 **/build
 *.o
 **/.vscode
-**/RedNoise/cmake-build-debug
-**/*.mp4
 **/*.perl
 **/*.perf
-**/*.cmake
-**/*.json
